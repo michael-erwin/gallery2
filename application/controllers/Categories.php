@@ -420,6 +420,7 @@ class Categories extends CI_Controller
         // Required params via post.
         $level = clean_numeric_text(trim($this->input->post('level')));
         $type = ($level == 1)? "all" : rtrim(clean_alpha_text(trim($this->input->post('type'))),'s'); // Strips 's' at the end.
+        $level_type = ($level == 1)? rtrim(clean_alpha_text(trim($this->input->post('type'))),'s') : $type;
         $title = clean_title_text(trim($this->input->post('title')));
         $description = clean_body_text(trim($this->input->post('description')));
         $icon = trim($this->input->post('icon'));
@@ -459,7 +460,7 @@ class Categories extends CI_Controller
                 $errors++;
                 $response['message'] .= "Database insert failed. ";
             }
-            if(!$data = $this->m_category->get_all($type))
+            if(!$data = $this->m_category->get_all($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
