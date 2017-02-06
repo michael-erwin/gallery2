@@ -1,0 +1,88 @@
+/* Table Display */
+#categories_table,
+#categories_table tbody {background-color: transparent !important;}
+#categories_table thead th,
+#categories_table tbody td {background-color: white}
+#categories_table tbody tr td.handle {
+    width: 24px;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: right !important;
+    border-right: 1px solid transparent !important;
+}
+#categories_table tbody tr td.handle .fa {
+    padding: 2px 5px;
+    cursor: pointer;
+}
+#categories_table tbody tr td.handle .fa:before {
+    content: "\f0da";
+}
+#categories_table tbody tr td.handle .fa.expanded {
+    transform: rotate(90deg);
+}
+#categories_table tbody td.handle i.active:hover {
+    color: #37A8E8 !important;
+}
+#categories_table tbody tr td.handle .disabled {
+    opacity: 0.2;
+    cursor: default;
+}
+#categories_table tbody tr.main-category td.handle + td {
+    padding-left: 5px;
+}
+#categories_table tbody tr.sub-category {
+    display: none;
+}
+#categories_table tbody tr.sub-category.open {
+    display: table-row;
+}
+#categories_table tbody tr.sub-category td {
+    background-color: #fbfbfb;
+}
+#categories_table tbody tr.sub-category td.handle {
+    border-top-color: transparent;
+    border-right-color: transparent;
+    background: transparent !important;
+}
+#categories_table tbody tr.sub-category td.handle:last-child {
+    border-bottom-color: #f4f4f4 !important;
+}
+/* Category Editor Modal */
+#modal_category_editor {}
+#modal_category_editor .form-group {
+    margin-bottom: 15px;
+}
+#modal_category_editor .form-group:last-child {
+    margin-bottom: 0;
+}
+#modal_category_editor .form-control option {
+    padding-left: 0;
+    padding-right: 0;
+}
+#modal_category_editor textarea {
+    resize: none;
+}
+#modal_category_editor [data-id="icon-preview-box"] {
+    width: 100%;
+    min-height: 222px;
+    margin-bottom: 5px;
+    padding: 15px;
+    border: 1px solid #d2d6de;
+    background-color: #f8f8f8;
+    position: relative;
+    text-align: center;
+}
+#modal_category_editor [data-id="icon-preview-box"] img {
+    display: inline-block;
+    max-width: 100%;
+}
+#modal_category_editor [data-id="icon-box-message"] {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 222px;
+    position: absolute;
+    left: 0; top: 0;
+    color: #b2b6be;
+    display: none;
+}
