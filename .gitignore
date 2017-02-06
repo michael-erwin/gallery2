@@ -1,0 +1,8 @@
+*/logs/*
+*/cache/*
+!*/cache/index.html
+!*/cache/.htaccess
+*/config/database.php
+*/config/config.php
+node_modules/
+/media/
