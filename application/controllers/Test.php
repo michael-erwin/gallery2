@@ -12,8 +12,9 @@ class Test extends CI_Controller
 
     public function _remap()
     {
-    $text = "John 
-Doe";
-        echo preg_replace(['/ /','/\n/'], ['_',''], $text);
+        $sql = "SELECT COUNT(*) as 'count' FROM `photos` WHERE 1";
+        $query = $this->db->query($sql);
+        $result = $query->result_array()[0];
+        print_r($result['count']);
     }
 }

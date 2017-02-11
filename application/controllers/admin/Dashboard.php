@@ -25,7 +25,19 @@ class Dashboard extends CI_Controller
         $data['sidebar_menu'] = $this->load->view('admin/v_sidebar_menu','',true);
 
         // Content.
-        $data['content'] = $this->load->view('admin/v_content_dashboard','',true);
+        $sql_photos = "SELECT COUNT(*) as 'count' FROM `photos` WHERE 1";
+        $sql_videos = "SELECT COUNT(*) as 'count' FROM `videos` WHERE 1";
+        $tmp_photos = $this->db->query($sql_photos);
+        $tmp_videos = $this->db->query($sql_videos);
+        $count_photos = $tmp_photos->result_array()[0];
+        $count_videos = $tmp_videos->result_array()[0];
+        $content_data = [
+            'photos_total' => $count_photos['count'],
+            'videos_total' => $count_videos['count'],
+            'users_count' => 0,
+            'unique_visits' => 0
+        ];
+        $data['content'] = $this->load->view('admin/v_content_dashboard',$content_data,true);
 
         // JSON Data
         $data['json']['sidebar_menus'] = json_encode($this->sidebar_menus);
@@ -41,7 +53,19 @@ class Dashboard extends CI_Controller
 
     public function json($option=null)
     {
-        $body = clean_whitespace($this->load->view('admin/v_content_dashboard','',true));
+        $sql_photos = "SELECT COUNT(*) as 'count' FROM `photos` WHERE 1";
+        $sql_videos = "SELECT COUNT(*) as 'count' FROM `videos` WHERE 1";
+        $tmp_photos = $this->db->query($sql_photos);
+        $tmp_videos = $this->db->query($sql_videos);
+        $count_photos = $tmp_photos->result_array()[0];
+        $count_videos = $tmp_videos->result_array()[0];
+        $content_data = [
+            'photos_total' => $count_photos['count'],
+            'videos_total' => $count_videos['count'],
+            'users_count' => 0,
+            'unique_visits' => 0
+        ];
+        $body = clean_whitespace($this->load->view('admin/v_content_dashboard',$content_data,true));
 
         if ($option)
         {
