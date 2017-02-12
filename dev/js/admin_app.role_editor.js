@@ -21,7 +21,8 @@ admin_app.role_editor =
             'name': "",
             'description': "",
             'permissions': ""
-        }
+        },
+        last_sinature: null
     },
     init: function() {
         this.self = $('#modal_role_editor');
@@ -39,6 +40,9 @@ admin_app.role_editor =
         // Event bindings.
         this.objects.form.unbind().on('submit',this.save.bind(this));
         this.objects.toggleAll.unbind().on('click',this.toggleSelectAll.bind(this));
+
+        // Initialize events.
+        this.getData();
     },
     render: function() {
         // Build permission table entries.
@@ -119,12 +123,12 @@ admin_app.role_editor =
     new: function(e) {
         this.objects.form[0].reset();
         this.data.mode = 'add';
-        this.getData();
+        this.render();
     },
     edit: function(data) {
         if(data){this.data.item = data};
         this.data.mode = 'update';
-        this.getData();
+        this.render();
     },
     save: function(e) {
         e.preventDefault();
@@ -142,30 +146,36 @@ admin_app.role_editor =
         if(errors == 0) {
             var endpoint = site.base_url+'roles/manage/'+this.data.mode;
             var data = $(e.target).serialize();
-            $.ajax({
-                method: 'post',
-                url: endpoint,
-                data: data,
-                context: this,
-                error: function(jqXHR,textStatus,errorThrown){
-                    toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
-                    this.enableFields();
-                },
-                success: function(response) {
-                    if(response.status == "ok") {
-                        toastr["success"](response.message);
+            if(this.data.last_sinature != data) {
+                $.ajax({
+                    method: 'post',
+                    url: endpoint,
+                    data: data,
+                    context: this,
+                    error: function(jqXHR,textStatus,errorThrown){
+                        toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
                         this.enableFields();
-                        this.self.modal('hide');
-                        admin_app.role.getData.call(admin_app.role,response.data);
+                    },
+                    success: function(response) {
+                        if(response.status == "ok") {
+                            toastr["success"](response.message);
+                            this.enableFields();
+                            this.self.modal('hide');
+                            admin_app.role.getData.call(admin_app.role,response.data);
+                            this.data.last_sinature = data;
+                        }
+                        else {
+                            this.enableFields();
+                            toastr["error"](response.message);
+                            this.self.modal('hide');
+                        }
                     }
-                    else {
-                        this.enableFields();
-                        toastr["error"](response.message);
-                        this.self.modal('hide');
-                    }
-                }
-            });
-            this.disableFields();
+                });
+                this.disableFields();
+            }
+            else {
+                this.self.modal('hide');
+            }
         }
     },
     disableFields: function() {
