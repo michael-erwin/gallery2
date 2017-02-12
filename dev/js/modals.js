@@ -42,4 +42,4 @@
             $('#modal_confirm').unbind('hide.bs.modal');
         }
     }
- }
+ };

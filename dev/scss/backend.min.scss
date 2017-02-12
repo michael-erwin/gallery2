@@ -1,6 +1,8 @@
 @import "admin.common";
+@import "admin.content.roles";
 @import "admin.content.media-library";
 @import "admin.content.dropbox-upload";
+@import "admin.modal.editor.role";
 @import "admin.modal.editor.category";
 @import "admin.modal.editor.media";
 @import "admin.modal.video-player";

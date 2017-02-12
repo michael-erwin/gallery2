@@ -112,7 +112,7 @@ admin_app.photo_editor =
             title: this.data.title,
             description: this.data.description,
             tags: this.data.tags
-        }
+        };
         $.ajax({
             context: this,
             url: site.base_url+"photos/update",
@@ -130,7 +130,7 @@ admin_app.photo_editor =
                         else {
                             this.caller.setName(this.data.title); // For uploader list update.
                         }
-                    }
+                    };
                     toastr["success"](response.message);
                     this.enableState();
                     this.close();
@@ -173,7 +173,7 @@ admin_app.photo_editor =
             else {
                 toastr["error"](response.message, "Error ");
             }
-        }
+        };
         $.ajax({
             context: $this,
             url: site.base_url+'photos/info/'+id,
@@ -189,7 +189,7 @@ admin_app.photo_editor =
     makeTags: function(list) {
         for(var i=0; i<list.length; i++) {
             $(this.formatTag(list[i])).insertBefore(this.objects.tag_box_input);
-        }
+        };
         this.objects.tag_box.delegate("li > span.del","click",this.removeTag);
     },
     formatTag: function(name) {
@@ -243,15 +243,15 @@ admin_app.photo_editor =
                     errors++;
                 }
             });
-        }
+        };
         if(errors == 0) {
             var tag = this.formatTag(input);
             $(tag).insertBefore(this.objects.tag_box_input);
             $(e.target).text("");
-        }
+        };
         return false;
     },
     removeTag: function(e) {
         $(e.target).parent("li").remove();
     }
-}
+};

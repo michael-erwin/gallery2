@@ -117,7 +117,7 @@ admin_app.video_editor =
             title: this.data.title,
             description: this.data.description,
             tags: this.data.tags
-        }
+        };
         $.ajax({
             context: this,
             url: site.base_url+"videos/update",
@@ -135,7 +135,7 @@ admin_app.video_editor =
                         else {
                             this.caller.setName(this.data.title); // For uploader list update.
                         }
-                    }
+                    };
                     toastr["success"](response.message);
                     this.enableState();
                     this.close();
@@ -178,7 +178,7 @@ admin_app.video_editor =
             else {
                 toastr["error"](response.message, "Error ");
             }
-        }
+        };
         $.ajax({
             context: $this,
             url: site.base_url+'videos/info/'+id,
@@ -191,7 +191,7 @@ admin_app.video_editor =
     makeTags: function(list) {
         for(var i=0; i<list.length; i++) {
             $(this.formatTag(list[i])).insertBefore(this.objects.tag_box_input);
-        }
+        };
         this.objects.tag_box.delegate("li > span.del","click",this.removeTag);
     },
     formatTag: function(name) {
@@ -250,10 +250,10 @@ admin_app.video_editor =
             var tag = this.formatTag(input);
             $(tag).insertBefore(this.objects.tag_box_input);
             $(e.target).text("");
-        }
+        };
         return false;
     },
     removeTag: function(e) {
         $(e.target).parent("li").remove();
     }
-}
+};

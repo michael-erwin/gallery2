@@ -86,7 +86,7 @@ admin_app.uploader =
             var file = this.objects.files[i];
             if(!file.rendered) {
                 this.objects.file_list_box.append(file.container);
-            }
+            };
             if(file.removed) {
                 file.container.remove();
                 remove_indexes.push(i);
@@ -95,7 +95,7 @@ admin_app.uploader =
         // Remove marked internal indexes.
         for(var n=remove_indexes.length-1; n>=0; n--) {
             this.objects.files.splice(remove_indexes[n],1);
-        }
+        };
         // Set media type selection.
         this.objects.media_type_box.val(this.data.media_type);
     },
@@ -150,13 +150,13 @@ admin_app.uploader =
         // Events.
         xhr.error = function(e) {
             toastr["warning"]("Failed to upload "+item_name+"?");
-        }
+        };
         xhr.upload.onprogress = function(e) {
             if(e.lengthComputable) {
                 var percent = Math.ceil((e.loaded/e.total) * 100);
                 file_widget.setProgress(percent);
             }
-        }
+        };
         xhr.onload = function(e) {
             try {
                 var response = JSON.parse(xhr.responseText);
@@ -187,7 +187,7 @@ admin_app.uploader =
                                         }
                                     }
                                 });
-                            }
+                            };
                             modal.confirm("Delete the file named \""+item_name+"\"?", delete_item);
                         });
 
@@ -245,7 +245,7 @@ admin_app.uploader =
                                                                     }
                                                                 }
                                                             });
-                                                        }
+                                                        };
                                                         modal.confirm("Delete the file named \""+item_name+"\"?", delete_item);
                                                     });
                                                     // Enable changing of type and category.
@@ -258,7 +258,7 @@ admin_app.uploader =
                                     }
                                 }
                             });
-                        }
+                        };
                         trackConversion.call(this,uid);
                     }
                 }
@@ -287,7 +287,7 @@ admin_app.uploader =
         for(var i=0;i<category_list.length;i++) {
             if(category_list[i].level == 1){
                 category_structure['parent_'+category_list[i].id] = {self:category_list[i],children:[]};
-            }
+            };
             if(category_list[i].level == 2){
                 var my_parent_id = 'parent_'+category_list[i].parent_id;
                 if(typeof category_structure[my_parent_id] !== 'undefined'){
@@ -297,7 +297,7 @@ admin_app.uploader =
                     category_structure[my_parent_id] = {self:null,children:[category_list[i]]};
                 }
             }
-        }
+        };
         // Create HTML output.
         for(item in category_structure){
             var main_cat = category_structure[item];
@@ -310,20 +310,18 @@ admin_app.uploader =
                     for(var x=0;x<main_cat['children'].length;x++){
                         category_html += '<option value="'+main_cat['children'][x].id+'">'+main_cat['children'][x].title+'</option>';
                     }
-                }
+                };
                 category_html += '</optgroup>';
             }
-        }
+        };
         this.objects.category_box.html(category_html);
     },
     handleInput(files_list) {
         var type = this.data.media_type;
         var allowed_types = null;
         var total_count = files_list.length+this.objects.files.length;
-
         if(type === "photos") allowed_types = this.data.allowed_photos;
         if(type === "videos") allowed_types = this.data.allowed_videos;
-
         for(var i = 0; i < files_list.length; i++) {
             var in_array = $.inArray(files_list[i].type, allowed_types);
             if(in_array !== -1) {
@@ -333,9 +331,8 @@ admin_app.uploader =
             else{
                 toastr["error"](files_list[i].name,"Not Allowed Type");
             }
-        }
-
+        };
         this.render();
         this.uploadNext();
     }
-}
+};

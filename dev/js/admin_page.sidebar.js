@@ -12,4 +12,4 @@ admin_page.sidebar =
             this.selected_menu = menus;
         }
     }
-}
+};

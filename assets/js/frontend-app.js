@@ -1,6 +1,5 @@
-function formatSizeUnits(bytes){if(bytes == 0) return '0 Bytes';var k = 1000,dm = 2,sizes = ['B', 'kB', 'MB', 'GB', 'TB'],i = Math.floor(Math.log(bytes) / Math.log(k));return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];}
-String.prototype.UCFirst = function() {return this.charAt(0).toUpperCase() + this.slice(1);}
-
+function formatSizeUnits(bytes){if(bytes == 0) return '0 Bytes';var k = 1000,dm = 2,sizes = ['B', 'kB', 'MB', 'GB', 'TB'],i = Math.floor(Math.log(bytes) / Math.log(k));return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];};
+String.prototype.UCFirst = function() {return this.charAt(0).toUpperCase() + this.slice(1);};
 var favorites = {
     self: null,
     objects: {
@@ -26,7 +25,6 @@ var favorites = {
         this.objects.modal = $('#modal_favorites');
         this.objects.modal_title = $('#modal_favorites h4.modal-title');
         this.objects.modal_body = $('#modal_favorites [data-id="contents"]');
-
         var stored_data = this.getCookie('favorites');
         if(stored_data) {
             stored_data = JSON.parse(stored_data);
@@ -158,7 +156,6 @@ var favorites = {
                                 '</div>';
                             }
                         }
-
                         this.objects.modal_body.html(thumbs);
                         this.objects.modal_body.find("a.remove-button").unbind("click").click(this.remove.bind(this));
                         this.objects.modal.modal('show');
@@ -201,7 +198,6 @@ var favorites = {
                                 '</div>';
                             }
                         }
-
                         this.objects.modal_body.html(thumbs);
                         this.objects.modal_body.find("a.remove-button").unbind("click").click(this.remove.bind(this));
                         this.objects.modal.modal('show');
@@ -211,7 +207,6 @@ var favorites = {
         }
     }
 };
-
 var results = {
     document: $('body'),
     self: $('#results_app'),
@@ -263,7 +258,6 @@ var results = {
         this.objects.category_thumbs_box = $('#category_thumbs_display');
         this.objects.media_item_box = $('#media_item_display');
         this.objects.loading = this.self.find('[data-id="loading"]');
-
         this.objects.pagination_index.unbind().on('keypress',this.goPage.bind(this))
                                      .on('paste',function(){return false});
         this.objects.search_type_options.unbind().on('click',this.pickType.bind(this));
@@ -480,7 +474,6 @@ var results = {
         }
     }
 };
-
 var media_box = {
     goFullScreen : function(id) {
         var el = document.getElementById(id);
@@ -506,7 +499,6 @@ var media_box = {
         }
     }
 };
-
 var modal_media = {
     objects: {
         self: $('#modal_media_details'),
@@ -574,7 +566,6 @@ var modal_media = {
         return table;
     }
 };
-
 var photo_page_box = {
     objects: {
         main_box: $('.media-item-display .media-photo'),
@@ -592,7 +583,6 @@ var photo_page_box = {
         this.objects.fs_button = $('.media-item-display .media-photo .display-options span.fullscreen');
         this.objects.fs_x_button = $('#photo_fullscreen .exit-btn');
         this.objects.fs_content = $('#photo_fullscreen .display-content');
-
         this.objects.main_photo.unbind('load').on('load',this.stateLoaded.bind(this));
         this.objects.fs_button.unbind('click').on('click', this.goFullScreen.bind(this));
         this.objects.fs_x_button.unbind('click').on('click', this.exitFullScreen.bind(this));
@@ -621,7 +611,6 @@ var photo_page_box = {
         this.objects.main_box.addClass('loaded');
     }
 };
-
 var video_page_box = (function(){
     if(document.querySelector('#video_item_object')){
         var player = videojs("video_item_object",{"controls": true, "autoplay": false});

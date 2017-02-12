@@ -13,28 +13,18 @@
         </div>
     </div>
 </div>
-<div>
+<div id="role_table">
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Title</th>
+                <th>Name</th>
                 <th>Description</th>
                 <th>Permissions</th>
                 <th>Options</th>
             </tr>
         </thead>
         <tbody data-id="list">
-            <!--
-            <tr>
-                <td>Uncategorized</td>
-                <td>Immutable default category.</td>
-                <td>Yes</td>
-                <td>
-                    <button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button>
-                    <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-            -->
+            
         </tbody>
     </table>
 </div>

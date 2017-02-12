@@ -89,7 +89,7 @@ admin_app.library =
                     }
                 }
                 else if(this.data.display == 'list') {
-                    html += '<ul class="list-box">'
+                    html += '<ul class="list-box">';
                     for(var i=0; i < entries.length; i++) {
                         var photo = entries[i];
                         var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
@@ -146,7 +146,7 @@ admin_app.library =
                     }
                 }
                 else if(this.data.display == 'list') {
-                    html += '<ul class="list-box">'
+                    html += '<ul class="list-box">';
                         for(var i=0;i<entries.length;i++) {
                             var video = entries[i];
                             var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
@@ -235,7 +235,7 @@ admin_app.library =
             var data = {
                 id: this.data.selected,
                 category_id: null
-            }
+            };
             admin_app.category_selector.open(endpoint, data);
         }
         else if(action == "delete"){
@@ -259,8 +259,8 @@ admin_app.library =
                         }
                     }
                 });
-            }
-            var cancelDelete = function(){this.objects.bulk_operation_dropdown_box.val('default')}
+            };
+            var cancelDelete = function(){this.objects.bulk_operation_dropdown_box.val('default')};
             modal.confirm("Do you want to delete "+item_count+" "+this.data.type+"?",deleteItems,cancelDelete.bind(this));
         }
     },
@@ -311,7 +311,7 @@ admin_app.library =
         for(var i=0;i<category_list.length;i++) {
             if(category_list[i].level == 1){
                 category_structure['parent_'+category_list[i].id] = {self:category_list[i],children:[]};
-            }
+            };
             if(category_list[i].level == 2){
                 var my_parent_id = 'parent_'+category_list[i].parent_id;
                 if(typeof category_structure[my_parent_id] !== 'undefined'){
@@ -321,7 +321,7 @@ admin_app.library =
                     category_structure[my_parent_id] = {self:null,children:[category_list[i]]};
                 }
             }
-        }
+        };
         // Create HTML output.
         for(item in category_structure){
             var main_cat = category_structure[item];
@@ -334,10 +334,10 @@ admin_app.library =
                     for(var x=0;x<main_cat['children'].length;x++){
                         category_html += '<option value="'+main_cat['children'][x].id+'">'+main_cat['children'][x].title+'</option>';
                     }
-                }
+                };
                 category_html += '</optgroup>';
             }
-        }
+        };
         this.objects.category_dropdown_box.html(category_html);
     },
     renderMediaType: function(e) {
@@ -391,7 +391,7 @@ admin_app.library =
                         }
                         else{
                             this.data.page.current = to_page;
-                        }
+                        };
                         this.getData();
                     }
                     else {
@@ -417,7 +417,7 @@ admin_app.library =
         var data = {
             id: parent.attr('data-id'),
             category_id: parent.attr('data-category_id')
-        }
+        };
         admin_app.category_selector.open(endpoint, data);
     },
     selectMedia: function(e){
@@ -436,7 +436,7 @@ admin_app.library =
             if(index > -1){
                 this.data.selected.remove(id);
             }
-        }
+        };
         if(this.data.selected.length > 0){
             if(!this.objects.bulk_operation_dropdown_box.hasClass('active')) this.objects.bulk_operation_dropdown_box.val('default');
             this.objects.bulk_operation_dropdown_box.addClass('active');
@@ -460,7 +460,7 @@ admin_app.library =
             this.data.selected = [];
             for(var i=0;i<current_items.length;i++ ){
                 this.data.selected.push(current_items[i].id);
-            }
+            };
             this.render();
         }
     },
@@ -498,7 +498,7 @@ admin_app.library =
                     }
                 }
             });
-        }
+        };
         modal.confirm("Do you want to delete a file?",delete_item);
     }
-}
+};

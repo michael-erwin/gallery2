@@ -1,0 +1,23 @@
+#role_table th:first-child {
+    width: 20%;
+}
+#role_table th:nth-child(2) {
+    width: 25%;
+}
+#role_table th:nth-child(4) {
+    width: 20%;
+}
+@media(max-width: 1200px) {
+    #role_table th:nth-child(4) {
+        width: 70px;
+    }
+    #role_table td:nth-child(4) {
+        text-align: center !important;
+    }
+}
+@media(max-width: 450px) {
+    #role_table th:nth-child(2),
+    #role_table td:nth-child(2) {
+        display: none !important;
+    }
+}

@@ -1,13 +1,12 @@
 var gulp = require('gulp');
 var pref = require('gulp-autoprefixer');
 var gcat = require('gulp-concat');
-var bcss = require('gulp-cssbeautify');
 var mcss = require('gulp-clean-css');
-var mini = require('gulp-minify');
 var name = require('gulp-rename');
 var sass = require('gulp-sass');
-var strp = require('gulp-strip-comments');
 var ugli = require('gulp-uglify');
+var strp = require('gulp-strip-comments');
+var comp = require('gulp-remove-empty-lines');
 var pump = require('pump');
 
 gulp.task('apply-theme-css',function(){
@@ -51,7 +50,8 @@ gulp.task('frontend-js',function(){
             'dev/js/frontend_app.photo_page_box.js',
             'dev/js/frontend_app.video_page_box.js'
         ]),
-        strp(),gcat('frontend-app.js'),
+        gcat('frontend-app.js'),
+        strp(),comp(),
         gulp.dest('assets/js/')
     ]);
 });
@@ -63,6 +63,8 @@ gulp.task('backend-js',function(){
             'dev/js/video_modal.js',
             'dev/js/admin_page.content.js',
             'dev/js/admin_page.sidebar.js',
+            'dev/js/admin_app.role.js',
+            'dev/js/admin_app.role_editor.js',
             'dev/js/admin_app.library.js',
             'dev/js/admin_app.photo_editor.js',
             'dev/js/admin_app.video_editor.js',
@@ -72,7 +74,8 @@ gulp.task('backend-js',function(){
             'dev/js/admin_app.file_widget.js',
             'dev/js/admin_app.uploader.js'
         ]),
-        strp(),gcat('backend.js'),
+        gcat('backend.js'),
+        strp(),comp({removeSpaces:true}),
         gulp.dest('assets/js/')
     ]);
 });

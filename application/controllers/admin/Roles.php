@@ -32,8 +32,11 @@ class Roles extends CI_Controller
         $data['json']['title'] = "{\"text\":\"{$this->page_title}\",\"small\":\"{$this->page_description}\"}";
         $data['json']['breadcrumbs'] = json_encode($this->breadcrumbs);
 
+        // Page objects.
+        $data['objects'] = $this->load->view('admin/v_object_role_editor','',true);
+
         // JS Scripts.
-        //$data['js_scripts'] = $this->load->view('admin/scripts/v_scripts_users','',true);
+        $data['js_scripts'] = $this->load->view('admin/scripts/v_scripts_roles','',true);
 
         // Page Template.
         $this->load->view('v_admin_layout',$data);
@@ -42,6 +45,7 @@ class Roles extends CI_Controller
     public function json($option=null)
     {
         $body = clean_whitespace($this->load->view('admin/v_content_roles','',true));
+        $objects = clean_whitespace($this->load->view('admin/v_object_role_editor','',true));
 
         if ($option)
         {
@@ -57,7 +61,8 @@ class Roles extends CI_Controller
                 "page_title" => $this->page_title,
                 "page_description" => $this->page_description,
                 "breadcrumbs" => $this->breadcrumbs,
-                "content" => $body
+                "content" => $body,
+                "objects" => $objects
             ];
         }
         header("Content-Type: application/json");
@@ -67,6 +72,6 @@ class Roles extends CI_Controller
     public function js()
     {
         header("Content-Type: application/javascript");
-        //$this->load->view('admin/scripts/v_scripts_*');
+        $this->load->view('admin/scripts/v_scripts_roles');
     }
 }

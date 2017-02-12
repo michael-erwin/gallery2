@@ -18,7 +18,7 @@ admin_app.file_widget = function(file,caller_app)
     this.setProgress = function(amount) {
         this.progress = amount;
         this.control_progress_level.width(amount+'%');
-    }
+    };
     this.setAsComplete = function(uid) {
         var type = (caller_app.data.media_type=="photos")? "photos" : caller_app.data.media_type;
         this.container.removeClass("uploading converting active").addClass("completed");
@@ -26,19 +26,19 @@ admin_app.file_widget = function(file,caller_app)
         this.progress = 100;
         this.control_progress_level.width('100%');
         this.complete = true;
-    }
+    };
     this.setAsConverting = function() {
         this.container.removeClass("uploading completed").addClass("converting");
-    }
+    };
     this.setAsActive = function() {
         this.container.addClass("active");
-    }
+    };
     this.onEdit = function(fn) {
         this.control_edit.unbind('click').on('click',fn);
-    }
+    };
     this.onDelete = function(fn) {
         this.control_delete.unbind('click').on('click',fn);
-    }
+    };
     // Bind events.
     this.control_abort.unbind().on('click',function(e){
         if(caller_app.xhr) caller_app.xhr.abort();

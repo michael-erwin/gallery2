@@ -1,5 +1,5 @@
 var videomodal = (function(){
-    var objects = {}
+    var objects = {};
     objects.modal = $('#modal_video');
     objects.container = objects.modal.find('[data-id="container"]');
     objects.title = objects.modal.find('.title');
@@ -7,7 +7,7 @@ var videomodal = (function(){
     objects.timer = null;
     objects.link_now = null;
 
-    var data = {}
+    var data = {};
     data.title = null;
 
     function open(e){
@@ -18,19 +18,19 @@ var videomodal = (function(){
         }
         else {
             clicked = $(clicked);
-        }
+        };
         objects.modal.modal('show');
         objects.player.src(clicked.attr('href'));
         data.title = clicked.attr('title');
         setTitle(data.title);
-    }
+    };
     function setTitle(text) {
         objects.title.text(text).css('opacity',1);
         if(objects.timer) clearTimeout(objects.timer);
         objects.timer = setTimeout(function(){
             objects.title.css('opacity',0);
         },3500);
-    }
+    };
 
     // Initialize
     objects.modal.on('shown.bs.modal', objects.player.play.bind(objects.player));
@@ -40,5 +40,5 @@ var videomodal = (function(){
     // Public
     return {
         open
-    }
+    };
 }());

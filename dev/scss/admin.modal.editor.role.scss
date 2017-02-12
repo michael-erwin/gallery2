@@ -1,0 +1,37 @@
+#modal_role_editor [data-id="list_container"] {
+    height: 200px;
+    overflow-x: auto;
+    padding: 0px 0px;
+    margin-bottom: 5px;
+}
+#modal_role_editor .form-group:last-child {
+    margin-bottom: 0px !important;
+}
+#modal_role_editor .bottom-control {
+    padding-left: 10px;
+    vertical-align: middle;
+}
+#modal_role_editor table {
+    margin-bottom: 0px;
+}
+#modal_role_editor table tr {
+    cursor: pointer;
+}
+#modal_role_editor table tr:hover {
+    background-color: #f5f5f5;
+}
+#modal_role_editor table tr.disabled:hover {
+    background-color: transparent !important;
+}
+#modal_role_editor table tr.active td {
+    background-color: #d2d6de;
+}
+#modal_role_editor table td {
+    vertical-align: middle;
+    padding: 4px 8px;
+    line-height: 18px;
+}
+#modal_role_editor table td:first-child {
+    text-align: center;
+    width: 30px;
+}

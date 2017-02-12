@@ -46,7 +46,7 @@ admin_page.content =
                 else {
                     breadcrumbs += '<li class="active">'+crumbs[menu].text+'</li>';
                 }
-            }
+            };
             $('.content-header .breadcrumb').html(breadcrumbs);
         }
     },
@@ -56,4 +56,4 @@ admin_page.content =
     setObjects: function(objects) {
         $('#objects_holder').html(objects);
     }
-}
+};

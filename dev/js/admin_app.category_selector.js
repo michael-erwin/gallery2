@@ -22,7 +22,7 @@ admin_app.category_selector =
         // Define objects.
         this.self = $(this.self);
         this.objects.selection_form = this.self.find('[data-id="selector_form"]');
-        this.objects.selection_count = this.self.find('[data-id="item_count"]')
+        this.objects.selection_count = this.self.find('[data-id="item_count"]');
         this.objects.selection_box = this.self.find('[data-id="category_box"]');
         this.objects.save_button = this.self.find('[data-id="save_button"]');
         this.objects.cancel_button = this.self.find('[data-id="cancel_button"]');
@@ -43,7 +43,7 @@ admin_app.category_selector =
         for(var i=0;i<categories.length;i++) {
             if(categories[i].level == 1){
                 category_structure['parent_'+categories[i].id] = {self:categories[i],children:[]};
-            }
+            };
             if(categories[i].level == 2){
                 var my_parent_id = 'parent_'+categories[i].parent_id;
                 if(typeof category_structure[my_parent_id] !== 'undefined'){
@@ -76,7 +76,7 @@ admin_app.category_selector =
                             category_html += '<option value="'+main_cat['children'][x].id+'">'+main_cat['children'][x].title+'</option>';
                         }
                     }
-                }
+                };
                 category_html += '</optgroup>';
             }
         }
@@ -86,7 +86,7 @@ admin_app.category_selector =
         }
         else {
             this.self.modal('hide');
-        }
+        };
         if(Array.isArray(this.data.item.id)){
             this.objects.selection_box.val(1);
             this.objects.selection_count.text(this.data.item.id.length);
@@ -115,7 +115,7 @@ admin_app.category_selector =
                 var data = {
                     id: this.data.item.id,
                     category_id: this.objects.selection_box.val()
-                }
+                };
                 $.ajax({
                     method: "post",
                     url: this.data.endpoint,
@@ -146,7 +146,7 @@ admin_app.category_selector =
         else {
             this.data.selector_visible = false;
             this.render();
-        }
+        };
         return false;
     },
     disableState: function(){
@@ -159,4 +159,4 @@ admin_app.category_selector =
         this.objects.save_button.prop('disabled', false);
         this.objects.cancel_button.prop('disabled', false);
     }
-}
+};

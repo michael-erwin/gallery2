@@ -63,12 +63,12 @@ admin_app.category =
                 if(this.config.expanded_items[item] === 1){
                     expand_status = 'expanded';
                 }
-            }
+            };
             if(mains[item]['core'] == "no") {
                 option_button = '<button class="btn btn-success btn-xs" data-id="new_entry" title="Add sub category."><i class="fa fa-plus"></i></button>'+
                                 '\n<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this main category."><i class="fa fa-pencil"></i></button>'+
                                 '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
-            }
+            };
             if(mains[item]['id'] > 1) {
                 if(typeof mains[item]['subcats'] === "object"){
                     expand_button = '<i class="fa active '+expand_status+'"></i>';
@@ -76,7 +76,7 @@ admin_app.category =
                 else{
                     expand_button = '<i class="fa disabled '+expand_status+'"></i>';
                 }
-            }
+            };
             table_html +=
             '<tr class="main-category" data-all=\''+JSON.stringify(mains[item])+'\'>'+
                 '<td class="handle">'+expand_button+'</td>'+
@@ -92,14 +92,14 @@ admin_app.category =
                     if(mains[item]['subcats'][subcat]['core'] == "no") {
                         option_button = '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this sub category."><i class="fa fa-pencil"></i></button>'+
                                         '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
-                    }
+                    };
                     var my_parent_id = mains[item]['subcats'][subcat]['parent_id'];
                     var my_display = 'none';
                     if(typeof this.config.expanded_items[item] !== "undefined"){
                         if(this.config.expanded_items[item] === 1){
                             my_display = 'table-row';
                         }
-                    }
+                    };
                     table_html +=
                     '<tr class="sub-category parent-id-'+my_parent_id+'" style="display:'+my_display+'" data-all=\''+JSON.stringify(mains[item]['subcats'][subcat])+'\'>'+
                         '<td class="handle"></td>'+
@@ -112,7 +112,7 @@ admin_app.category =
                     '</tr>';
                 }
             }
-        }
+        };
         this.objects.table_body.html(table_html);
         // Attach events.
         this.self.find('button[data-id="new_entry"]').unbind().on('click',this.new_subcat.bind(this));
@@ -196,7 +196,7 @@ admin_app.category =
                     }
                 }
             });
-        }
+        };
         modal.confirm('Associated media under category "'+data.title+'" will be moved to uncategorized. Do you want to continue?',doDelete.bind(this));
     }
-}
+};

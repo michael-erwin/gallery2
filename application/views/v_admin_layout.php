@@ -8,7 +8,7 @@
     <!-- Library Dependency -->
     <link href="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url();?>assets/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet"> -->
     <!-- Plugins Dependency -->
     <link href="<?php echo base_url();?>assets/plugins/toastr/toastr.min.css" rel="stylesheet">
     <link href="<?php echo base_url();?>assets/plugins/fullsizable/css/jquery-fullsizable.css" rel="stylesheet">
@@ -175,9 +175,7 @@
     <!-- /Common Modals -->
     <!-- Global Constants -->
     <script>
-        site = {
-            "base_url": "<?php echo base_url();?>"
-        }
+        site = {"base_url": "<?php echo base_url();?>"}
     </script>
     <!-- /Global Constants -->
     <!-- Library Dependencies -->
@@ -203,6 +201,7 @@
     <!-- Extended App -->
     <script>
     <?php echo @$js_scripts;?>
+    
     </script>
 </body>
 </html>

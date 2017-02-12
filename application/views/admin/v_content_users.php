@@ -1,22 +1,33 @@
-<div class="row">
-                    <div class="col-lg-12">
-                        <div class="box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Users Table</h3>
-                                <div class="box-tools pull-right">
-                                    <!-- Buttons, labels, and many other things can be placed here! -->
-                                    <!-- Here is a label for example -->
-                                    <span class="label label-primary">Label</span>
-                                </div><!-- /.box-tools -->
-                            </div>
-                            <div class="box-body">
-                                No contents yet.
-                            </div>
-                            <!--
-                            <div class="box-footer">
-                                The footer of the box
-                            </div>
-                            -->
-                        </div>
-                    </div>
-                </div>
+<div class="content-toolbar content-box clearfix">
+    <div class="control-left">
+        <button class="btn btn-control btn-sm" data-id="new_button">New</button>
+    </div>
+    <div class="control-right">
+        <div class="toolbar-search">
+            <form data-id="search_form">
+                <input type="text" class="form-control input-sm" disabled="true" placeholder="Search..." data-id="search_box" />
+                <button data-id="search_btn">
+                    <i class="fa fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="users_table">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody data-id="list">
+            <tr>
+                <td colspan="5">Not yet functional.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

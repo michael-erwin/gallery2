@@ -1,3 +1,3 @@
 <script>
-    photo_page_box.init();
-</script>
+        photo_page_box.init();
+    </script>

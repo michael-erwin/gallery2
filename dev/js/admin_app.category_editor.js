@@ -87,7 +87,7 @@ admin_app.category_editor =
             'description': false,
             'publish_yes': false,
             'publish_no': false
-        }
+        };
         // Bind event handlers.
         this.objects.item.icon.unbind().on('blur',this.setIcon.bind(this));
         this.objects.icon_image.unbind().on('load',this.setIconSuccess.bind(this));
@@ -101,7 +101,7 @@ admin_app.category_editor =
         for(var i=0;i<admin_app.category.data.media_list.length;i++){
             var current_item = admin_app.category.data.media_list[i];
             if((current_item.id > 1) && (current_item.level == 1)) parent_dropdown_html += '<option value="'+current_item.id+'">'+current_item.title+'</option>';
-        }
+        };
         this.objects.parent_level_block.find('select.list').html(parent_dropdown_html);
         // Update input field values.
         this.self.find('.error').removeClass('error');
@@ -124,7 +124,7 @@ admin_app.category_editor =
         else{
             this.objects.icon_image.css('display','none');
             this.objects.icon_message.text('No image.').css('display','block');
-        }
+        };
         // Update default thumbnail image checkbox.
         if(this.data.item.icon_default == 1){
             this.objects.icon_setdefault_option.prop('checked',true);
@@ -141,7 +141,7 @@ admin_app.category_editor =
             this.objects.category_parent_dropdown.val(this.data.item.parent_id);
             this.objects.icon_setdefault_option.parent("label").css('display','inline');
             this.objects.parent_level_block.css('display','block');
-        }
+        };
         // Update publish radio button display logic.
         if(this.data.item.published == "yes") {
             this.objects.item.publish_no.prop('checked',false);
@@ -150,13 +150,13 @@ admin_app.category_editor =
         else if(this.data.item.published == "no") {
             this.objects.item.publish_yes.prop('checked',false);
             this.objects.item.publish_no.prop('checked',true);
-        }
+        };
         if(this.data.editor_visible) {
             this.self.modal('show');
         }
         else {
             this.self.modal('hide');
-        }
+        };
         // Disabled items.
         for(var item in this.settings.disabled) {
             if(this.settings.disabled[item]) {
@@ -178,12 +178,12 @@ admin_app.category_editor =
             icon: "",
             parent_id: 0,
             publish: "no"
-        }
+        };
         if(typeof parent_id !== "object"){
             this.data.item.level = 2;
             this.data.item.parent_id = parent_id;
             console.log(typeof parent_id);
-        }
+        };
         this.settings.disabled['id'] = false;
         this.settings.disabled['title'] = false;
         this.settings.disabled['description'] = false;
@@ -231,7 +231,7 @@ admin_app.category_editor =
         else{
             this.settings.disabled['category_level_main'] = true;
             this.settings.disabled['category_level_sub'] = false;
-        }
+        };
         if(data.core == "yes") {
             this.settings.disabled['title'] = true;
             this.settings.disabled['description'] = true;
@@ -239,8 +239,8 @@ admin_app.category_editor =
         else {
             this.settings.disabled['title'] = false;
             this.settings.disabled['description'] = false;
-        }
-        this.settings.disabled['publish_yes'] = false;+")"
+        };
+        this.settings.disabled['publish_yes'] = false;+")";
         this.settings.disabled['publish_no'] = false;
 
         this.data.editor_title = "Edit Category ("+admin_app.category.data.media_type.ucfirst()+")";
@@ -294,7 +294,7 @@ admin_app.category_editor =
         if($.trim(this.data.item.title).length == 0) {
             this.objects.item.title.addClass('error');
             errors++;
-        }
+        };
         if(this.objects.icon_setdefault_option.is(":checked")){
             this.data.item.icon_default = 1;
             var icon_url = $.trim(this.objects.item.icon.val());
@@ -309,7 +309,7 @@ admin_app.category_editor =
         else{
             this.data.item.icon_default = 0;
             this.objects.item.icon.removeClass('error');
-        }
+        };
         if(this.data.item.level == 1){
             this.data.item.parent_id = 0;
         }
@@ -324,7 +324,7 @@ admin_app.category_editor =
                 category_parent.removeClass('error');
                 this.data.item.parent_id = category_parent.val();
             }
-        }
+        };
         if(errors === 0) {
             this.objects.item.title.removeClass('error');
             this.disableState();
@@ -350,7 +350,7 @@ admin_app.category_editor =
                     }
                 }
             });
-        }
+        };
         return false;
     },
     disableState: function() {
@@ -360,7 +360,7 @@ admin_app.category_editor =
             'description': true,
             'publish_yes': true,
             'publish_no': true
-        }
+        };
         this.render();
     },
     enableState: function() {
@@ -370,7 +370,7 @@ admin_app.category_editor =
             'description': false,
             'publish_yes': false,
             'publish_no': false
-        }
+        };
         this.render();
     }
-}
+};
