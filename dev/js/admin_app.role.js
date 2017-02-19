@@ -59,10 +59,8 @@ admin_app.role =
     },
     getData: function(data) {
         if(data) {
-            console.log(data);
             this.data.items = data;
             this.render();
-            console.log("Data is provided");
         }
         else{
             $.ajax({

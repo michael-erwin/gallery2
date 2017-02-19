@@ -37,6 +37,9 @@ admin_app.role_editor =
         // Modal setup.
         this.self.modal({backdrop: 'static'}).modal('hide');
 
+        // Reset settings.
+        this.data.mode = null;
+
         // Event bindings.
         this.objects.form.unbind().on('submit',this.save.bind(this));
         this.objects.toggleAll.unbind().on('click',this.toggleSelectAll.bind(this));
