@@ -30,19 +30,22 @@ admin_app.role =
                 for(var n=0;n<permissions.length;n++) {
                     permissions_html += '<span class="label label-primary">'+permissions[n]+'</span>\n'
                 };
-                list_rows += 
-                '<tr data-info=\''+JSON.stringify(role)+'\'>'+
-                    '<td>'+role.name+'</td>'+
-                    '<td>'+role.description+'</td>'+
-                    '<td>'+permissions_html+'</td>'+
-                    '<td>'+
+                var options = "";
+                if(role.core == "no") {
+                    options = 
                         '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
                             '<i class="fa fa-pencil"></i>'+
                         '</button>&nbsp;'+
                         '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
                             '<i class="fa fa-trash"></i>'+
-                        '</button>'+
-                    '</td>'+
+                        '</button>';
+                }
+                list_rows += 
+                '<tr data-info=\''+JSON.stringify(role)+'\'>'+
+                    '<td>'+role.name+'</td>'+
+                    '<td>'+role.description+'</td>'+
+                    '<td>'+permissions_html+'</td>'+
+                    '<td>'+options+'</td>'+
                 '</tr>';
             }
         }

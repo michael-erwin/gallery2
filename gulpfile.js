@@ -63,6 +63,8 @@ gulp.task('backend-js',function(){
             'dev/js/video_modal.js',
             'dev/js/admin_page.content.js',
             'dev/js/admin_page.sidebar.js',
+            'dev/js/admin_app.user.js',
+            'dev/js/admin_app.user_editor.js',
             'dev/js/admin_app.role.js',
             'dev/js/admin_app.role_editor.js',
             'dev/js/admin_app.library.js',

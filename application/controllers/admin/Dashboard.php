@@ -25,16 +25,19 @@ class Dashboard extends CI_Controller
         $data['sidebar_menu'] = $this->load->view('admin/v_sidebar_menu','',true);
 
         // Content.
-        $sql_photos = "SELECT COUNT(*) as 'count' FROM `photos` WHERE 1";
-        $sql_videos = "SELECT COUNT(*) as 'count' FROM `videos` WHERE 1";
+        $sql_photos = "SELECT COUNT(`id`) as 'count' FROM `photos`";
+        $sql_videos = "SELECT COUNT(`id`) as 'count' FROM `videos`";
+        $sql_rusers = "SELECT COUNT(`id`) as 'count' FROM `users`";
         $tmp_photos = $this->db->query($sql_photos);
         $tmp_videos = $this->db->query($sql_videos);
+        $tmp_rusers = $this->db->query($sql_rusers);
         $count_photos = $tmp_photos->result_array()[0];
         $count_videos = $tmp_videos->result_array()[0];
+        $count_rusers = $tmp_rusers->result_array()[0];
         $content_data = [
             'photos_total' => $count_photos['count'],
             'videos_total' => $count_videos['count'],
-            'users_count' => 0,
+            'users_count' => $count_rusers['count'],
             'unique_visits' => 0
         ];
         $data['content'] = $this->load->view('admin/v_content_dashboard',$content_data,true);
@@ -53,16 +56,19 @@ class Dashboard extends CI_Controller
 
     public function json($option=null)
     {
-        $sql_photos = "SELECT COUNT(*) as 'count' FROM `photos` WHERE 1";
-        $sql_videos = "SELECT COUNT(*) as 'count' FROM `videos` WHERE 1";
+        $sql_photos = "SELECT COUNT(`id`) as 'count' FROM `photos`";
+        $sql_videos = "SELECT COUNT(`id`) as 'count' FROM `videos`";
+        $sql_rusers = "SELECT COUNT(`id`) as 'count' FROM `users`";
         $tmp_photos = $this->db->query($sql_photos);
         $tmp_videos = $this->db->query($sql_videos);
+        $tmp_rusers = $this->db->query($sql_rusers);
         $count_photos = $tmp_photos->result_array()[0];
         $count_videos = $tmp_videos->result_array()[0];
+        $count_rusers = $tmp_rusers->result_array()[0];
         $content_data = [
             'photos_total' => $count_photos['count'],
             'videos_total' => $count_videos['count'],
-            'users_count' => 0,
+            'users_count' => $count_rusers['count'],
             'unique_visits' => 0
         ];
         $body = clean_whitespace($this->load->view('admin/v_content_dashboard',$content_data,true));
