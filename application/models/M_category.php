@@ -171,7 +171,6 @@ class M_category extends CI_Model
     public function get_all($type = 'photo')
     {
         $sql = "SELECT * FROM `categories` WHERE `type`='{$type}' OR `type`='all' ORDER BY `level`,`title`,`date_added` ASC";
-        header("Content-Type: text/plain");
         $query = $this->db->query($sql);
         return $query->result_array();
     }

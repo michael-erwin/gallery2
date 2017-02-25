@@ -44,7 +44,7 @@ class Library extends CI_Controller
         $data['js_scripts'] = $this->load->view('admin/scripts/v_scripts_media_gallery',$js_scripts,true);
 
         // Page Template.
-        $this->load->view('v_admin_layout',$data);
+        $this->load->view('v_admin_layout',$data,false);
     }
 
     public function json($option=null)
