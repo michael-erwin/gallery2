@@ -10,6 +10,7 @@ admin_app.uploader =
         media_type_box: null,
         files: []
     },
+    permissions: ['photos','videos'],
     data: {
         media_type: "photos",
         media_category_id: 1,
@@ -150,6 +151,7 @@ admin_app.uploader =
         // Events.
         xhr.error = function(e) {
             toastr["warning"]("Failed to upload "+item_name+"?");
+            console.log("This xhr.error");
         };
         xhr.upload.onprogress = function(e) {
             if(e.lengthComputable) {
@@ -160,9 +162,10 @@ admin_app.uploader =
         xhr.onload = function(e) {
             try {
                 var response = JSON.parse(xhr.responseText);
-                var id = response.data.id;
-                var uid = response.data.uid;
+                
                 if(response.status == "ok") {
+                    var id = response.data.id;
+                    var uid = response.data.uid;
                     if(media_type == "photos") {
 
                         // Attach events.
@@ -175,6 +178,7 @@ admin_app.uploader =
                                     "data": "id="+id,
                                     "error" : function(jqXHR,textStatus,errorThrown){
                                         toastr["error"]("Failed to delete \""+item_name+"\".", "Error "+jqXHR.status);
+                                        admin_app.uploader.render();
                                     },
                                     "success": function(response){
                                         if(response.status == "ok"){
@@ -205,9 +209,9 @@ admin_app.uploader =
                         file_widget.setAsConverting();
                         function trackConversion(uid) {
                             $.ajax({
+                                method: "GET",
                                 context: this,
                                 url: site.base_url+'videos/progress/'+uid,
-                                data: null,
                                 success: function(response) {
                                     if(response.status == "ok") {
                                         if(!response.data.complete) {
@@ -216,6 +220,7 @@ admin_app.uploader =
                                         }
                                         else {
                                             $.ajax({
+                                                method: "GET",
                                                 context: this,
                                                 url: site.base_url+'videos/complete/'+id,
                                                 success: function() {
@@ -262,9 +267,20 @@ admin_app.uploader =
                         trackConversion.call(this,uid);
                     }
                 }
+                else {
+                    toastr["warning"](response.message,"Warning");
+                    file_widget.setAsErrored(response.message);
+                    this.objects.media_type_box.prop("disabled", false);
+                    this.objects.category_box.prop("disabled", false);
+                    this.uploadNext();
+                }
             }
             catch(e) {
-                toastr["warning"]("Failed to upload "+item_name+".");
+                toastr["error"]("Failed to upload "+item_name+".",xhr.statusText);
+                file_widget.setAsErrored(xhr.statusText);
+                this.objects.media_type_box.prop("disabled", false);
+                this.objects.category_box.prop("disabled", false);
+                this.uploadNext();
             }
         }.bind(this);
 
@@ -322,16 +338,21 @@ admin_app.uploader =
         var total_count = files_list.length+this.objects.files.length;
         if(type === "photos") allowed_types = this.data.allowed_photos;
         if(type === "videos") allowed_types = this.data.allowed_videos;
-        for(var i = 0; i < files_list.length; i++) {
-            var in_array = $.inArray(files_list[i].type, allowed_types);
-            if(in_array !== -1) {
-                var new_entry = new admin_app.file_widget(files_list[i],this);
-                this.objects.files.push(new_entry);
+        if($.inArray(type,this.permissions) === -1) {
+            toastr["error"]("You don't have permission to upload "+type+".");
+        }
+        else {
+            for(var i = 0; i < files_list.length; i++) {
+                var in_allowed_types = $.inArray(files_list[i].type, allowed_types);
+                if(in_allowed_types !== -1) {
+                    var new_entry = new admin_app.file_widget(files_list[i],this);
+                    this.objects.files.push(new_entry);
+                }
+                else{
+                    toastr["error"]("File type is not allowed.","Error");
+                }
             }
-            else{
-                toastr["error"](files_list[i].name,"Not Allowed Type");
-            }
-        };
+        }
         this.render();
         this.uploadNext();
     }

@@ -63,7 +63,7 @@
     vertical-align: top;
 }
 #file_list_box .media-item a.btn {
-    width: 60px;
+    width: 35px;
     height: 32px;
     line-height: 30px;
     text-align: center;
@@ -99,15 +99,16 @@
 #file_list_box .media-item.uploading i.fa {
     display: inline;
 }
-#file_list_box .media-item.uploading.active i.fa {
+#file_list_box .media-item.uploading.active i.fa-lg {
     color: #F39C12;
     animation: blinking 1s steps(5, start) infinite;
 }
-#file_list_box .media-item.uploading i.fa:before {
+#file_list_box .media-item.uploading i.fa-lg:before {
     content: "\f093";
 }
 #file_list_box .media-item.uploading [data-control="edit"],
-#file_list_box .media-item.uploading [data-control="delete"] {
+#file_list_box .media-item.uploading [data-control="delete"],
+#file_list_box .media-item.uploading [data-control="remove"] {
     display: none;
 }
 #file_list_box .media-item.uploading .ul-progress-bar,
@@ -149,18 +150,21 @@
 }
 #file_list_box .media-item.converting [data-control="abort"],
 #file_list_box .media-item.converting [data-control="edit"],
-#file_list_box .media-item.converting [data-control="delete"] {
+#file_list_box .media-item.converting [data-control="delete"],
+#file_list_box .media-item.converting [data-control="remove"] {
     display: none;
 }
 /* Dropbox Upload - Error state */
-#file_list_box .media-item.errored i.fa {
+#file_list_box .media-item.errored i.fa-lg {
     display: inline;
 }
-#file_list_box .media-item.errored i.fa:before {
+#file_list_box .media-item.errored i.fa-lg:before {
     content: "\f071";
 }
 #file_list_box .media-item.errored .ul-progress-bar,
-#file_list_box .media-item.errored .btn {
+#file_list_box .media-item.errored [data-control="abort"],
+#file_list_box .media-item.errored [data-control="edit"],
+#file_list_box .media-item.errored [data-control="delete"] {
     display: none;
 }
 #file_list_box .media-item.errored {

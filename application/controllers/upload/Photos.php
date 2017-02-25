@@ -25,11 +25,11 @@ class Photos extends CI_Controller
 
     public function index()
     {
-        $category_id = $this->input->post('category_id');
+        $category_id = clean_numeric_text($this->input->post('category_id'));
 
         if(isset($_FILES['file']))
         {
-            $response = ['status'=>'error','code'=>null,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+            $response = ['status'=>'error','code'=>1,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
             $category_id = is_numeric($category_id)? $category_id : 1;
             $path = $this->media_path;
             $title = explode('.',$_FILES['file']['name']);array_pop($title);
@@ -43,38 +43,49 @@ class Photos extends CI_Controller
                 $picture = $this->simpleimage->load($source);
                 $width  = $picture->get_width();
                 $height = $picture->get_height();
+                $checksum = md5_file($source);
                 $orientation = ($width > $height)? "horizontal" : "vertical";
 
-                // Save original dimension to file system.
-                $full_size_file = "{$path}/photos/private/full_size/{$uid}.jpg";
-                $picture->save($full_size_file);
-
-                // Get the saved file size.
-                $size = filesize($full_size_file);
-
-                // Save 256px square box cover dimension to file system.
-                if ($orientation == "horizontal") { $picture->fit_to_height(256); }else{ $picture->fit_to_width(256); };
-                $picture->save("{$path}/photos/public/256/{$uid}.jpg");
-
-                // Save 128px square box cover dimension to file system.
-                if ($orientation == "horizontal") { $picture->fit_to_height(128); }else{ $picture->fit_to_width(128); };
-                $picture->save("{$path}/photos/public/128/{$uid}.jpg");
-
+                // Check file if already present.
+                if($this->m_photo->isPresent($checksum))
+                {
+                    $response['code'] = 2; // Change code to catch this type of error.
+                    $response['message'] = "Duplicate entry found.";
+                    $response['debug_info'] = $checksum;
+                }
                 // Insert entry to database.
-                if ($id = $this->m_photo->add($title,$uid,$width,$height,$size,$category_id))
-                {
-                    $response['status'] = "ok";
-                    $response['message'] = "Photo added.";
-                    $response['data'] = ['id'=>$id,'uid'=>$uid];
-                    header("Content-Type: application/json");
-                    echo json_encode($response);
+                else{
+
+                    // Save original dimension to file system.
+                    $full_size_file = "{$path}/photos/private/full_size/{$uid}.jpg";
+                    $picture->save($full_size_file);
+
+                    // Get the saved file size.
+                    $size = filesize($full_size_file);
+
+                    // Save 256px square box cover dimension to file system.
+                    if ($orientation == "horizontal") { $picture->fit_to_height(256); }else{ $picture->fit_to_width(256); };
+                    $picture->save("{$path}/photos/public/256/{$uid}.jpg");
+
+                    // Save 128px square box cover dimension to file system.
+                    if ($orientation == "horizontal") { $picture->fit_to_height(128); }else{ $picture->fit_to_width(128); };
+                    $picture->save("{$path}/photos/public/128/{$uid}.jpg");
+
+                    if ($id = $this->m_photo->add($title,$uid,$width,$height,$size,$checksum,$category_id))
+                    {
+                        $response['status'] = "ok";
+                        $response['message'] = "Photo added.";
+                        $response['data'] = ['id'=>$id,'uid'=>$uid];
+                    }
+                    else
+                    {
+                        $response['message'] = "Database write failed.";
+                        $this->m_photo->delete_file($uid);
+                    }
                 }
-                else
-                {
-                    $response['message'] = "Data insert failed.";
-                    header("Content-Type: application/json");
-                    echo json_encode($response);
-                }
+                
+                header("Content-Type: application/json");
+                echo json_encode($response);
             }
             catch (Exception $e)
             {

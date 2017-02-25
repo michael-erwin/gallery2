@@ -12,9 +12,10 @@ admin_app.file_widget = function(file,caller_app)
     this.control = $('<div class="control"></div>').appendTo(this.container);
     this.control_progress_bar = $('<div class="ul-progress-bar"></div>').appendTo(this.control);
     this.control_progress_level = $('<div class="progress" data-control="progress"></div>').appendTo(this.control_progress_bar);
-    this.control_abort = $('<a class="btn btn-warning" data-control="abort">Abort</a>').appendTo(this.control);
-    this.control_edit = $('<a class="btn btn-primary" data-control="edit">Edit</a>').appendTo(this.control);
-    this.control_delete = $('<a class="btn btn-danger" data-control="delete">Delete</a>').appendTo(this.control);
+    this.control_abort = $('<a class="btn btn-warning" data-control="abort" title="Abort"><i class="fa fa-stop"></i></a>').appendTo(this.control);
+    this.control_edit = $('<a class="btn btn-primary" data-control="edit" title="Edit"><i class="fa fa-pencil"></i></a>').appendTo(this.control);
+    this.control_delete = $('<a class="btn btn-danger" data-control="delete" title="Delete"><i class="fa fa-trash"></i></a>').appendTo(this.control);
+    this.control_remove = $('<a class="btn btn-default" data-control="remove" title="Hide"><i class="fa fa-times"></i></a>').appendTo(this.control);
     this.setProgress = function(amount) {
         this.progress = amount;
         this.control_progress_level.width(amount+'%');
@@ -33,6 +34,11 @@ admin_app.file_widget = function(file,caller_app)
     this.setAsActive = function() {
         this.container.addClass("active");
     };
+    this.setAsErrored = function(message) {
+        this.container.removeClass("uploading active").addClass("errored");
+        this.item.attr("title",message);
+        this.complete = true;
+    };
     this.onEdit = function(fn) {
         this.control_edit.unbind('click').on('click',fn);
     };
@@ -42,6 +48,10 @@ admin_app.file_widget = function(file,caller_app)
     // Bind events.
     this.control_abort.unbind().on('click',function(e){
         if(caller_app.xhr) caller_app.xhr.abort();
+        this.removed = true;
+        caller_app.render();
+    }.bind(this));
+    this.control_remove.unbind().on('click',function(e){
         this.removed = true;
         caller_app.render();
     }.bind(this));

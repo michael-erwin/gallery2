@@ -36,17 +36,17 @@ class Progress extends CI_Controller
         if(!$uid)
         {
             $errors++;
-            $response['message'] = 'Log id is missing. ';
+            $response['message'] = ' Log id is missing.';
         }
         if(!file_exists($stat_file))
         {
             $errors++;
-            $response['message'] .= 'Log file is missing. ';
+            $response['message'] .= ' Log file is missing.';
         }
         elseif(!file_exists($time_file))
         {
             $errors++;
-            $response['message'] .= 'Time file is missing. ';
+            $response['message'] .= ' Time file is missing.';
         }
         if($errors === 0)
         {
