@@ -55,183 +55,235 @@ admin_app.library =
         this.objects.pagination_index.unbind().on('keypress',this.goPage.bind(this));
         this.objects.pagination_next.unbind().on('click',this.nextPage.bind(this));
         // Trigger initial contents.
-        this.renderMediaType();
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('media_view',site.permissions) !== -1){
+            this.renderMediaType();
+        }else{
+            this.render();
+        }
     },
     render: function(){
         // Build result entries.
         var entries = this.data.items.entries;
         var html = "";
-
-        // Thumb & list display.
-        if(entries.length > 0){
-            if(this.data.type == "photos") {
-                if(this.data.display == 'thumb') {
-                    for(var i=0; i < entries.length; i++) {
-                        var photo = entries[i];
-                        var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
-                        var selected = $.inArray(photo.id,this.data.selected);
-                        var item_class = (selected > -1)? "active" : "";
-                        var checked = (selected > -1)? "checked" : "";
-                        html +=
-                        '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
-                            '<div class="thumb" >'+
-                                '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
-                                '</a>'+
-                                '<div class="controls">'+
-                                    '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>'+
-                                    '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>'+
-                                    '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>'+
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('media_view',site.permissions) !== -1){
+            // Thumb & list display.
+            if(entries.length > 0){
+                if(this.data.type == "photos") {
+                    if(this.data.display == 'thumb') {
+                        for(var n=0; n < entries.length; n++) {
+                            var photo = entries[n];
+                            var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
+                            var controls = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
+                                controls += '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1){
+                                controls += '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1){
+                                controls += '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>';
+                            }
+                            var bulk_select = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
+                                bulk_select += '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>';
+                            }
+                            var selected = $.inArray(photo.id,this.data.selected);
+                            var item_class = (selected > -1)? "active" : "";
+                            var checked = (selected > -1)? "checked" : "";
+                            html +=
+                            '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
+                                '<div class="thumb" >'+
+                                    '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
+                                    '</a>'+
+                                    '<div class="controls">'+controls+ '</div>'+
                                 '</div>'+
-                            '</div>'+
-                            '<div class="no-interact"></div>'+
-                            '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
-                        '</div>';
+                                '<div class="no-interact"></div>'+bulk_select+
+                            '</div>';
+                        }
+                    }
+                    else if(this.data.display == 'list') {
+                        html += '<ul class="list-box">';
+                        for(var i=0; i < entries.length; i++) {
+                            var photo = entries[i];
+                            var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
+                            var controls = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
+                                controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1){
+                                controls += '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1){
+                                controls += '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>';
+                            }
+                            var selected = $.inArray(photo.id,this.data.selected);
+                            var item_class = (selected > -1)? "active" : "";
+                            var checked = (selected > -1)? "checked" : "";
+                            html +=
+                                '<li class="media-entry list clearfix '+item_class+'" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
+                                    '<div class="check-box">'+
+                                        '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
+                                    '</div>'+
+                                    '<div class="photo" style="background-image:url('+thumb+')">'+
+                                        '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">&nbsp;</a>'+
+                                    '</div>'+
+                                    '<div class="detail">'+
+                                        '<div class="title"><a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">'+photo.title+'</a></div>'+
+                                        '<div class="description">'+photo.description+'</div>'+
+                                    '</div>'+
+                                    '<div class="controls float-right">'+controls+'</div>'+
+                                    '<div class="no-interact"></div>'+
+                                '</li>';
+                        }
+                        html += '</ul>';
                     }
                 }
-                else if(this.data.display == 'list') {
-                    html += '<ul class="list-box">';
-                    for(var i=0; i < entries.length; i++) {
-                        var photo = entries[i];
-                        var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
-                        var selected = $.inArray(photo.id,this.data.selected);
-                        var item_class = (selected > -1)? "active" : "";
-                        var checked = (selected > -1)? "checked" : "";
-                        html +=
-                            '<li class="media-entry list clearfix '+item_class+'" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
-                                '<div class="check-box">'+
-                                    '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
-                                '</div>'+
-                                '<div class="photo" style="background-image:url('+thumb+')">'+
-                                    '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">&nbsp;</a>'+
-                                '</div>'+
-                                '<div class="detail">'+
-                                    '<div class="title"><a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">'+photo.title+'</a></div>'+
-                                    '<div class="description">'+photo.description+'</div>'+
-                                '</div>'+
-                                '<div class="controls float-right">'+
-                                    '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>'+
-                                    '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>'+
-                                    '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>'+
-                                '</div>'+
-                                '<div class="no-interact"></div>'+
-                            '</li>';
-                    }
-                    html += '</ul>';
-                }
-            }
-            else if(this.data.type == "videos") {
-                if(this.data.display == 'thumb') {
-                    for(var i=0;i<entries.length;i++) {
-                        var video = entries[i];
-                        var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
-                        //var vlink = site.base_url+'videos/view/fhd/'+video.uid;
-                        var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
-                        var selected = $.inArray(video.id,this.data.selected);
-                        var item_class = (selected > -1)? "active" : "";
-                        var checked = (selected > -1)? "checked" : "";
-                        html +=
-                        '<div class="media-entry thumb-box col-lg-2 col-md-3 col-sm-4 col-xs-6 '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
-                            '<div class="thumb" >'+
-                                '<a href="'+vlink+'" title="'+video.title+'" class="image-link media-item video-preview" style="background-image:url(\''+thumb+'\')">'+
-                                '</a>'+
-                                '<div class="controls">'+
-                                    '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>'+
-                                    '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>'+
-                                    '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>'+
-                                '</div>'+
-                            '</div>'+
-                            '<div class="no-interact"></div>'+
-                            '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
-                        '</div>';
-                    }
-                }
-                else if(this.data.display == 'list') {
-                    html += '<ul class="list-box">';
-                        for(var i=0;i<entries.length;i++) {
-                            var video = entries[i];
-                            var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
+                else if(this.data.type == "videos") {
+                    if(this.data.display == 'thumb') {
+                        for(var n=0;n<entries.length;n++) {
+                            var video = entries[n];
+                            var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
                             //var vlink = site.base_url+'videos/view/fhd/'+video.uid;
                             var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
+                            var controls = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
+                                controls += '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('video_edit',site.permissions) !== -1){
+                                controls += '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1){
+                                controls += '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>';
+                            }
+                            var bulk_select = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
+                                bulk_select += '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>';
+                            }
                             var selected = $.inArray(video.id,this.data.selected);
                             var item_class = (selected > -1)? "active" : "";
                             var checked = (selected > -1)? "checked" : "";
                             html +=
-                                '<li class="media-entry list clearfix '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
-                                    '<div class="check-box">'+
-                                        '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
-                                    '</div>'+
-                                    '<div class="photo" style="background-image:url('+thumb+')">'+
-                                        '<a href="'+vlink+'" title="'+video.title+'" class="video-preview">&nbsp;</a>'+
-                                    '</div>'+
-                                    '<div class="detail">'+
-                                        '<div class="title"><a href="'+site.base_url+'videos/view/fhd/'+video.uid+'" title="'+video.title+'" class="video-preview">'+video.title+'</a></div>'+
-                                        '<div class="description">'+video.description+'</div>'+
-                                    '</div>'+
-                                    '<div class="controls float-right">'+
-                                        '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>'+
-                                        '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>'+
-                                        '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>'+
-                                    '</div>'+
-                                    '<div class="no-interact"></div>'+
-                                '</li>';
+                            '<div class="media-entry thumb-box col-lg-2 col-md-3 col-sm-4 col-xs-6 '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
+                                '<div class="thumb" >'+
+                                    '<a href="'+vlink+'" title="'+video.title+'" class="image-link media-item video-preview" style="background-image:url(\''+thumb+'\')">'+
+                                    '</a>'+
+                                    '<div class="controls">'+controls+'</div>'+
+                                '</div>'+
+                                '<div class="no-interact"></div>'+bulk_select+
+                            '</div>';
                         }
-                    html += '</ul>';
+                    }
+                    else if(this.data.display == 'list') {
+                        html += '<ul class="list-box">';
+                            for(var i=0;i<entries.length;i++) {
+                                var video = entries[i];
+                                var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
+                                //var vlink = site.base_url+'videos/view/fhd/'+video.uid;
+                                var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
+                                var controls = "";
+                                if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
+                                    controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
+                                }
+                                if($.inArray('all',site.permissions) !== -1 || $.inArray('video_edit',site.permissions) !== -1){
+                                    controls += '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>';
+                                }
+                                if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1){
+                                    controls += '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>';
+                                }
+                                var selected = $.inArray(video.id,this.data.selected);
+                                var item_class = (selected > -1)? "active" : "";
+                                var checked = (selected > -1)? "checked" : "";
+                                html +=
+                                    '<li class="media-entry list clearfix '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
+                                        '<div class="check-box">'+
+                                            '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
+                                        '</div>'+
+                                        '<div class="photo" style="background-image:url('+thumb+')">'+
+                                            '<a href="'+vlink+'" title="'+video.title+'" class="video-preview">&nbsp;</a>'+
+                                        '</div>'+
+                                        '<div class="detail">'+
+                                            '<div class="title"><a href="'+site.base_url+'videos/view/fhd/'+video.uid+'" title="'+video.title+'" class="video-preview">'+video.title+'</a></div>'+
+                                            '<div class="description">'+video.description+'</div>'+
+                                        '</div>'+
+                                        '<div class="controls float-right">'+controls+'</div>'+
+                                        '<div class="no-interact"></div>'+
+                                    '</li>';
+                            }
+                        html += '</ul>';
+                    }
                 }
             }
+            else {
+                html = '<div class="col-xs-12"><div class="alert alert-warning">No results found.</div></div>';
+            }
+            // Display results.
+            this.objects.content_box.html(html);
+            // Update pagination.
+            this.objects.pagination_total.text(this.data.page.total);
+            if(this.data.page.current < this.data.page.total) {
+                this.objects.pagination_next.prop('disabled', false);
+            }
+            else {
+                this.objects.pagination_next.prop('disabled', true);
+            }
+            if(this.data.page.current > 1) {
+                this.objects.pagination_prev.prop('disabled', false);
+            }
+            else {
+                this.objects.pagination_prev.prop('disabled', true);
+            }
+            if(this.data.page.total == 0) {
+                this.objects.pagination_index.prop('disabled', true);
+            }
+            else {
+                this.objects.pagination_index.prop('disabled', false);
+            }
+            this.objects.pagination_index.val(this.data.page.current);
+            // Update display buttons.
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1 || $.inArray('video_edit',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1){
+                this.objects.select_quick_buttons.prop('disabled', false);
+            }else{
+                this.objects.select_quick_buttons.prop('disabled', true);
+            }
+            this.objects.display_quick_buttons.removeClass('active');
+            this.self.find('button[data-display="'+this.data.display+'"]').addClass('active');
+            // Update bulk operation displays (toolbar item, quick buttons & display items).
+            if(this.data.selected.length > 0){
+                if(!this.objects.bulk_operation_dropdown_box.hasClass('active')) this.objects.bulk_operation_dropdown_box.val('default');
+                this.objects.bulk_operation_dropdown_box.addClass('active');
+                this.objects.content_box.addClass('bulk_select_mode');
+            }
+            else{
+                this.objects.select_quick_buttons.removeClass('active');
+                this.objects.bulk_operation_dropdown_box.removeClass('active');
+                this.objects.content_box.removeClass('bulk_select_mode');
+            }
+            // Bind functions.
+            this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('click',this.moveToCategory.bind(this));
+            this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
+            this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('click',this.editMedia.bind(this));
+            this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('click',this.deleteMedia.bind(this));
+            this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
+            this.objects.content_box.find('a.video-preview').unbind('click').click(videomodal.open);
+        }else{
+            this.objects.media_type_dropdown_box.prop('disabled',true);
+            this.objects.category_dropdown_box.prop('disabled',true);
+            this.objects.bulk_operation_dropdown_box.prop('disabled',true);
+            this.objects.search_box.prop('disabled',true);
+            $('.quickbar').css('display','none');
+            $('.table_block').css('display','none');
+            $('#message_block').css('display','block').find('.alert').text("You don't have enough permission to view this content.");
+            list_rows = 
+                '<tr>'+
+                    '<td colspan="4">You don\'t have enough permission to view this content.</td>'+
+                '</tr>';
         }
-        else {
-            html = '<div class="col-xs-12"><div class="alert alert-warning">No results found.</div></div>';
-        }
-        // Display results.
-        this.objects.content_box.html(html);
-        // Update pagination.
-        this.objects.pagination_total.text(this.data.page.total);
-        if(this.data.page.current < this.data.page.total) {
-            this.objects.pagination_next.prop('disabled', false);
-        }
-        else {
-            this.objects.pagination_next.prop('disabled', true);
-        }
-        if(this.data.page.current > 1) {
-            this.objects.pagination_prev.prop('disabled', false);
-        }
-        else {
-            this.objects.pagination_prev.prop('disabled', true);
-        }
-        if(this.data.page.total == 0) {
-            this.objects.pagination_index.prop('disabled', true);
-        }
-        else {
-            this.objects.pagination_index.prop('disabled', false);
-        }
-        this.objects.pagination_index.val(this.data.page.current);
-        // Update display buttons.
-        this.objects.display_quick_buttons.removeClass('active');
-        this.self.find('button[data-display="'+this.data.display+'"]').addClass('active');
-        // Update bulk operation displays (toolbar item, quick buttons & display items).
-        if(this.data.selected.length > 0){
-            if(!this.objects.bulk_operation_dropdown_box.hasClass('active')) this.objects.bulk_operation_dropdown_box.val('default');
-            this.objects.bulk_operation_dropdown_box.addClass('active');
-            this.objects.content_box.addClass('bulk_select_mode');
-        }
-        else{
-            this.objects.select_quick_buttons.removeClass('active');
-            this.objects.bulk_operation_dropdown_box.removeClass('active');
-            this.objects.content_box.removeClass('bulk_select_mode');
-        }
-        // Bind functions.
-        this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('click',this.moveToCategory.bind(this));
-        this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
-        this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('click',this.editMedia.bind(this));
-        this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('click',this.deleteMedia.bind(this));
-        this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
-        this.objects.content_box.find('a.video-preview').unbind('click').click(videomodal.open);
     },
     runBulkAction: function(e){
         var $this = this;
         var action = e.target.value;
         if(action == "chage_category"){
-            var endpoint = site.base_url+this.data.type+'/update';
+            var endpoint = site.base_url+this.data.type+'/move';
             var data = {
                 id: this.data.selected,
                 category_id: null
@@ -265,9 +317,11 @@ admin_app.library =
         }
     },
     doSearch: function(e){
-        e.preventDefault();
-        this.data.page.current = 1;
-        this.getData();
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('media_view',site.permissions) !== -1){
+            e.preventDefault();
+            this.data.page.current = 1;
+            this.getData();
+        }
     },
     liveSearch: function(e){
         if(e.keyCode != 13) {
@@ -413,7 +467,7 @@ admin_app.library =
     },
     moveToCategory: function(e){
         var parent = $(e.target).parents(".media-entry");
-        var endpoint = site.base_url+this.objects.media_type_dropdown_box.val()+'/update';
+        var endpoint = site.base_url+this.objects.media_type_dropdown_box.val()+'/move';
         var data = {
             id: parent.attr('data-id'),
             category_id: parent.attr('data-category_id')
@@ -494,7 +548,7 @@ admin_app.library =
                         this.getData();
                     }
                     else{
-                        toastr["error"]("Failed to delete \""+item_name+"\".", "Error 500");
+                        toastr["error"](response.message);
                     }
                 }
             });

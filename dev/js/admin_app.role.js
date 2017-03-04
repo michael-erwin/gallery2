@@ -6,6 +6,7 @@ admin_app.role =
     },
     objects: {
         'new_button': null,
+        'search_form': null,
         'table_body': null
     },
     data: {
@@ -13,48 +14,79 @@ admin_app.role =
     },
     init: function() {
         this.objects.new_button = this.self.find('button[data-id="new_button"]');
+        this.objects.search_form = this.self.find('form[data-id="search_form"]');
         this.objects.table_body = this.self.find('tbody[data-id="list"]');
 
         // Bind events.
         this.objects.new_button.on('click',this.new.bind(this));
-        this.getData.call(this);
+        this.objects.search_form.submit(function(e){e.preventDefault();});
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('role_view',site.permissions) !== -1){
+            this.getData.call(this);
+        }else{
+            this.render();
+        }
     },
     render: function() {
         // Build table entries.
         var list_rows = "";
-        if(this.data.items.length > 0) {
-            for (var i = 0; i < this.data.items.length; i++) {
-                var role = this.data.items[i];
-                var permissions = role.permissions.split(',');
-                var permissions_html = "";
-                for(var n=0;n<permissions.length;n++) {
-                    permissions_html += '<span class="label label-primary">'+permissions[n]+'</span>\n'
-                };
-                var options = "";
-                if(role.core == "no") {
-                    options = 
-                        '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
-                            '<i class="fa fa-pencil"></i>'+
-                        '</button>&nbsp;'+
-                        '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
-                            '<i class="fa fa-trash"></i>'+
-                        '</button>';
-                }
-                list_rows += 
-                '<tr data-info=\''+JSON.stringify(role)+'\'>'+
-                    '<td>'+role.name+'</td>'+
-                    '<td>'+role.description+'</td>'+
-                    '<td>'+permissions_html+'</td>'+
-                    '<td>'+options+'</td>'+
-                '</tr>';
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('role_view',site.permissions) !== -1){
+            $('.quickbar').css('display','block');
+            $('.table_block').css('display','block');
+            $('#message_block').css('display','none');
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('role_add',site.permissions) !== -1){
+                this.objects.new_button.prop("disabled",false);
+            }else{
+                this.objects.new_button.prop("disabled",true);
             }
-        }
-        else {
+            if(this.data.items.length > 0) {
+                for (var i = 0; i < this.data.items.length; i++) {
+                    var role = this.data.items[i];
+                    var permissions = role.permissions.split(',');
+                    var permissions_html = "";
+                    for(var n=0;n<permissions.length;n++) {
+                        permissions_html += '<span class="label label-primary">'+permissions[n]+'</span>\n'
+                    };
+                    var options = "";
+                    if(role.core == "no") {
+                        if($.inArray('all',site.permissions) !== -1 || $.inArray('role_edit',site.permissions) !== -1){
+                            options +=
+                            '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
+                                '<i class="fa fa-pencil"></i>'+
+                            '</button>&nbsp;';
+                        }
+                        if($.inArray('all',site.permissions) !== -1 || $.inArray('role_delete',site.permissions) !== -1){
+                            options +=
+                            '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
+                                '<i class="fa fa-trash"></i>'+
+                            '</button>';
+                        }
+                    }
+                    list_rows += 
+                    '<tr data-info=\''+JSON.stringify(role)+'\'>'+
+                        '<td>'+role.name+'</td>'+
+                        '<td>'+role.description+'</td>'+
+                        '<td>'+permissions_html+'</td>'+
+                        '<td>'+options+'</td>'+
+                    '</tr>';
+                }
+            }
+            else {
+                list_rows = 
+                '<tr colspan="4">'+
+                    '<td>No items found.</td>'+
+                '</tr>';
+            };
+        }else{
+            $('.quickbar').css('display','none');
+            $('.table_block').css('display','none');
+            $('#message_block').css('display','block').find('.alert').text("You don't have enough permission to view this content.");
             list_rows = 
-            '<tr colspan="4">'+
-                '<td>No items found.</td>'+
-            '</tr>';
-        };
+                '<tr>'+
+                    '<td colspan="4">You don\'t have enough permission to view this content.</td>'+
+                '</tr>';
+            this.objects.new_button.prop("disabled",true);
+        }
+            
         this.objects.table_body.html(list_rows);
         // Event bindings.
         this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
@@ -118,6 +150,6 @@ admin_app.role =
                 }
             });
         };
-        modal.confirm('Associated users with the role will be moved to guest. Do you want to delete a role?',doDelete.bind(this));
+        modal.confirm('Associated users with the role will be moved to default. Do you want to continue?',doDelete.bind(this));
     }
 };

@@ -1,7 +1,8 @@
 <?php
 class Categories extends CI_Controller
 {
-    private $sidebar_menus, $page_title, $page_description, $breadcrumbs;
+    private $sidebar_menus, $page_title, $page_description, $breadcrumbs,
+            $permissions = ['category_view','category_add','category_edit','category_delete'];
 
     function __construct()
     {
@@ -19,6 +20,9 @@ class Categories extends CI_Controller
 
     public function index($option=null)
     {
+        // Permissions.
+        $data['permissions'] = json_encode($this->permissions);
+
         // Sidebar - User Panel.
         $data['sidebar_user_panel'] = $this->load->view('admin/v_sidebar_user_panel','',true);
 

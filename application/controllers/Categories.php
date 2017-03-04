@@ -4,6 +4,7 @@
 */
 class Categories extends CI_Controller
 {
+    private $permissions = ['category_view'];
 
     function __construct()
     {
@@ -29,18 +30,70 @@ class Categories extends CI_Controller
         {
             if($param_2 == "add")
             {
+                if(!in_array('all',$this->permissions) && !in_array('category_add',$this->permissions))
+                {
+                    $response = [
+                        "status" => "error",
+                        "code"=> 403,
+                        "message" => "You're not authorized to perform this action.",
+                        "data" => null,
+                        "page" => null
+                    ];
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $this->add();
             }
             elseif($param_2 == "update")
             {
+                if(!in_array('all',$this->permissions) && !in_array('category_edit',$this->permissions))
+                {
+                    $response = [
+                        "status" => "error",
+                        "code"=> 403,
+                        "message" => "You're not authorized to perform this action.",
+                        "data" => null,
+                        "page" => null
+                    ];
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $this->update();
             }
             elseif($param_2 == "delete")
             {
+                if(!in_array('all',$this->permissions) && !in_array('category_delete',$this->permissions))
+                {
+                    $response = [
+                        "status" => "error",
+                        "code"=> 403,
+                        "message" => "You're not authorized to perform this action.",
+                        "data" => null,
+                        "page" => null
+                    ];
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $this->delete();
             }
             elseif($param_2 == "get_all")
             {
+                if(!in_array('all',$this->permissions) && !in_array('category_view',$this->permissions))
+                {
+                    $response = [
+                        "status" => "error",
+                        "code"=> 403,
+                        "message" => "You don't have authorization to view content.",
+                        "data" => null,
+                        "page" => null
+                    ];
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $media_type = clean_alpha_text($this->input->get('type'));
                 $this->get_all($media_type);
             }

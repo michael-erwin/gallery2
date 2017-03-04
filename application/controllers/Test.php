@@ -12,6 +12,6 @@ class Test extends CI_Controller
 
     public function _remap()
     {
-        //echo md5_file('big_size.m4v');
+        echo CI_VERSION;
     }
 }

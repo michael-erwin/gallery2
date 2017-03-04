@@ -26,50 +26,79 @@ admin_app.user =
     init: function() {
         this.objects.new_button = this.self.find('button[data-id="new_button"]');
         this.objects.search_box = this.self.find('input[data-id="search_box"]');
+        this.objects.search_form = this.self.find('form[data-id="search_form"]');
         this.objects.table_body = this.self.find('tbody[data-id="list"]');
         this.objects.page_prev = this.self.find('button.prev');
         this.objects.page_next = this.self.find('button.next');
         this.objects.page_now = this.self.find('input.index');
         this.objects.page_total = this.self.find('span.of-pages .total');
         this.objects.display_buttons = this.self.find('[data-id="quick_buttons"] button.display');
-
         // Bind events.
         this.objects.new_button.on('click',this.new.bind(this));
+        this.objects.search_form.submit(function(e){e.preventDefault();});
         this.objects.search_box.on('keydown',this.doLiveSearch.bind(this));
         this.objects.page_prev.on('click',this.prevPage.bind(this));
         this.objects.page_next.on('click',this.nextPage.bind(this));
         this.objects.page_now.on('keypress',this.goPage.bind(this));
         this.objects.display_buttons.on('click',this.displaySize.bind(this));
-        this.getData.call(this);
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('user_view',site.permissions) !== -1){
+            this.getData.call(this);
+        }else{
+            this.render();
+        }
     },
     render: function() {
+        var empty_table_text = "No items found.";
+        // Apply permissions.
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('user_view',site.permissions) !== -1){
+            $('.quickbar').css('display','block');
+            $('.table_block').css('display','block');
+            $('#message_block').css('display','none');
+            this.objects.search_box.prop('disabled',false);
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('user_add',site.permissions) !== -1){
+                this.objects.new_button.prop('disabled',false);
+            }else{
+                this.objects.new_button.prop('disabled',true);
+            }
+        }else{
+            $('.quickbar').css('display','none');
+            $('.table_block').css('display','none');
+            $('#message_block').css('display','block').find('.alert').text("You don't have enough permission to view this content.");
+            this.objects.search_box.prop('disabled',true);
+            this.objects.new_button.prop('disabled',true);
+        }
         // Build table entries.
         var list_rows = "";
         if(this.data.items.length > 0) {
             for (var i = 0; i < this.data.items.length; i++) {
                 var user = this.data.items[i];
                 var status = (user.status == "active")? 'success':'default';
+                var edit_btn = "";
+                var delete_btn = "";
+                if($.inArray('all',site.permissions) !== -1 || $.inArray('user_edit',site.permissions) !== -1){
+                    edit_btn = '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
+                                    '<i class="fa fa-pencil"></i>'+
+                                '</button>&nbsp;';
+                }
+                if($.inArray('all',site.permissions) !== -1 || $.inArray('user_delete',site.permissions) !== -1){
+                    delete_btn = '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
+                                    '<i class="fa fa-trash"></i>'+
+                                '</button>&nbsp;';
+                }
                 list_rows += 
                 '<tr data-info=\''+JSON.stringify(user)+'\'>'+
                     '<td>'+user.email+'</td>'+
                     '<td>'+user.first_name+' '+user.last_name+'</td>'+
                     '<td>'+user.role_name+'</td>'+
                     '<td><span class="label label-'+status+'">'+user.status+'</span></td>'+
-                    '<td>'+
-                        '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
-                            '<i class="fa fa-pencil"></i>'+
-                        '</button>&nbsp;'+
-                        '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
-                            '<i class="fa fa-trash"></i>'+
-                        '</button>'+
-                    '</td>'+
+                    '<td>'+edit_btn+delete_btn+'</td>'+
                 '</tr>';
             }
         }
         else {
             list_rows = 
             '<tr colspan="5">'+
-                '<td>No items found.</td>'+
+                '<td>'+empty_table_text+'</td>'+
             '</tr>';
         };
         this.objects.table_body.html(list_rows);

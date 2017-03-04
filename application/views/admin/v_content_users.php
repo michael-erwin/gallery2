@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<div class="content-block clearfix">
+<div class="content-block quickbar clearfix">
     <div class="float-left">
         <div data-id="quick_buttons">
             <button class="btn btn-default btn-sm display active" title="Display 15 items" data-display="15">
@@ -34,7 +34,7 @@
         <button class="btn btn-default btn-sm next"><i class="glyphicon glyphicon-chevron-right"></i></button>
     </div>
 </div>
-<div id="users_table">
+<div id="users_table" class="table_block">
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -52,7 +52,10 @@
         </tbody>
     </table>
 </div>
-<div class="content-block clearfix">
+<div id="message_block" class="row" style="display:none">
+    <div class="col-xs-12"><div class="alert alert-danger">No results found.</div></div>
+</div>
+<div class="content-block quickbar clearfix">
     <div class="float-left"></div>
     <div class="m-pagination float-right">
         <button class="btn btn-default btn-sm prev"><i class="glyphicon glyphicon-chevron-left"></i></button>

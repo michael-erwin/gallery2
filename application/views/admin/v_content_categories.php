@@ -17,7 +17,7 @@
         </div>
     </div>
 </div>
-<div>
+<div class="content-block">
     <table id="categories_table" class="table table-bordered">
         <thead>
             <tr>
@@ -30,4 +30,7 @@
         <tbody data-id="list">
         </tbody>
     </table>
+</div>
+<div id="message_block" class="row" style="display:none">
+    <div class="col-xs-12"><div class="alert alert-danger">You don't have enough permission to view this content.</div></div>
 </div>

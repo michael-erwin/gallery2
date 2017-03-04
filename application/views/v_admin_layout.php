@@ -175,7 +175,7 @@
     <!-- /Common Modals -->
     <!-- Global Constants -->
     <script>
-        site = {"base_url": "<?php echo base_url();?>"}
+        site = {"base_url": "<?php echo base_url();?>","permissions": <?php if(isset($permissions)): echo $permissions; else:  echo '[]'; endif?>}
     </script>
     <!-- /Global Constants -->
     <!-- Library Dependencies -->

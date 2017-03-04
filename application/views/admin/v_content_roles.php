@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<div id="role_table">
+<div id="role_table" class="table_block">
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -27,4 +27,7 @@
             
         </tbody>
     </table>
+</div>
+<div id="message_block" class="row" style="display:none">
+    <div class="col-xs-12"><div class="alert alert-danger">No results found.</div></div>
 </div>

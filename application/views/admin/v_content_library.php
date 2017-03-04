@@ -24,7 +24,7 @@
             </div>
         </div>
 </div>
-<div class="content-block clearfix">
+<div class="content-block quickbar clearfix">
     <div class="float-left">
         <div data-id="quick_buttons">
             <button class="btn btn-default btn-sm toggle-select" title="Select or deselect all">
@@ -48,7 +48,10 @@
 <div class="content-block row" data-id="content">
     <!-- Thumbnails will load here. -->
 </div>
-<div class="content-block clearfix">
+<div id="message_block" class="row" style="display:none">
+    <div class="col-xs-12"><div class="alert alert-danger">No results found.</div></div>
+</div>
+<div class="content-block quickbar clearfix">
     <div class="m-pagination float-right">
         <button class="btn btn-default btn-sm prev"><i class="glyphicon glyphicon-chevron-left"></i></button>
         <input type="text" class="form-control input-sm index" />

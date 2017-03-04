@@ -26,6 +26,15 @@ class Update extends CI_Controller
 
         if($id)
         {
+            if(!in_array('all',$this->permissions) && !in_array('video_edit',$this->permissions))
+            {
+                $response['code'] = '403';
+                $response['message'] = "You're not authorized to perform this action.";
+                header("Content-Type: application/json");
+                echo json_encode($response);
+                exit();
+            }
+
             $title = clean_title_text($this->input->post('title'));
             $description = clean_body_text($this->input->post('description'));
             $tags = clean_title_text($this->input->post('tags'));

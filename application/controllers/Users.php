@@ -4,6 +4,7 @@
 */
 class Users extends CI_Controller
 {
+    private $permissions = [];
 
     function __construct()
     {
@@ -18,6 +19,13 @@ class Users extends CI_Controller
     */
     public function _remap()
     {
+        $response = [
+            "status" => "error",
+            "code"=> 403,
+            "message" => "You don't have enough permission. Please contact system administrator.",
+            "data" => null,
+            "page" => null
+        ];
         $param_1 = $this->uri->segment(2);
         $param_2 = $this->uri->segment(3);
         $param_3 = $this->uri->segment(4);
@@ -26,7 +34,13 @@ class Users extends CI_Controller
         if($param_1 == "manage")
         {
             if($param_2 == "add")
-            {
+            {   
+                if(!in_array('all',$this->permissions) && !in_array('user_add',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $fname = clean_title_text($this->input->post('fname'));
                 $lname = clean_title_text($this->input->post('lname'));
                 $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
@@ -50,6 +64,12 @@ class Users extends CI_Controller
             }
             elseif($param_2 == "update")
             {
+                if(!in_array('all',$this->permissions) && !in_array('user_edit',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $id = clean_numeric_text($this->input->post('id'));
                 $fname = clean_title_text($this->input->post('fname'));
                 $lname = clean_title_text($this->input->post('lname'));
@@ -74,6 +94,12 @@ class Users extends CI_Controller
             }
             elseif($param_2 == "delete")
             {
+                if(!in_array('all',$this->permissions) && !in_array('user_delete',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $id = clean_numeric_text($this->input->post('id'));
                 $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
                 $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
@@ -81,12 +107,24 @@ class Users extends CI_Controller
             }
             elseif($param_2 == "get_page")
             {
+                if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
                 $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
                 $this->fetch($limit,$page);
             }
             elseif($param_2 == "search")
             {
+                if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $keywords = $this->input->get('kw');
                 $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
                 $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;

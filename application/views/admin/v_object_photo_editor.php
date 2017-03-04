@@ -32,6 +32,13 @@
                                     <!--<li class="input-text" contenteditable="true"></li>-->
                                 </ul>
                             </div>
+                            <div class="data-label">Download Option</div>
+                            <div class="data-value">
+                                <div class="form-control">
+                                    <button type="button" class="btn btn-primary" data-id="download_btn" disabled>Download</button>
+                                    <button type="button" class="btn btn-primary" data-id="upload_btn">Upload</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

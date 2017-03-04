@@ -4,6 +4,7 @@
 */
 class Roles extends CI_Controller
 {
+    private $permissions = [];
 
     function __construct()
     {
@@ -25,8 +26,22 @@ class Roles extends CI_Controller
 
         if($param_1 == "manage")
         {
+            $response = [
+                "status" => "error",
+                "code"=> 403,
+                "message" => "You don't have enough permission. Please contact system administrator.",
+                "data" => null,
+                "page" => null
+            ];
+
             if($param_2 == "add")
             {
+                if(!in_array('all',$this->permissions) && !in_array('role_add',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $name = clean_title_text($this->input->post('name'));
                 $description = $this->input->post('description');
                 $permissions = $this->input->post('permission');
@@ -49,6 +64,12 @@ class Roles extends CI_Controller
             }
             elseif($param_2 == "update")
             {
+                if(!in_array('all',$this->permissions) && !in_array('role_edit',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $id = clean_numeric_text($this->input->post('id'));
                 $name = clean_title_text($this->input->post('name'));
                 $description = $this->input->post('description');
@@ -72,21 +93,39 @@ class Roles extends CI_Controller
             }
             elseif($param_2 == "delete")
             {
+                if(!in_array('all',$this->permissions) && !in_array('role_delete',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $id = clean_numeric_text($this->input->post('id'));
                 $this->delete($id);
             }
             elseif($param_2 == "get_all")
             {
+                if(!in_array('all',$this->permissions) && !in_array('role_view',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $this->get_all();
             }
             elseif($param_2 == "get_permissions")
             {
+                if(!in_array('all',$this->permissions) && !in_array('role_view',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
                 $this->get_permissions();
             }
         }
         elseif($param_1 == "test")
         {
-            $this->test();
+            print_r($this->permissions);
         }
     }
 
@@ -244,13 +283,23 @@ class Roles extends CI_Controller
         else
         {
             // TODO: Include users that will be affected in query statement.
-            $delete_sql = "DELETE FROM `roles` WHERE `id`='{$id}'";
+            $delete_sql = "DELETE FROM `roles` WHERE `id`={$id}";
+            $users_sql  = "UPDATE `users` SET `role_id`=2 WHERE `role_id`={$id}";
            
             if($this->db->query($delete_sql))
             {
-                $response['status'] = "ok";
-                $response['message'] = "1 role deleted.";
-                $response['data'] = $this->get_all(true);
+                if($this->db->query($users_sql))
+                {
+                    $response['status'] = "ok";
+                    $response['message'] = "1 role deleted.";
+                    $response['data'] = $this->get_all(true);
+                }
+                else
+                {
+                    $response['message'] = "Role deleted but unable to move users.";
+                    $response['data'] = $this->get_all(true);
+                }
+                    
             }
             else
             {

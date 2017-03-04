@@ -24,101 +24,136 @@ admin_app.category =
         this.objects.media_type_dropdown.unbind().on('change',this.setMediaType.bind(this));
         this.objects.new_button.unbind().on('click',admin_app.category_editor.new.bind(admin_app.category_editor));
         // Get data.
-        this.getData();
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('category_view',site.permissions) !== -1){
+            this.getData();
+        }else{
+            this.render();
+        }
     },
     render: function() {
-        // Arrange according to hierarchy.
-        var mains = {};
-        for(var i=0;i<this.data.media_list.length;i++) {
-            if(Number(this.data.media_list[i]['parent_id']) === 0) {
-                var main_id = 'm_'+this.data.media_list[i]['id'];
-                if(typeof mains[main_id] === "undefined") mains[main_id] = {};
-                mains[main_id].id = this.data.media_list[i]['id'];
-                mains[main_id].level = this.data.media_list[i]['level'];
-                mains[main_id].type = this.data.media_type;
-                mains[main_id].title = this.data.media_list[i]['title'];
-                mains[main_id].icon = this.data.media_list[i]['icon'];
-                mains[main_id].description = this.data.media_list[i]['description'];
-                mains[main_id].parent_id = this.data.media_list[i]['parent_id'];
-                mains[main_id].published = this.data.media_list[i]['published'];
-                mains[main_id].core = this.data.media_list[i]['core'];
-                mains[main_id].date_added = this.data.media_list[i]['date_added'];
-                mains[main_id].date_modified = this.data.media_list[i]['date_modified'];
-            }
-            else{
-                var main_id = 'm_'+this.data.media_list[i]['parent_id'];
-                var subc_id = 's_'+this.data.media_list[i]['id'];
-                if(typeof mains[main_id] === "undefined") mains[main_id] = {};
-                if(typeof mains[main_id].subcats === "undefined") mains[main_id].subcats = {};
-                mains[main_id].subcats[subc_id] = this.data.media_list[i];
-            }
-        }
-        // Build HTML rows content of table.
-        var table_html = "";
-        for(var item in mains){
-            var option_button = "";
-            var expand_button = "";
-            var expand_status = "";
-            if(typeof this.config.expanded_items[item] !== "undefined"){
-                if(this.config.expanded_items[item] === 1){
-                    expand_status = 'expanded';
-                }
-            };
-            if(mains[item]['core'] == "no") {
-                option_button = '<button class="btn btn-success btn-xs" data-id="new_entry" title="Add sub category."><i class="fa fa-plus"></i></button>'+
-                                '\n<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this main category."><i class="fa fa-pencil"></i></button>'+
-                                '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
-            };
-            if(mains[item]['id'] > 1) {
-                if(typeof mains[item]['subcats'] === "object"){
-                    expand_button = '<i class="fa active '+expand_status+'"></i>';
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('category_view',site.permissions) !== -1){
+            // Enable view.
+            this.objects.media_type_dropdown.prop('disabled',false);
+            this.objects.new_button.prop('disabled',false);
+            $('.content-block').css('display','block');
+            $('#message_block').css('display','none');
+
+            // Arrange according to hierarchy.
+            var mains = {};
+            for(var i=0;i<this.data.media_list.length;i++) {
+                if(Number(this.data.media_list[i]['parent_id']) === 0) {
+                    var main_id = 'm_'+this.data.media_list[i]['id'];
+                    if(typeof mains[main_id] === "undefined") mains[main_id] = {};
+                    mains[main_id].id = this.data.media_list[i]['id'];
+                    mains[main_id].level = this.data.media_list[i]['level'];
+                    mains[main_id].type = this.data.media_type;
+                    mains[main_id].title = this.data.media_list[i]['title'];
+                    mains[main_id].icon = this.data.media_list[i]['icon'];
+                    mains[main_id].description = this.data.media_list[i]['description'];
+                    mains[main_id].parent_id = this.data.media_list[i]['parent_id'];
+                    mains[main_id].published = this.data.media_list[i]['published'];
+                    mains[main_id].core = this.data.media_list[i]['core'];
+                    mains[main_id].date_added = this.data.media_list[i]['date_added'];
+                    mains[main_id].date_modified = this.data.media_list[i]['date_modified'];
                 }
                 else{
-                    expand_button = '<i class="fa disabled '+expand_status+'"></i>';
-                }
-            };
-            table_html +=
-            '<tr class="main-category" data-all=\''+JSON.stringify(mains[item])+'\'>'+
-                '<td class="handle">'+expand_button+'</td>'+
-                '<td>'+mains[item]['title']+'</td>'+
-                '<td>'+mains[item]['description']+'</td>'+
-                '<td>'+mains[item]['published']+'</td>'+
-                '<td>'+
-                    option_button+
-                '</td>'+
-            '</tr>';
-            if(typeof mains[item]['subcats'] === "object") {
-                for(var subcat in mains[item]['subcats']){
-                    if(mains[item]['subcats'][subcat]['core'] == "no") {
-                        option_button = '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this sub category."><i class="fa fa-pencil"></i></button>'+
-                                        '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
-                    };
-                    var my_parent_id = mains[item]['subcats'][subcat]['parent_id'];
-                    var my_display = 'none';
-                    if(typeof this.config.expanded_items[item] !== "undefined"){
-                        if(this.config.expanded_items[item] === 1){
-                            my_display = 'table-row';
-                        }
-                    };
-                    table_html +=
-                    '<tr class="sub-category parent-id-'+my_parent_id+'" style="display:'+my_display+'" data-all=\''+JSON.stringify(mains[item]['subcats'][subcat])+'\'>'+
-                        '<td class="handle"></td>'+
-                        '<td>'+mains[item]['subcats'][subcat]['title']+'</td>'+
-                        '<td>'+mains[item]['subcats'][subcat]['description']+'</td>'+
-                        '<td>'+mains[item]['subcats'][subcat]['published']+'</td>'+
-                        '<td>'+
-                            option_button+
-                        '</td>'+
-                    '</tr>';
+                    var main_id = 'm_'+this.data.media_list[i]['parent_id'];
+                    var subc_id = 's_'+this.data.media_list[i]['id'];
+                    if(typeof mains[main_id] === "undefined") mains[main_id] = {};
+                    if(typeof mains[main_id].subcats === "undefined") mains[main_id].subcats = {};
+                    mains[main_id].subcats[subc_id] = this.data.media_list[i];
                 }
             }
-        };
-        this.objects.table_body.html(table_html);
-        // Attach events.
-        this.self.find('button[data-id="new_entry"]').unbind().on('click',this.new_subcat.bind(this));
-        this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
-        this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
-        this.self.find('#categories_table tbody i.active').unbind().on('click',this.toggleSubcat.bind(this));
+            // Build HTML rows content of table.
+            var table_html = "";
+            for(var item in mains){
+                var option_button = "";
+                var expand_button = "";
+                var expand_status = "";
+                if(typeof this.config.expanded_items[item] !== "undefined"){
+                    if(this.config.expanded_items[item] === 1){
+                        expand_status = 'expanded';
+                    }
+                };
+                if($.inArray('all',site.permissions) !== -1 || $.inArray('category_add',site.permissions) !== -1){
+                    this.objects.new_button.prop('disabled',false);
+                }else{
+                    this.objects.new_button.prop('disabled',true);
+                }
+                if(mains[item]['core'] == "no") {
+                    option_button = "";
+                    if($.inArray('all',site.permissions) !== -1 || $.inArray('category_add',site.permissions) !== -1){
+                        option_button += '<button class="btn btn-success btn-xs" data-id="new_entry" title="Add sub category."><i class="fa fa-plus"></i></button>';
+                    }
+                    if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
+                        option_button += '\n<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this main category."><i class="fa fa-pencil"></i></button>';
+                    }
+                    if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
+                        option_button += '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
+                    }
+                };
+                if(mains[item]['id'] > 1) {
+                    if(typeof mains[item]['subcats'] === "object"){
+                        expand_button = '<i class="fa active '+expand_status+'"></i>';
+                    }
+                    else{
+                        expand_button = '<i class="fa disabled '+expand_status+'"></i>';
+                    }
+                };
+                table_html +=
+                '<tr class="main-category" data-all=\''+JSON.stringify(mains[item])+'\'>'+
+                    '<td class="handle">'+expand_button+'</td>'+
+                    '<td>'+mains[item]['title']+'</td>'+
+                    '<td>'+mains[item]['description']+'</td>'+
+                    '<td>'+mains[item]['published']+'</td>'+
+                    '<td>'+
+                        option_button+
+                    '</td>'+
+                '</tr>';
+                if(typeof mains[item]['subcats'] === "object") {
+                    for(var subcat in mains[item]['subcats']){
+                        if(mains[item]['subcats'][subcat]['core'] == "no") {              
+                            option_button = "";
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
+                                option_button += '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this sub category."><i class="fa fa-pencil"></i></button>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
+                                option_button += '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
+                            }
+                        };
+                        var my_parent_id = mains[item]['subcats'][subcat]['parent_id'];
+                        var my_display = 'none';
+                        if(typeof this.config.expanded_items[item] !== "undefined"){
+                            if(this.config.expanded_items[item] === 1){
+                                my_display = 'table-row';
+                            }
+                        };
+                        table_html +=
+                        '<tr class="sub-category parent-id-'+my_parent_id+'" style="display:'+my_display+'" data-all=\''+JSON.stringify(mains[item]['subcats'][subcat])+'\'>'+
+                            '<td class="handle"></td>'+
+                            '<td>'+mains[item]['subcats'][subcat]['title']+'</td>'+
+                            '<td>'+mains[item]['subcats'][subcat]['description']+'</td>'+
+                            '<td>'+mains[item]['subcats'][subcat]['published']+'</td>'+
+                            '<td>'+
+                                option_button+
+                            '</td>'+
+                        '</tr>';
+                    }
+                }
+            };
+            this.objects.table_body.html(table_html);
+            // Attach events.
+            this.self.find('button[data-id="new_entry"]').unbind().on('click',this.new_subcat.bind(this));
+            this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
+            this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
+            this.self.find('#categories_table tbody i.active').unbind().on('click',this.toggleSubcat.bind(this));
+        }else{
+            this.objects.media_type_dropdown.prop('disabled',true);
+            this.objects.new_button.prop('disabled',true);
+            $('.content-block').css('display','none');
+            $('#message_block .alert').text("You don't have enough permission to view this content.");
+            $('#message_block').css('display','block');
+        }
     },
     getData: function(data) {
         if(data) {

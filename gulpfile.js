@@ -56,7 +56,7 @@ gulp.task('frontend-js',function(){
     ]);
 });
 gulp.task('backend-js',function(){
-    pump([
+    //pump([
         gulp.src([
             'dev/js/backend.js',
             'dev/js/modals.js',
@@ -75,11 +75,12 @@ gulp.task('backend-js',function(){
             'dev/js/admin_app.category_selector.js',
             'dev/js/admin_app.file_widget.js',
             'dev/js/admin_app.uploader.js'
-        ]),
-        gcat('backend.js'),
-        strp(),comp({removeSpaces:true}),
-        gulp.dest('assets/js/')
-    ]);
+        ])
+        .pipe(gcat('backend.js'))
+        .pipe(strp())
+        .pipe(comp({removeSpaces:true}))
+        .pipe(gulp.dest('assets/js/'))
+    //]);
 });
 
 gulp.task('watch',function(){

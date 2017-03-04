@@ -45,7 +45,9 @@ admin_app.role_editor =
         this.objects.toggleAll.unbind().on('click',this.toggleSelectAll.bind(this));
 
         // Initialize events.
-        this.getData();
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('role_view',site.permissions) !== -1){
+            this.getData();
+        }
     },
     render: function() {
         // Build permission table entries.
