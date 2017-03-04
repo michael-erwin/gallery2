@@ -1,12 +1,13 @@
 <?php
 class Library extends CI_Controller
 {
-    private $sidebar_menus, $page_title, $page_description, $breadcrumbs,
-            $permissions = ['all'];
+    private $sidebar_menus, $page_title, $page_description, $breadcrumbs;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->page_title = "Library";
         $this->page_description = "Media Library";
         $this->breadcrumbs =

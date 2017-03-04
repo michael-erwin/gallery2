@@ -5,10 +5,12 @@
 class Preview extends CI_Controller
 {
     private $media_path, $watermark;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->library('SimpleImage');
         $this->config->load('media_gallery');
         $this->media_path = $this->config->item('mg_media_path');

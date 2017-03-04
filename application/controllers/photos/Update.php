@@ -1,11 +1,12 @@
 <?php
 class Update extends CI_Controller
 {
-    private $permissions = ['all'];
+    private $permissions = [];
     
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->model('m_photo');
         $this->load->model('m_tag');
     }

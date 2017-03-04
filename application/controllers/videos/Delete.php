@@ -4,12 +4,13 @@
 */
 class Delete extends CI_Controller
 {
-    private $media_path,
-            $permissions = [];
+    private $media_path;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->config->load('media_gallery');
         $this->media_path = $this->config->item('mg_media_path');
         $this->load->model("m_video");

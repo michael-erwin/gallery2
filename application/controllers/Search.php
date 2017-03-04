@@ -4,10 +4,12 @@
 */
 class Search extends CI_Controller
 {
+    private $permissions;
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
     }
 
     public function _remap($options=null)

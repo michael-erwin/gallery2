@@ -13,10 +13,12 @@
 class Photos extends CI_Controller
 {
     private $media_path;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->library('SimpleImage');
         $this->load->model('m_photo');
         $this->config->load('media_gallery');

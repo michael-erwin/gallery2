@@ -9,6 +9,7 @@ class Users extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
     }
 
     /**
@@ -440,7 +441,7 @@ class Users extends CI_Controller
             ]
         ];
         
-        if($results  = $get_qry->result_array())
+        if($results = $get_qry->result_array())
         {
             if($page_qry = $this->db->query("SELECT COUNT(id) AS total FROM `users`"))
             {
@@ -505,25 +506,6 @@ class Users extends CI_Controller
 
     public function test()
     {
-        $users = json_decode(file_get_contents('./users.json'),true);
-        $statuses = ["active","inactive"];
-
-        foreach ($users as $user) {
-            $rand = rand(0,1);
-            $first_name = $user['first_name'];
-            $last_name = $user['last_name'];
-            $email = $user['email'];
-            $password = password_hash($first_name,PASSWORD_BCRYPT);
-            $role_id = 5;
-            $status = $statuses[$rand];
-            $date_added = time();
-            $date_modified = 0;
-            
-            $add_sql = "INSERT INTO `users` SET `first_name`='{$first_name}',`last_name`='{$last_name}',`email`='{$email}',`password`='{$password}',"
-                        ."`role_id`={$role_id},`status`='{$status}',`date_added`={$date_added},`date_modified`={$date_modified}";
-            $this->db->query($add_sql);
-        }
-
-        //header("Content-Type: text/plain");
+        
     }
 }

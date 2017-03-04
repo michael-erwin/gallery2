@@ -1,12 +1,13 @@
 <?php
 class Categories extends CI_Controller
 {
-    private $sidebar_menus, $page_title, $page_description, $breadcrumbs,
-            $permissions = ['category_view','category_add','category_edit','category_delete'];
+    private $sidebar_menus, $page_title, $page_description, $breadcrumbs;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->page_title = "Categories";
         $this->page_description = "All Media";
         $this->breadcrumbs =

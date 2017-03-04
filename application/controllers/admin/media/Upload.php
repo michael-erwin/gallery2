@@ -11,10 +11,12 @@
 class Upload extends CI_Controller
 {
     private $sidebar_menus, $page_title, $page_description, $breadcrumbs;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->model('m_category');
         $this->page_title = "Upload";
         $this->page_description = "Add New";

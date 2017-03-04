@@ -1,11 +1,12 @@
 <?php
 class Move extends CI_Controller
 {
-    private $permissions = ['photo_change_category'];
+    private $permissions = [];
     
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->model('m_photo');
         $this->load->model('m_tag');
     }

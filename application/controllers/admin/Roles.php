@@ -1,12 +1,18 @@
 <?php
 class Roles extends CI_Controller
 {
-    private $sidebar_menus, $page_title, $page_description, $breadcrumbs,
-            $permissions = [];
+    private $sidebar_menus, $page_title, $page_description, $breadcrumbs;
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
+        if(!in_array('all', $this->permissions) && !in_array('admin_access', $this->permissions))
+        {
+            header("Location: ".base_url('/'));
+            exit();
+        }
         $this->page_title = "Roles";
         $this->page_description = "Manage User Roles";
         $this->breadcrumbs =

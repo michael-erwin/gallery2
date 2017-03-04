@@ -9,6 +9,7 @@ class Roles extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
     }
 
     /**

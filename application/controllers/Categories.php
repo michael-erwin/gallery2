@@ -4,11 +4,12 @@
 */
 class Categories extends CI_Controller
 {
-    private $permissions = ['category_view'];
+    private $permissions = [];
 
     function __construct()
     {
         parent::__construct();
+        $this->permissions = $this->auth->get_permissions();
         $this->load->model('m_category');
     }
 
