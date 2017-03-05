@@ -68,7 +68,6 @@
         }else{
             // Enforce terms agreement.
             if($el.input_agree.is(':checked')){
-                toastr['success']('No erros','Success');
                 var data = $el.form.serialize();
                 send(data);
             }else{
@@ -87,10 +86,11 @@
             },
             success: function(response){
                 setTimeout(function(){
-                    idle();
                     if(response.status == "ok"){
-                        //window.location = response.data;
+                        toastr['success'](response.message,"Check Your Email");
+                        setTimeout(function(){window.location = site.base_url+'account/signin';},4000);
                     }else{
+                        idle();
                         toastr['error'](response.message,"Error");
                     }
                     console.log(response)

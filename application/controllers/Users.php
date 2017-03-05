@@ -278,6 +278,11 @@ class Users extends CI_Controller
         
         $response = $this->m_users->add($fname,$lname,$email,$password,$role,$status,$limit,$page,$verify);
 
+        if($response['status'] == "ok")
+        {
+            $response['message'] = "Confirmation link was sent to your email. Please check your email for instructions.";
+        }
+
         header("Content-Type: application/json");
         echo json_encode($response);
     }
