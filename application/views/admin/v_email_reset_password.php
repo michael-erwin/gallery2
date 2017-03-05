@@ -1,4 +1,4 @@
-<p>Dear <?php echo $name;?>,</p>
+<p>Hi <?php echo $name;?>,</p>
 <p>
     Please visit the following link to reset your password:<br><br>
     <a href="<?php echo $link;?>" target="_blank"><?php echo $link;?></a>.<br><br>
