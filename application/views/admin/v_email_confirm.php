@@ -5,7 +5,7 @@
     The link will expire within 24hrs if unused.
 </p>
 <p>
-    NOTICE: This message is a system generated email. Please do not reply.
+    NOTICE: This message is a system generated email. Please do not reply.<br>
 </p>
 <p>Regards,</p>
 <p>Gallery Team</p>
