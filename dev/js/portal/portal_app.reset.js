@@ -58,7 +58,7 @@
             success: function(response){
                 setTimeout(function(){
                     if(response.status == "ok"){
-                        toastr['success'](response.message,"Error");
+                        toastr['success'](response.message,"Success");
                         setTimeout(function(){window.location = site.base_url+'account/signin';},4000);
                     }else{
                         idle();
