@@ -345,7 +345,7 @@ class M_users extends CI_Model
                         $message = $this->load->view('admin/v_email_reset_password',$vars,true);
                         $this->email->from($from, 'System Bot');
                         $this->email->to($email);
-                        $this->email->message("Reset Your Password");
+                        $this->email->subject("Reset Your Password");
                         $this->email->message($message);
                         $this->email->send();
 
