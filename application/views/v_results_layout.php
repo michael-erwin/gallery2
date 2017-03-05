@@ -174,7 +174,7 @@
     <script src="<?php echo base_url();?>assets/plugins/toastr/toastr.min.js"></script>
     <script src="<?php echo base_url();?>assets/plugins/videojs/video.min.js"></script>
     <!-- Frontend App -->
-    <script src="<?php echo base_url();?>assets/js/frontend-app.js"></script>
+    <script src="<?php echo base_url();?>assets/js/frontend.js"></script>
     <script src="<?php echo base_url();?>assets/js/search-hint.js"></script>
     <script>
         var site = {base_url:"<?php echo base_url();?>"};

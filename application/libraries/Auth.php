@@ -33,7 +33,7 @@ class Auth
                 }
                 else
                 {
-                    $sql_permissions = "SELECT `users`.`id`,`roles`.`permissions` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `users`.`id`=".$_SESSION['user']['id'];
+                    $sql_permissions = "SELECT `users`.`id`,`roles`.`permissions` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `users`.`id`=".$_SESSION['user']['id']." AND `status`='active'";
                     $query = $this->db->query($sql_permissions);
                     if($query->num_rows() > 0)
                     {
@@ -60,13 +60,14 @@ class Auth
      */
     function sign_in($email,$password,$remember=false)
     {
-        $sql_user = "SELECT `users`.`*`,`roles`.`id` AS `role_id`,`roles`.`name` AS `role_name` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `email`='{$email}'";
+        $sql_user = "SELECT `users`.`*`,`roles`.`id` AS `role_id`,`roles`.`name` AS `role_name` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `email`='{$email}' AND `status`='active'";
         $query = $this->db->query($sql_user);
         if($query->num_rows() > 0)
         {
             $user_data = $query->result_array()[0];
             if(password_verify($password,$user_data['password']))
             {
+                unset($_SESSION['user']);
                 $_SESSION['user'] = $user_data;
                 if($remember) $this->ci->session->mark_as_temp('user',$this->remember_time); // Remember me.
                 return true;

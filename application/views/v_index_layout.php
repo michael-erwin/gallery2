@@ -96,7 +96,7 @@
     <script src="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.js"></script>
     <!-- Plugins -->
     <script src="<?php echo base_url();?>assets/js/search-hint.js"></script>
-    <script src="<?php echo base_url();?>assets/js/frontend-app.js"></script>
+    <script src="<?php echo base_url();?>assets/js/frontend.js"></script>
     <script>
         var site = {base_url:"<?php echo base_url();?>"}
         $(document).ready(function(){

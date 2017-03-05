@@ -13,7 +13,7 @@ class Index extends CI_Controller
     {
         if(!in_array('all', $this->permissions) && !in_array('admin_access', $this->permissions))
         {
-            header("Location: ".base_url('/'));
+            header("Location: ".base_url('/account/signin').'?redir='.base_url(uri_string()));
             exit();
         }
         else

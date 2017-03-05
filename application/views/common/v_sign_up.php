@@ -1,31 +1,31 @@
-<div class="register-box">
+<div id="signup_box" class="portal-item register-box">
     <div class="register-logo">
         <a href="<?php echo base_url();?>"><b>Gallery</b></a>
     </div>
         <div class="register-box-body">
             <p class="login-box-msg">Sign up for new membership</p>
-            <form method="post">
+            <form method="post" novalidate>
                 <div class="form-group has-feedback">
-                    <input type="text" class="form-control" name="fname" placeholder="First name">
+                    <input type="text" name="fname" class="form-control" placeholder="First name">
                     <span class="fa fa-user-circle form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="text" class="form-control" name="lname" placeholder="Last name">
+                    <input type="text" name="lname" class="form-control" placeholder="Last name">
                     <span class="fa fa-user-circle-o form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="email" class="form-control" name="email" placeholder="Email">
+                    <input type="email" name="email" class="form-control" placeholder="Email">
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input type="password" class="form-control" placeholder="Password">
+                    <input type="password" name="password" class="form-control" placeholder="Password">
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
                         <div class="checkbox icheck">
                             <label>
-                                <input type="checkbox">&nbsp;&nbsp;I agree to the <a href="#">terms</a>
+                                <input type="checkbox" name="agree">&nbsp;&nbsp;I agree to the <a href="#" target="_blank">terms</a>
                             </label>
                         </div>
                     </div>
@@ -34,6 +34,6 @@
                     </div>
                 </div>
             </form>
-            <a href="login.html" class="text-center">I'm already a member</a>
+            <a href="<?php echo base_url();?>account/signin" class="text-center">I'm already a member</a>
         </div>
     </div>

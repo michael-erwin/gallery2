@@ -1,0 +1,10 @@
+input:-webkit-autofill:focus,
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+input:-webkit-autofill:disabled {
+    -webkit-box-shadow: 0 0 0px 1000px #eeeeee inset;
+}
+.portal-item input.form-control.error {
+    border-color: red !important;
+}

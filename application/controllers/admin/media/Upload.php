@@ -17,6 +17,11 @@ class Upload extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
+        if(!in_array('all', $this->permissions) && !in_array('admin_access', $this->permissions))
+        {
+            header("Location: ".base_url('/account/signin').'?redir='.base_url(uri_string()));
+            exit();
+        }
         $this->load->model('m_category');
         $this->page_title = "Upload";
         $this->page_description = "Add New";

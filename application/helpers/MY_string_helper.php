@@ -39,6 +39,14 @@ function clean_alpha_text($subject)
     return preg_replace($pattern, $replace, $subject);
 }
 
+// Letters and numbers only.
+function clean_alphanum_hash($subject)
+{
+    $pattern = '/[^a-zA-Z0-9]/';
+    $replace = '';
+    return preg_replace($pattern, $replace, $subject);
+}
+
 // Letters, integers, dash, space, underscore. i.e. All 0-3 quick_brown fox.
 function clean_title_text($subject)
 {

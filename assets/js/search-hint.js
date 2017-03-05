@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     $.fn.searchHint = function() {
 
         var hint_box = $('#search_hint_box');

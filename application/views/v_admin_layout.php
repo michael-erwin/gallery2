@@ -53,12 +53,12 @@
                             <!-- The user photo in the navbar-->
                             <img alt="User Photo" class="user-image" src="<?php echo base_url();?>assets/img/user.jpg">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                            <span class="hidden-xs">Johnnie Walker</span></a>
+                            <span class="hidden-xs"><?php echo @$_SESSION['user']['first_name'];?> <?php echo @$_SESSION['user']['last_name'];?></span></a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
                                     <img alt="User Photo" class="img-circle" src="<?php echo base_url();?>assets/img/user.jpg">
-                                    <p>Johnnie Walker - Administrator <small>Member since Jan. 2015</small></p>
+                                    <p><?php echo @$_SESSION['user']['first_name'];?> <?php echo @$_SESSION['user']['last_name'];?> - <?php echo @$_SESSION['user']['role_name'];?> <small>Member since Jan. 2015</small></p>
                                 </li>
                                 <!-- Menu Body -->
                                 <!-- Menu Footer-->
@@ -67,7 +67,7 @@
                                         <a class="btn btn-default btn-flat" href="#">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a class="btn btn-default btn-flat" href="#">Sign out</a>
+                                        <a class="btn btn-default btn-flat" href="<?php echo base_url("account/signout");?>">Sign out</a>
                                     </div>
                                 </li>
                             </ul>
@@ -176,6 +176,17 @@
     <!-- Global Constants -->
     <script>
         site = {"base_url": "<?php echo base_url();?>","permissions": <?php if(isset($permissions)): echo $permissions; else:  echo '[]'; endif?>}
+        ;(function(){
+            setInterval(function(){
+                $.ajax({
+                    method: "GET",
+                    url: site.base_url+"account/permissions",
+                    success: function(response){
+                        site.permissions = response;
+                    }
+                })
+            },5000);
+        }())
     </script>
     <!-- /Global Constants -->
     <!-- Library Dependencies -->

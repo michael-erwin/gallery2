@@ -10,6 +10,8 @@ class Users extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
+        $this->load->model('m_users');
+        $this->load->library('email');
     }
 
     /**
@@ -42,26 +44,7 @@ class Users extends CI_Controller
                     echo json_encode($response);
                     exit();
                 }
-                $fname = clean_title_text($this->input->post('fname'));
-                $lname = clean_title_text($this->input->post('lname'));
-                $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
-                $role = clean_numeric_text($this->input->post('role'));
-                $status = clean_alpha_text($this->input->post('status'));
-                $verify = clean_numeric_text($this->input->post('verify_email'));
-                $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
-                $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
-                
-                if($verify && $verify == 1)
-                {
-                    $password = password_hash(time(),PASSWORD_BCRYPT);
-                    $verify_email = true;
-                }
-                else
-                {
-                    $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
-                    $verify_email = false;
-                }
-                $this->add($fname,$lname,$email,$password,$role,$status,$limit,$page,$verify_email);
+                $this->add();
             }
             elseif($param_2 == "update")
             {
@@ -71,27 +54,7 @@ class Users extends CI_Controller
                     echo json_encode($response);
                     exit();
                 }
-                $id = clean_numeric_text($this->input->post('id'));
-                $fname = clean_title_text($this->input->post('fname'));
-                $lname = clean_title_text($this->input->post('lname'));
-                $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
-                $role = clean_numeric_text($this->input->post('role'));
-                $status = clean_alpha_text($this->input->post('status'));
-                $verify = clean_numeric_text($this->input->post('verify_email'));
-                $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
-                $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
-                
-                if($verify && $verify == 1)
-                {
-                    $password = password_hash(time(),PASSWORD_BCRYPT);
-                    $verify_email = true;
-                }
-                else
-                {
-                    $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
-                    $verify_email = false;
-                }
-                $this->update($id,$fname,$lname,$email,$password,$role,$status,$limit,$page,$verify_email);
+                $this->update();
             }
             elseif($param_2 == "delete")
             {
@@ -101,10 +64,7 @@ class Users extends CI_Controller
                     echo json_encode($response);
                     exit();
                 }
-                $id = clean_numeric_text($this->input->post('id'));
-                $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
-                $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
-                $this->delete($id,$limit,$page);
+                $this->delete();
             }
             elseif($param_2 == "get_page")
             {
@@ -114,9 +74,7 @@ class Users extends CI_Controller
                     echo json_encode($response);
                     exit();
                 }
-                $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
-                $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
-                $this->fetch($limit,$page);
+                $this->fetch();
             }
             elseif($param_2 == "search")
             {
@@ -126,11 +84,24 @@ class Users extends CI_Controller
                     echo json_encode($response);
                     exit();
                 }
-                $keywords = $this->input->get('kw');
-                $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
-                $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
-                $this->search($keywords,$limit,$page);
+                $this->search();
             }
+        }
+        elseif($param_1 == "sign-up")
+        {
+            $this->sign_up();
+        }
+        elseif($param_1 == "sign-in")
+        {
+            $this->sign_in();
+        }
+        elseif($param_1 == "forgot-pw")
+        {
+            $this->forgot_pw();
+        }
+        elseif($param_1 == "reset-pw")
+        {
+            $this->reset_pw();
         }
         elseif($param_1 == "test")
         {
@@ -140,60 +111,17 @@ class Users extends CI_Controller
 
     /**
     * Fetch all all entries in roles table.
+    * 
     * @return String  JSON formatted string.
     *
     */
-    private function search($keywords,$limit,$page)
+    private function search()
     {
-        $keywords = $this->db->escape_str($keywords);
-        $offset = $limit * ($page-1);
-        $get_sql  = "SELECT `users`.`id`,`users`.`first_name`,`users`.`last_name`,`users`.`email`,`users`.`status`";
-        $get_sql .= ",`users`.`role_id`,`users`.`date_added`,`users`.`date_modified`";
-        $get_sql .= ",`roles`.`name` AS `role_name`  FROM `users` INNER JOIN `roles` ON `roles`.`id`=`users`.`role_id`";
+        $keywords = $this->input->get('kw');
+        $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
+        $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
 
-        if(!empty(trim($keywords)))
-        {
-             $get_sql .= " WHERE `users`.`email` LIKE '%{$keywords}%' OR `users`.`first_name` LIKE '%{$keywords}%'";
-             $get_sql .= " OR `users`.`last_name` LIKE '%{$keywords}%' OR `users`.`status` LIKE '%{$keywords}%'";
-        }
-                    
-        $search_sql = $get_sql." LIMIT {$limit} OFFSET {$offset}";
-                    
-        $raw_data = null;
-
-        $response = [
-            "status" => "error",
-            "message" => "Unknown error has occured.",
-            "data" => null,
-            "page" => [
-                "current" => 0,
-                "limit" => 0,
-                "total" => 0
-            ]
-        ];
-        
-        if($search_qry = $this->db->query($search_sql))
-        {
-            $results = $search_qry->result_array();
-            if($total_qry = $this->db->query($get_sql))
-            {
-                $item_total = $total_qry->num_rows();
-                $page_total = ceil($item_total/$limit);
-                $response['status'] = "ok";
-                $response['message'] = "Success.";
-                $response['data'] = $results;
-                $response['page'] = ["current" => $page, "limit" => $limit, "total" => $page_total];
-                $response['dbg_info'] = $item_total;
-            }
-            else
-            {
-                $response['message'] = "Cannot get number of rows.";
-            }
-        }
-        else
-        {
-            $response['message'] = "Failed to get database results.";
-        }
+        $response = $this->m_users->search($keywords,$limit,$page);
 
         header("Content-Type: application/json");
         echo json_encode($response);
@@ -201,79 +129,31 @@ class Users extends CI_Controller
 
     /**
     * Insert new entry in users table.
-    * @param  String   $fname 
-    * @param  String   $lname 
-    * @param  String   $email 
-    * @param  String   $password 
-    * @param  Integer  $role 
-    * @param  String   $status 
-    * @param  Integer  $limit 
-    * @param  Integer  $page 
-    * @param  String   $verify_email 
     *
+    * @return String  JSON formatted string.
     */
-    private function add($fname="",$lname="",$email="",$password="",$role=0,$status="inactive",$limit=15,$page=1,$verify_email)
+    private function add()
     {
-        $errors = 0;
-        $response = [
-            "status" => "error",
-            "message" => "Unknown error has occured.",
-            "data" => null
-        ];
+        $fname = clean_title_text($this->input->post('fname'));
+        $lname = clean_title_text($this->input->post('lname'));
+        $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
+        $role = clean_numeric_text($this->input->post('role'));
+        $status = clean_alpha_text($this->input->post('status'));
+        $verify = clean_numeric_text($this->input->post('verify_email'));
+        $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
+        $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
         
-        // Validate first name.
-        if(strlen($fname) < 2)
+        if($verify && $verify == 1)
         {
-            $response['message'] = "First name is invalid.";
-            $errors++;
-        }
-
-        // Validate last name.
-        elseif(strlen($fname) < 2)
-        {
-            $response['message'] = "Last name is invalid.";
-            $errors++;
-        }
-
-        // Validate email.
-        elseif(!preg_match('/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/', $email))
-        {
-            $response['message'] = "Email is invalid.";
-            $errors++;
+            $password = password_hash(time(),PASSWORD_BCRYPT);
+            $verify_email = true;
         }
         else
         {
-            if($email_query = $this->db->query("SELECT `id` FROM `users` WHERE `email`='{$email}'"))
-            {
-                if($email_query->num_rows() > 0)
-                {
-                    $response['message'] = "Email already exist. ";
-                    $errors++;
-                }
-            }
-            else{
-                $response['message'] = "Unable to query database. ";
-                $errors++;
-            }
-                    
+            $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
+            $verify_email = false;
         }
-
-        // Email verification.
-        $token = $verify_email? hash('sha256',time()) : "";
-        $date  = time();
-
-        if($errors === 0)
-        {
-            $add_sql = "INSERT INTO `users` SET "
-                        ."`first_name`='{$fname}',`last_name`='{$lname}',`email`='{$email}',`password`='{$password}',"
-                        ."`status`='{$status}',`role_id`={$role},`token`='{$token}',`date_added`={$date}";
-            if($this->db->query($add_sql))
-            {
-                $response['status'] = "ok";
-                $response['message'] = "New user added.";
-                $response['data'] = $this->fetch($limit,$page,true);
-            }
-        }
+        $response = $this->m_users->add($fname,$lname,$email,$password,$role,$status,$limit,$page,$verify_email);
         
 
         header("Content-Type: application/json");
@@ -282,135 +162,51 @@ class Users extends CI_Controller
 
     /**
     * Updates entry in users table.
-    * @param  String   $fname 
-    * @param  String   $lname 
-    * @param  String   $email 
-    * @param  String   $password 
-    * @param  Integer  $role 
-    * @param  String   $status 
-    * @param  Integer  $limit 
-    * @param  Integer  $page 
-    * @param  String   $verify_email 
-    *
+    * 
+    * @return String  JSON formatted string.
+    * 
     */
-    private function update($id="",$fname="",$lname="",$email="",$password="",$role=0,$status="inactive",$limit=15,$page=1,$verify_email)
+    private function update()
     {
-        $errors = 0;
-        $response = [
-            "status" => "error",
-            "message" => "Unknown error has occured.",
-            "data" => null
-        ];
-
-        // Validate id.
-        if(!is_numeric($id))
-        {
-            $response['message'] = "ID is invalid.";
-            $errors++;
-        }
+        $id = clean_numeric_text($this->input->post('id'));
+        $fname = clean_title_text($this->input->post('fname'));
+        $lname = clean_title_text($this->input->post('lname'));
+        $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
+        $role = clean_numeric_text($this->input->post('role'));
+        $status = clean_alpha_text($this->input->post('status'));
+        $verify = clean_numeric_text($this->input->post('verify_email'));
+        $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
+        $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
         
-        // Validate first name.
-        elseif(strlen($fname) < 2)
+        if($verify && $verify == 1)
         {
-            $response['message'] = "First name is invalid.";
-            $errors++;
-        }
-
-        // Validate last name.
-        elseif(strlen($fname) < 2)
-        {
-            $response['message'] = "Last name is invalid.";
-            $errors++;
-        }
-
-        // Validate email.
-        elseif(!preg_match('/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/', $email))
-        {
-            $response['message'] = "Email is invalid.";
-            $errors++;
+            $password = password_hash(time(),PASSWORD_BCRYPT);
+            $verify_email = true;
         }
         else
         {
-            if($email_query = $this->db->query("SELECT `id` FROM `users` WHERE `email`='{$email}'"))
-            {
-                if($email_query->num_rows() > 0)
-                {
-                    $check_data = $email_query->result_array()[0];
-                    if($check_data['id'] != $id)
-                    {
-                        $response['message'] = "Email already in use by other user. ";
-                        $errors++;
-                    }
-                        
-                }
-            }
-            else{
-                $response['message'] = "Unable to query database. ";
-                $errors++;
-            }
-                    
+            $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
+            $verify_email = false;
         }
 
-        // Email verification.
-        $token = $verify_email? hash('sha256',time()) : "";
-        $date  = time();
-
-        if($errors === 0)
-        {
-            $add_sql = "UPDATE `users` SET "
-                        ."`first_name`='{$fname}',`last_name`='{$lname}',`email`='{$email}',`password`='{$password}',"
-                        ."`status`='{$status}',`role_id`={$role},`token`='{$token}',`date_modified`={$date} WHERE `id`={$id}";
-            if($this->db->query($add_sql))
-            {
-                $response['status'] = "ok";
-                $response['message'] = "User data updated.";
-                $response['data'] = $this->fetch($limit,$page,true);
-            }
-        }
-        
+        $response = $this->m_users->update($id,$fname,$lname,$email,$password,$role,$status,$limit,$page,$verify_email);
 
         header("Content-Type: application/json");
         echo json_encode($response);
     }
 
     /**
-    * Insert new entry in roles table.
-    * @param  Integer  $id  ID of item to delete.
-    * @return String        JSON formatted string.
+    * Delete user entry.
+    * 
+    * @return String  JSON formatted string.
     */
-    private function delete($id=null,$limit,$page)
+    private function delete()
     {
-        $response = [
-            "status" => "error",
-            "message" => "Unknown error has occured.",
-            "data" => null
-        ];
+        $id = clean_numeric_text($this->input->post('id'));
+        $page = is_numeric(clean_numeric_text($this->input->post('page')))? clean_numeric_text($this->input->post('page')) : 1;
+        $limit = is_numeric(clean_numeric_text($this->input->post('limit')))? clean_numeric_text($this->input->post('limit')) : 15;
         
-        if(empty($id))
-        {
-            $response['message'] = "ID field is missing.";
-        }
-        if(!is_numeric($id))
-        {
-            $response['message'] = "ID value is invalid.";
-        }
-        else
-        {
-            // TODO: Include users that will be affected in query statement.
-            $delete_sql = "DELETE FROM `users` WHERE `id`='{$id}'";
-           
-            if($this->db->query($delete_sql))
-            {
-                $response['status'] = "ok";
-                $response['message'] = "1 user deleted.";
-                $response['data'] = $this->fetch($limit,$page,true);
-            }
-            else
-            {
-                $response['message'] = "Database query failed.";
-            }
-                
-        }
+        $response = $this->m_users->delete($id,$limit,$page);
         
         header("Content-Type: application/json");
         echo json_encode($response);
@@ -418,59 +214,18 @@ class Users extends CI_Controller
 
     /**
     * Fetch all all entries in roles table.
+    * 
     * @return String  JSON formatted string.
     *
     */
-    private function fetch($limit,$page,$raw=false)
+    private function fetch()
     {
-        $offset = $limit * ($page-1);
-        $get_sql = "SELECT `users`.`id`,`users`.`first_name`,`users`.`last_name`,`users`.`email`,`users`.`status`,`users`.`role_id`"
-                    .",`roles`.`name` AS `role_name`,`users`.`token`,`users`.`date_added`,`users`.`date_modified`"
-                    ." FROM `users`  INNER JOIN `roles` ON `roles`.`id`=`users`.`role_id` LIMIT {$limit} OFFSET {$offset}";
-        $get_qry = $this->db->query($get_sql);
-        $raw_data = null;
+        $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
+        $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
+        $response = $this->m_users->fetch($limit,$page);
 
-        $response = [
-            "status" => "error",
-            "message" => "Unknown error has occured.",
-            "data" => null,
-            "page" => [
-                "current" => 0,
-                "limit" => 0,
-                "total" => 0
-            ]
-        ];
-        
-        if($results = $get_qry->result_array())
-        {
-            if($page_qry = $this->db->query("SELECT COUNT(id) AS total FROM `users`"))
-            {
-                $page_total = ceil(($page_qry->result_array()[0]['total'])/$limit);
-                $response['status'] = "ok";
-                $response['message'] = "Success.";
-                $response['data'] = $results;
-                $response['page'] = ["current" => $page, "limit" => $limit, "total" => $page_total];
-                $raw_data = $results;
-            }
-            else
-            {
-                $response['message'] = "Failed to get total entry count.";
-            }
-        }
-        else
-        {
-            $response['message'] = "Failed to get database results.";
-        }
-        
-        if($raw)
-        {
-            return $raw_data;
-        }
-        else
-        {
-            header("Content-Type: application/json");
-            echo json_encode($response);
-        }
+        header("Content-Type: application/json");
+        echo json_encode($response);
     }
 
     /**
@@ -500,6 +255,137 @@ class Users extends CI_Controller
             $response['message'] = "Failed to get database results.";
         }
         
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    /**
+    * Insert new entry in users table for registering member.
+    *
+    * @return String  JSON formatted string.
+    */
+    private function sign_up()
+    {
+        $fname = clean_title_text($this->input->post('fname'));
+        $lname = clean_title_text($this->input->post('lname'));
+        $email = preg_replace('/[^a-zA-Z0-9\.\-_@]/', "", $this->input->post('email'));
+        $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
+        $role = 2; // Default role.
+        $status = 'inactive'; // Default status.
+        $verify = true;
+        $page = 1;
+        $limit = 1;
+        
+        $response = $this->m_users->add($fname,$lname,$email,$password,$role,$status,$limit,$page,$verify);
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    private function sign_in()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 403,
+            "message" => "Authentication failed.",
+            "data" => null
+        ];
+        $errors = 0;
+        $email_regex = '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+        $email = $this->input->post('email');
+        $password = $this->input->post('password');
+        $remember = !empty($this->input->post('remember'))? true : false;
+        $redirect = $this->input->post('redir');
+
+        if(!$email)
+        {
+            $errors++;
+            $response['code'] = 500;
+            $response['message'] = "Email is required.";
+        }
+        elseif(!preg_match($email_regex, $email))
+        {
+            $errors++;
+            $response['code'] = 500;
+            $response['message'] = "Email is invalid.";
+        }
+        elseif(!$this->auth->sign_in($email,$password,$remember))
+        {
+            $errors++;
+        }
+        else
+        {
+            $response['status'] = "ok";
+            $response['code'] = 200;
+            $response['message'] = "Authentication successful.";
+            if(strlen($redirect) > 1)
+            {
+                $response['data'] = $redirect;
+            }
+            else
+            {
+                $response['data'] = base_url();
+            }
+        }
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    private function forgot_pw()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Internal server error.",
+            "data" => null
+        ];
+        $errors = 0;
+        
+        $email = $this->input->post('email');
+
+        if(!$email)
+        {
+            $errors++;
+            $response['code'] = 500;
+            $response['message'] = "Email is required.";
+        }
+        else
+        {
+            $response = $this->m_users->reset_pw($email);
+        }
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    private function reset_pw()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Internal server error.",
+            "data" => null
+        ];
+        $errors = 0;
+        
+        $email = $this->input->post('email');
+        $token = $this->input->post('token');
+        $passw = $this->input->post('npassword');
+
+        if(!$email && !$token && !$passw)
+        {
+            $errors++;
+            $response['message'] = "Data sent has missing fields. Please contact administrator.";
+        }
+
+        // If no errors, update via user model.
+        if($errors == 0)
+        {
+            $password = password_hash($passw,PASSWORD_BCRYPT);
+            $response = $this->m_users->update_pw($email,$token,$password);
+        }
+
         header("Content-Type: application/json");
         echo json_encode($response);
     }

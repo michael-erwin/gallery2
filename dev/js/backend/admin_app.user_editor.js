@@ -156,7 +156,8 @@ admin_app.user_editor =
         } else { this.objects.input_lname.removeClass('error'); }
 
         // Validate first email.
-        if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.objects.input_email.val())) {
+        var email_filter = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!email_filter.test(this.objects.input_email.val())) {
             this.objects.input_email.addClass('error');
             errors++;
         } else { this.objects.input_email.removeClass('error'); }

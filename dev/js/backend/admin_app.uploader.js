@@ -335,13 +335,17 @@ admin_app.uploader =
     handleInput(files_list) {
         var type = this.data.media_type;
         var allowed_types = null;
+        var permission_name = null;
         var total_count = files_list.length+this.objects.files.length;
-        if(type === "photos") allowed_types = this.data.allowed_photos;
-        if(type === "videos") allowed_types = this.data.allowed_videos;
-        if($.inArray(type,this.permissions) === -1) {
-            toastr["error"]("You don't have permission to upload "+type+".");
-        }
-        else {
+        if(type === "photos"){
+            permission_name = 'photo_add';
+            allowed_types = this.data.allowed_photos;
+        };
+        if(type === "videos"){
+            allowed_types = this.data.allowed_videos;
+            permission_name = 'video_add';
+        };
+        if($.inArray('all',site.permissions) !== -1 || $.inArray(permission_name,this.permissions) !== -1) {
             for(var i = 0; i < files_list.length; i++) {
                 var in_allowed_types = $.inArray(files_list[i].type, allowed_types);
                 if(in_allowed_types !== -1) {
@@ -353,6 +357,9 @@ admin_app.uploader =
                 }
             }
         }
+        else {
+            toastr["error"]("You don't have permission to upload "+type+".");
+        };
         this.render();
         this.uploadNext();
     }
