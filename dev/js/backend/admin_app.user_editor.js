@@ -60,6 +60,8 @@ admin_app.user_editor =
         this.getData();
     },
     render: function() {
+        // Clear previous error markings.
+        this.self.find('.error').removeClass('error');
         // Build permission table entries.
         var list_options = "";
         if(this.data.role_list.length > 0) {
