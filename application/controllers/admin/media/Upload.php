@@ -19,7 +19,9 @@ class Upload extends CI_Controller
         $this->permissions = $this->auth->get_permissions();
         if(!in_array('all', $this->permissions) && !in_array('admin_access', $this->permissions))
         {
-            header("Location: ".base_url('/account/signin').'?redir='.base_url(uri_string()));
+            $query_strings = '?redir='.base_url(uri_string());
+            $query_strings .= '&auth_error=Please login using authorized account to access page.';
+            header("Location: ".base_url('account/signin').$query_strings);
             exit();
         }
         $this->load->model('m_category');
