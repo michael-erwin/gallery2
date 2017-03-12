@@ -24,13 +24,6 @@ var favorites = {
         this.objects.modal = $('#modal_favorites');
         this.objects.modal_title = $('#modal_favorites h4.modal-title');
         this.objects.modal_body = $('#modal_favorites [data-id="contents"]');
-
-        // var stored_data = this.getCookie('favorites');
-        // if(stored_data) {
-        //     stored_data = JSON.parse(stored_data);
-        //     this.data = stored_data;
-        // }
-        // this.render.call(this);
         this.getData.call(this);
     },
     render() {
@@ -137,7 +130,7 @@ var favorites = {
                     this.data = response.data;
                     this.render();
                 }else{
-                    toastr["error"](response.message,"Error");
+                    if(response.code != 403) toastr["error"](response.message,"Error");
                 }
             }
         });
