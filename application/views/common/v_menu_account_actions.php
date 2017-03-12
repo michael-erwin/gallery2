@@ -14,7 +14,7 @@
                             <a><?php echo strtoupper($_SESSION['user']['first_name']);?></a>
                             <div class="box-wrapper">
                                 <ul class="submenu" id="menu_favorites">
-                                    <li><a href="<?php echo base_url('account/profile');?>">Profile</a></li>
+                                    <li><a href="#account/profile">Profile</a></li>
                                     <li><a href="<?php echo base_url('account/signout');?>">Sign Out</a></li>
                                 </ul>
                             </div>
