@@ -17,20 +17,21 @@ var favorites = {
     init: function() {
         this.objects.action_box = $('#actions');
         this.self = $('#menu_favorites');
-        this.objects.photos = this.self.find('[data-id="photos"]');
-        this.objects.videos = this.self.find('[data-id="videos"]');
+        this.objects.menu_photos = this.self.find('[data-id="photos"]');
+        this.objects.menu_videos = this.self.find('[data-id="videos"]');
         this.objects.badge_photos = this.self.find('[data-id="fav_badge_photos"]');
         this.objects.badge_videos = this.self.find('[data-id="fav_badge_videos"]');
         this.objects.modal = $('#modal_favorites');
         this.objects.modal_title = $('#modal_favorites h4.modal-title');
         this.objects.modal_body = $('#modal_favorites [data-id="contents"]');
 
-        var stored_data = this.getCookie('favorites');
-        if(stored_data) {
-            stored_data = JSON.parse(stored_data);
-            this.data = stored_data;
-        }
-        this.render.call(this);
+        // var stored_data = this.getCookie('favorites');
+        // if(stored_data) {
+        //     stored_data = JSON.parse(stored_data);
+        //     this.data = stored_data;
+        // }
+        // this.render.call(this);
+        this.getData.call(this);
     },
     render() {
         // Item count display.
@@ -46,63 +47,65 @@ var favorites = {
         else {
             this.objects.badge_videos.text(this.data.videos.length).css('display','none');
         }
-        // Update cookie value.
-        this.setCookie();
+        
         // Event bindings.
-        this.objects.photos.unbind('click').on('click',this.fetch.bind(this));
-        this.objects.videos.unbind('click').on('click',this.fetch.bind(this));
+        this.objects.menu_photos.unbind('click').on('click',this.fetch.bind(this));
+        this.objects.menu_videos.unbind('click').on('click',this.fetch.bind(this));
     },
     add: function(e) {
         var parent_thumb = $(e.target).parents('.thumb');
         var parent_data = JSON.parse(parent_thumb.attr('data-data'));
         var media_type = parent_thumb.attr('data-media');
-        if(media_type == "photo") {
-            var existed = $.inArray(parent_data.id,this.data.photos);
-            if(existed === -1) {
-                this.data.photos.push(parent_data.id);
-                toastr["success"]("Item \""+parent_data.title+"\" added to favorites.");
-                this.setCookie();
-                this.render();
-            }
-            else {
-                toastr["info"]("Item \""+parent_data.title+"\" already exist.");
-            }
+        var media_type_s = media_type+'s';
+        var existed = $.inArray(parent_data.id,this.data[media_type_s]);
+        if(existed === -1) {
+            $.ajax({
+                method: "POST",
+                context: this,
+                url: site.base_url+'favorites/add/'+media_type,
+                data: 'id='+parent_data.id,
+                error: function(jqXHR,textStatus,errorThrown){
+                    toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
+                },
+                success: function(response){
+                    if(response.status == "ok"){
+                        this.data = response.data;
+                        toastr["success"]("Item \""+parent_data.title+"\" added to favorites.","Success");
+                        this.render();
+                    }else{
+                        toastr["error"](response.message,"Error");
+                    }
+                }
+            });
         }
-        if(media_type == "video") {
-            var existed = $.inArray(parent_data.id,this.data.videos);
-            if(existed === -1) {
-                this.data.videos.push(parent_data.id);
-                toastr["success"]("Item \""+parent_data.title+"\" added to favorites.");
-                this.setCookie();
-                this.render();
-            }
-            else {
-                toastr["info"]("Item \""+parent_data.title+"\" already exist.");
-            }
+        else {
+            toastr["info"]("Item \""+parent_data.title+"\" already exist.");
         }
     },
     remove: function(e) {
         var parent_item = $(e.target).parents('.item');
         var id = parent_item.attr('data-id');
         var type = parent_item.attr('data-type');
-        if(type == "photo") {
-            var index = $.inArray(id,this.data.photos);
-            this.data.photos.splice(index,1);
-            this.render();
-            parent_item.remove();
-            if(this.data.photos.length == 0) {
-                this.objects.modal.modal('hide');
+        $.ajax({
+            method: "POST",
+            context: this,
+            url: site.base_url+'favorites/remove/'+type,
+            data: 'id='+id,
+            error: function(jqXHR,textStatus,errorThrown){
+                toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
+            },
+            success: function(response){
+                if(response.status == "ok"){
+                    this.data = response.data;
+                    parent_item.remove();
+                    if(this.data[type+'s'].length == 0) this.objects.modal.modal('hide');
+                    toastr["success"](response.message);
+                    this.render();
+                }else{
+                    toastr["error"](response.message,"Error");
+                }
             }
-        }
-        else if(type == "video") {
-            var index = $.inArray(id,this.data.videos);
-            this.data.videos.splice(index,1);
-            this.render();
-            parent_item.remove();
-            if(this.data.videos.length == 0) {
-                this.objects.modal.modal('hide');
-            }
-        }
+        });
     },
     getCookie: function(name) {
         var nameEQ = name + "=";
@@ -121,8 +124,26 @@ var favorites = {
         var path = "; path=/";
         document.cookie = "favorites="+JSON.stringify(this.data)+expires+path;
     },
+    getData: function() {
+        $.ajax({
+            method: "GET",
+            context: this,
+            url: site.base_url+'favorites/get',
+            error: function(jqXHR,textStatus,errorThrown){
+                toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
+            },
+            success: function(response){
+                if(response.status == "ok"){
+                    this.data = response.data;
+                    this.render();
+                }else{
+                    toastr["error"](response.message,"Error");
+                }
+            }
+        });
+    },
     fetch: function(e) {
-        var media_type = $(e.target).attr('data-id');
+        var media_type = $(e.target).data('id');
         if(media_type == "photos") {
             if(this.data.photos.length > 0) {
                 var loading = '<div class="favorites-loading"><img src="'+site.base_url+'assets/img/hourglass.gif" /></div>';

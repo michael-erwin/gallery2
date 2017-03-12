@@ -347,11 +347,34 @@ header #actions li {
     list-style-type: none;
     display: inline-block;
 }
+header #actions > ul > li {
+    height: 48px;
+    vertical-align: top;
+}
 header .container-fluid {
     position: relative;
 }
+header #actions li.hasmenu:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-bottom-color: rgba(255,255,255,0.8);
+    position: relative;
+    bottom: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+    animation-name: dummyAnim;
+    animation-duration: 390ms;
+    animation-fill-mode: forwards;
+}
 header #actions li.hasmenu:hover > a {
     color: #35b4f7;
+}
+header #actions li.hasmenu:hover:after {
+    opacity: 0;
+    display: block;
 }
 header #actions li.hasmenu > div.box-wrapper
 {
@@ -369,8 +392,12 @@ header #actions li.hasmenu > div.box-wrapper
 header #actions li.hasmenu:hover > div.box-wrapper {
     display: block;
 }
+@keyframes dummyAnim {
+    0% {opacity: 0;}
+    99% {opacity: 0;}
+    to{opacity: 1;}
+}
 @keyframes makeShadow {
-    to{overflow: hidden;box-shadow: none}
     to{overflow: visible;box-shadow: 1px 1px 10px 2px rgba(0, 0, 0, 0.3);}
 }
 header #actions ul.submenu {
@@ -396,16 +423,10 @@ header #actions ul.submenu li:hover a {
     color: #333;
     background-color: rgba(150,150,150,0.5);
 }
+/*
 header #actions ul.submenu:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border: 8px solid transparent;
-    border-bottom-color: rgba(255,255,255,0.8);
-    position: absolute;
-    top: -16px;
-    left: 25px;
-}
+    
+}*/
 
 /* Main */
 @keyframes category_display {

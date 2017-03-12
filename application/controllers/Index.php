@@ -15,6 +15,7 @@ class Index extends CI_Controller
     public function index()
     {
         $data = [
+            'account_actions' => $this->load->view('common/v_menu_account_actions',null,true),
             'backdrop_photo' => "",
             'category_thumbs' => ""
         ];

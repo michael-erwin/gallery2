@@ -146,7 +146,7 @@ admin_app.photo_editor =
                             this.caller();
                         }
                         else {
-                            this.caller.setName(this.data.title); // For uploader list update.
+                            this.caller.setName(this.data.title);
                         }
                     };
                     toastr["success"](response.message);
@@ -280,6 +280,7 @@ admin_app.photo_editor =
         // Disable closing window.
         this.self.find('button').prop("disabled",true);
         // Hide upload controls and show progress bar.
+        this.objects.downloadable_progress_bar.css('width','0%').text('0%');
         this.objects.downloadable_text.css('display','none');
         this.objects.downloadable_btn.css('display','none');
         this.objects.downloadable_progress_box.css('display','block');

@@ -20,19 +20,7 @@
                     <a href="<?php echo base_url();?>"><i class="fa fa-camera fa-lg" style="color:#c93428"></i> Media Gallery</a>
                 </div>
                 <div id="actions">
-                    <ul>
-                        <li class="hasmenu">
-                            <a>FAVORITES</a>
-                            <div class="box-wrapper">
-                                <ul class="submenu" id="menu_favorites">
-                                    <li><a data-id="photos">Photos <span class="badge" data-id="fav_badge_photos">0</span></a></li>
-                                    <li><a data-id="videos">Videos <span class="badge" data-id="fav_badge_videos">0</span></a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li>&nbsp;|&nbsp;</li>
-                        <li><a>SIGN IN</a></li>
-                    </ul>
+                    <?php echo @$account_actions;?>
                 </div>
             </section>
         </header>

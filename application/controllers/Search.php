@@ -158,6 +158,7 @@ class Search extends CI_Controller
     private function index($result, $page_meta=null)
     {
         $data = [];
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         $data['thumbs'] = '';
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$result['crumbs']],true);
         $data['pagination'] = '';
