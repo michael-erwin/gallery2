@@ -89,6 +89,9 @@ ol.breadcrumb a.active {
 .media-item-display.loading .media {
     background-color: #eeeeee;
 }
+.media-item-display.loading button.btn {
+    display: none;
+}
 .media-item-display .row {
     padding-left: 20px;
     padding-right: 20px;

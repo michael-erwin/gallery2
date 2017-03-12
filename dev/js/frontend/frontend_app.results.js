@@ -266,14 +266,14 @@ var results = {
     },
     download: function(e) {
         var thumb = $(e.target).parents(".thumb");
+        var data = JSON.parse(thumb.attr("data-data"));
         var type = thumb.attr("data-media");
+        var filename = (data.title).replace(' ','-')+'-'+data.uid;
         if(type == "photo") {
-            var data = JSON.parse(thumb.attr("data-data"));
-            window.open('//'+location.host+'/photos/download/'+data.uid,'_blank');
+            window.location = site.base_url+'photos/download/full/'+filename;
         }
         if(type == "video") {
-            var data = JSON.parse(thumb.attr("data-data"));
-            window.open('//'+location.host+'/videos/download/'+data.uid,'_blank');
+            window.location = site.base_url+'videos/download/full/'+filename;
         }
     }
 };

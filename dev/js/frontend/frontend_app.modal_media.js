@@ -34,14 +34,18 @@ var modal_media = {
                 video_page_box.play();
             }
         }.bind(this),500);
-        //console.log(contents);
     },
     buildTable: function(data,type) {
+        var mime = (type == "photos")? "JPG" : "MP4";
         var tags = (data.tags).split(' ');
         var tag_html = "";
+        var btn_zip = "";
         for(var i=0;i<tags.length;i++) {
             var tag_seo_link = site.base_url+'search/'+type+'?kw='+tags[i];
             tag_html += '<a class="label label-default" href="'+tag_seo_link+'">'+tags[i]+'</a>&nbsp;';
+        }
+        if(data.has_zip){
+            if(data.has_zip > 0){btn_zip = '\n<button class="btn btn-danger" data-mime="ZIP" data-type="'+type+'" data-title="'+data.title+'" data-uid="'+data.uid+'" onclick="media_file.download(this)" >All (ZIP)</button>';}
         }
         var table =
             '<table class="table table-bordered">'+
@@ -62,6 +66,16 @@ var modal_media = {
                 '<tbody>'+
                     '<tr><td>'+
                         tag_html+
+                    '</td></tr>'+
+                '</tbody>'+
+            '</table>'+
+            '<table class="table table-bordered">'+
+                '<thead>'+
+                    '<tr><th>Downloads</th></tr>'+
+                '</thead>'+
+                '<tbody>'+
+                    '<tr><td style="text-align:center">'+
+                        '<button class="btn btn-success" data-mime="'+mime+'" data-type="'+type+'" data-title="'+data.title+'" data-uid="'+data.uid+'" onclick="media_file.download(this)">Full ('+mime+')</button>'+btn_zip+
                     '</td></tr>'+
                 '</tbody>'+
             '</table>';

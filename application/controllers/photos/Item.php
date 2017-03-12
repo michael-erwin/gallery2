@@ -49,11 +49,13 @@ class Item extends CI_Controller
             $info['title'] => ""
         ];
         $media = [
+            'uid' => $info['uid'],
             'title' => $info['title'],
             'description' => $info['description'],
             'dimension' => $info['width'].'x'.$info['height'],
             'file_size' => $this->formatSizeUnits($info['file_size']),
             'tags' => explode(' ',$info['tags']),
+            'has_zip' => $info['has_zip'],
             'photo_url' => base_url()."photos/preview/lg/".preg_replace('/\s/','-', $info['title'])."-".$info['uid']
         ];
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);

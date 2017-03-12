@@ -40,8 +40,8 @@
                 </thead>
                 <tbody>
                     <tr><td style="text-align:center">
-                        <button class="btn btn-success">Full (MP4)</button>
-                    </td> </tr>
+                        <button class="btn btn-success" data-mime="MP4" data-type="videos" data-title="<?php echo @$title;?>" data-uid="<?php echo @$uid;?>" onclick="media_file.download(this)">Full (MP4)</button>
+                    </td></tr>
                 </tbody>
             </table>
         </div>

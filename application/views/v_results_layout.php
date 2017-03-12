@@ -143,17 +143,6 @@
                                         <tr><td>&nbsp;</td></tr>
                                     </tbody>
                                 </table>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr><th>Downloads</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td style="text-align:center">
-                                            <button class="btn btn-success">Full (JPG)</button>&nbsp;
-                                            <button class="btn btn-danger">All (ZIP)</button>
-                                        </td> </tr>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>

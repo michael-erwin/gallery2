@@ -19,6 +19,7 @@ var scss_files = [
 
 var frontend_js_files = [
             './dev/js/frontend/frontend_app.utilities.js',
+            './dev/js/frontend/frontend_app.media_file.js',
             './dev/js/frontend/frontend_app.favorites.js',
             './dev/js/frontend/frontend_app.results.js',
             './dev/js/frontend/frontend_app.media_box.js',

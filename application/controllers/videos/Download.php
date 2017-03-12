@@ -1,6 +1,6 @@
 <?php
 /**
-* Stream a video.
+* Download a video.
 */
 class Download extends CI_Controller
 {
@@ -14,22 +14,38 @@ class Download extends CI_Controller
         $this->media_path = $this->config->item('mg_media_path');
     }
 
-    public function _remap($filename=null)
+    public function full($filename = null)
     {
-        if($filename)
+        $name = explode('-', $filename);
+        $uid  = end($name);
+        $path = $this->media_path;
+        $mark = $this->watermark;
+        $file_full = "{$path}/videos/private/full_size/{$uid}.mp4";
+        $file_480p = "{$path}/videos/public/file_480p/{$uid}.mp4";
+        $overlay = "{$path}/photos/private/watermark/{$mark}";
+            
+        if(in_array('all',$this->permissions) || in_array('media_view',$this->permissions))
         {
-            $filename = end((explode('-', $filename)));
-            $file_path = $this->media_path.'/videos/public/480p/'.$filename.'.mp4';
-
-            if(file_exists($file_path))
+            if (file_exists($file_full))
             {
-                header("Content-Type: video/mp4");
                 header("Content-disposition: attachment; filename=\"{$filename}.mp4\"");
-                readfile($file_path);
+                readfile($file_full);
             }
             else
             {
-                echo "File not found.";
+                show_404();
+            }
+        }
+        else
+        {
+            if (file_exists($file_480p))
+            {
+                header("Content-disposition: attachment; filename=\"{$filename}.mp4\"");
+                readfile($file_480p);
+            }
+            else
+            {
+                show_404();
             }
         }
     }

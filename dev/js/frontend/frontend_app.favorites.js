@@ -66,7 +66,11 @@ var favorites = {
                         toastr["success"]("Item \""+parent_data.title+"\" added to favorites.","Success");
                         this.render();
                     }else{
-                        toastr["error"](response.message,"Error");
+                        if(response.code == 403){
+                            toastr["info"]("This feature is for registered members only. Please sign in with your account or sign up.","Notice");
+                        }else{
+                            toastr["error"](response.message,"Error");
+                        }
                     }
                 }
             });

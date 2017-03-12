@@ -38,9 +38,9 @@
                 </thead>
                 <tbody>
                     <tr><td style="text-align:center">
-                        <button class="btn btn-success">Full (JPG)</button>&nbsp;
-                        <button class="btn btn-danger">All (ZIP)</button>
-                    </td> </tr>
+                        <button class="btn btn-success" data-mime="JPG" data-type="photos" data-title="<?php echo @$title;?>" data-uid="<?php echo @$uid;?>" onclick="media_file.download(this)">Full (JPG)</button>
+                        <?php if($has_zip > 0):?>&nbsp;<button class="btn btn-danger" data-mime="ZIP" data-type="photos" data-title="<?php echo @$title;?>" data-uid="<?php echo @$uid;?>" onclick="media_file.download(this)">All (ZIP)</button><?php endif;?>
+                    </td></tr>
                 </tbody>
             </table>
         </div>

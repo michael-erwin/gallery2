@@ -37,20 +37,20 @@ class Preview extends CI_Controller
         }
     }
 
-    public function lg($name = null)
+    public function lg($filename = null)
     {
-        $name = explode('-', $name);
+        $name = explode('-', $filename);
         $uid = end($name);
         $path = $this->media_path;
         $mark = $this->watermark;
         $file = "{$path}/photos/private/full_size/{$uid}.jpg";
         $overlay = "{$path}/photos/private/watermark/{$mark}";
 
-        if ($name && file_exists($file))
+        if (file_exists($file))
         {
             $picture = $this->simpleimage->load($file);
             $picture->best_fit(1080, 1080);
-            $picture->overlay($overlay,"tile");
+            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions)) $picture->overlay($overlay,"tile");
             $picture->output();
         }
         else
@@ -58,9 +58,34 @@ class Preview extends CI_Controller
             show_404();
         }
     }
-    public function test($name)
+    
+    public function full($filename = null)
     {
-        $name = explode('-', $name);$name = end($name);
-        print_r($name);
+        $name = explode('-', $filename);
+        $uid = end($name);
+        $path = $this->media_path;
+        $mark = $this->watermark;
+        $file = "{$path}/photos/private/full_size/{$uid}.jpg";
+        $overlay = "{$path}/photos/private/watermark/{$mark}";
+
+        if (file_exists($file))
+        {
+            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions))
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->best_fit(1080, 1080);
+                $picture->overlay($overlay,"tile");
+                $picture->output();
+            }
+            else
+            {
+                header("Content-Type: image/jpg");
+                readfile($file);
+            }
+        }
+        else
+        {
+            show_404();
+        }
     }
 }

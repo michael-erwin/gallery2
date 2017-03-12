@@ -1,6 +1,6 @@
 <?php
 /**
-* Preview photos
+* Download photos
 */
 class Download extends CI_Controller
 {
@@ -17,59 +17,60 @@ class Download extends CI_Controller
         $this->watermark = $this->config->item('mg_watermark');
     }
 
-    public function _remap($options=null)
+    public function full($filename = null)
     {
-        if($options)
-        {
-            $this->lg($options);
-        }
-    }
-
-    public function md($name = null)
-    {
+        $name = explode('-', $filename);
+        $uid  = end($name);
         $path = $this->media_path;
         $mark = $this->watermark;
         $file = "{$path}/photos/private/full_size/{$uid}.jpg";
         $overlay = "{$path}/photos/private/watermark/{$mark}";
 
-        if ($name && file_exists($file))
+        if (file_exists($file))
         {
-            $picture = $this->simpleimage->load($file);
-            $picture->best_fit(768, 768);
-            $picture->overlay($overlay,"tile");
-            $picture->output();
+            
+            if(in_array('all',$this->permissions) || in_array('media_view',$this->permissions))
+            {
+                header("Content-disposition: attachment; filename=\"{$filename}.jpg\"");
+                readfile($file);
+            }
+            else
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->overlay($overlay,"tile");
+                header("Content-disposition: attachment; filename=\"{$filename}.jpg\"");
+                $picture->output();
+            }
         }
         else
         {
             show_404();
         }
     }
-
-    public function lg($name = null)
+    
+    public function zip($filename = null)
     {
-        $name = explode('-', $name);
-        $uid = end($name);
+        $name = explode('-', $filename);
+        $uid  = end($name);
         $path = $this->media_path;
         $mark = $this->watermark;
-        $file = "{$path}/photos/private/full_size/{$uid}.jpg";
-        $overlay = "{$path}/photos/private/watermark/{$mark}";
+        $file = "{$path}/photos/private/zip/{$uid}.zip";
 
-        if ($name && file_exists($file))
+        if (file_exists($file))
         {
-            $picture = $this->simpleimage->load($file);
-            $picture->best_fit(1080, 1080);
-            $picture->overlay($overlay,"tile");
-            header("Content-disposition: attachment; filename=\"{$uid}.jpg\"");
-            $picture->output();
+            if(in_array('all',$this->permissions) || in_array('media_view',$this->permissions))
+            {
+                header("Content-disposition: attachment; filename=\"{$filename}.zip\"");
+                readfile($file);
+            }
+            else
+            {
+                show_404();
+            }
         }
         else
         {
             show_404();
         }
-    }
-    public function test($name)
-    {
-        $name = explode('-', $name);$name = end($name);
-        print_r($name);
     }
 }
