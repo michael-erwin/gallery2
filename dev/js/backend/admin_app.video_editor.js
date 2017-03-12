@@ -195,7 +195,7 @@ admin_app.video_editor =
         this.objects.tag_box.delegate("li > span.del","click",this.removeTag);
     },
     formatTag: function(name) {
-        return '<li class="input-tag"><span class="name">'+name+'</span><span class="del">x</span></li>';
+        return '<li class="input-tag"><span class="name">'+name+'</span><span class="del" title="Remove">×</span></li>';
     },
     keyinTag: function(e) {
         var self = e.target;

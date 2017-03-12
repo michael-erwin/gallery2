@@ -11,7 +11,13 @@ admin_app.photo_editor =
         description_box: null,
         tag_box: null,
         tag_box_input: null,
-        save_btn: null,
+        downloadable_form: null,
+        downloadable_text: null,
+        downloadable_file: null,
+        downloadable_progress_box: null,
+        downloadable_progress_bar: null,
+        downloadable_btn: null,
+        save_btn: null
     },
     caller: null,
     data: {
@@ -24,6 +30,7 @@ admin_app.photo_editor =
         height: null,
         width: null,
         file_size: null,
+        has_zip: null,
         share_id: null,
         date_added: null,
         date_modified: null
@@ -56,15 +63,26 @@ admin_app.photo_editor =
         this.objects.tag_box_input.unbind('keydown').on('keydown',this.backspTag.bind(this));
         this.objects.tag_box_input.unbind('paste').on('paste',function(){return false});
         this.objects.tag_box.unbind('click').on('click',(function(){this.objects.tag_box_input.focus()}).bind(this));
-        // Initialize save button.
+        // Initialize downloadable box.
+        this.objects.downloadable_form = this.self.find('.downloadable_box form');
+        this.objects.downloadable_file = this.self.find('.downloadable_box [data-id="upload_source_file"]');
+        this.objects.downloadable_text = this.self.find('.downloadable_box [data-id="downloadable_text"]');
+        this.objects.downloadable_progress_box = this.self.find('.downloadable_box [data-id="progress_box"]');
+        this.objects.downloadable_progress_bar = this.self.find('.downloadable_box [role="progressbar"]');
+        this.objects.downloadable_btn = this.self.find('.downloadable_box [data-id="upload_btn"]');
+        // Initialize buttons.
         this.objects.save_btn = this.self.find('[data-id="save_btn"]');
         this.objects.save_btn.unbind('click').on('click',this.save.bind(this));
+        this.objects.downloadable_btn.unbind('click').on('click',this.uploadTrigger.bind(this));
+        this.objects.downloadable_file.unbind().on('change',this.uploadFile.bind(this));
         // Bind events.
+        this.self.find('.downloadable_box button.delete').unbind('click').on('click',this.deleteZip.bind(this));
         this.self.on('hidden.bs.modal', (function(){this.objects.img_box.addClass("loading")}).bind(this));
         // Modal behavior.
-        this.self.modal({backdrop: 'static'}).modal('hide');
+        this.self.modal({backdrop: 'static',keyboard: false}).modal('hide');
     },
     render: function() {
+        this.uploadZipEnd();
         this.objects.img_box.addClass("loading");
         this.objects.img_box.find('img[data-id="photo"]').attr('src',site.base_url+'photos/view/lg/'+this.data.uid);
         this.enableState();
@@ -193,7 +211,7 @@ admin_app.photo_editor =
         this.objects.tag_box.delegate("li > span.del","click",this.removeTag);
     },
     formatTag: function(name) {
-        return '<li class="input-tag"><span class="name">'+name+'</span><span class="del">x</span></li>';
+        return '<li class="input-tag"><span class="name">'+name+'</span><span class="del" title="Remove">×</span></li>';
     },
     keyinTag: function(e) {
         var self = e.target;
@@ -253,5 +271,107 @@ admin_app.photo_editor =
     },
     removeTag: function(e) {
         $(e.target).parent("li").remove();
+    },
+    uploadTrigger: function(e){
+        this.objects.downloadable_form[0].reset();
+        this.objects.downloadable_file.trigger('click');
+    },
+    uploadZipStart: function(){
+        // Disable closing window.
+        this.self.find('button').prop("disabled",true);
+        // Hide upload controls and show progress bar.
+        this.objects.downloadable_text.css('display','none');
+        this.objects.downloadable_btn.css('display','none');
+        this.objects.downloadable_progress_box.css('display','block');
+    },
+    uploadZipEnd: function(){
+        // Determine text for name & button.
+        var file_text = "None";
+        var btn_text = "Upload";
+        if(this.data.has_zip > 0){
+            btn_text = "Change";
+            file_text = (this.data.title.split(' ')).join('-').toLowerCase()+'-'+this.data.uid+'.zip';
+            this.objects.downloadable_text.addClass('active');
+        }else{
+            this.objects.downloadable_text.removeClass('active');
+        }
+        // Enable closing window.
+        this.self.find('button').prop("disabled",false);
+        // Show upload controls and hide progress bar.
+        this.objects.downloadable_text.css('display','block').children('span').text(file_text);
+        this.objects.downloadable_btn.text(btn_text).css('display','block');
+        this.objects.downloadable_progress_box.css('display','none');
+    },
+    uploadFile: function(e){
+        this.uploadZipStart.call(this);
+        
+        // XHR Object Definition
+        this.objects.xhr = new XMLHttpRequest();
+        var xhr = this.objects.xhr;
+
+        // Form data.
+        var form_data = new FormData();
+        form_data.append('id', this.data.id);
+        form_data.append('uid', this.data.uid);
+        form_data.append('zip_file', e.target.files[0]);
+
+        // Events.
+        xhr.error = function(e) {
+            toastr["warning"]("Failed to upload "+item_name+"?");
+            console.log("This xhr.error");
+        }.bind(this);
+        xhr.upload.onprogress = function(e) {
+            if(e.lengthComputable) {
+                var percent = Math.ceil((e.loaded/e.total) * 100) + '%';
+                this.objects.downloadable_progress_bar.css('width',percent).text(percent);
+            }
+        }.bind(this);
+        xhr.onload = function(e) {
+            try {
+                var response = JSON.parse(xhr.responseText);
+                if(response.status == "ok"){
+                    this.data.has_zip = 1;
+                    admin_app.library.getData.call(admin_app.library);
+                }else{
+                    toastr["error"](response.message,"Error");
+                }
+            }catch(e){
+                toastr["error"]("Unknown response.","Error");
+            }
+            setTimeout(this.uploadZipEnd.bind(this),1000);
+        }.bind(this);
+
+        // Submit files.
+        xhr.open('POST', site.base_url+'upload/photos/zip', true);
+        xhr.send(form_data);
+    },
+    deleteZip: function(e){
+        function deleteZipFile(){
+            this.disableState();
+            this.data.has_zip = 0;
+            $.ajax({
+                context: this,
+                method: 'POST',
+                url: site.base_url+'upload/photos/clear',
+                data: {id:this.data.id,uid:this.data.uid},
+                error: function(jqXHR,textStatus,errorThrown){
+                    toastr["error"]("Request failed.", "Error "+jqXHR.status);
+                    this.enableState();
+                },
+                success: function(response){
+                    admin_app.library.getData.call(admin_app.library);
+                    setTimeout(function(){
+                        if(response.status == "ok"){
+                            toastr["success"](response.message);
+                        }else{
+                            toastr["error"](response.message,"Error");
+                        }
+                        this.enableState();
+                        this.uploadZipEnd();
+                    }.bind(this),1000);
+                }
+            });
+        }
+        modal.confirm("Do you want to delete associated zip file?",deleteZipFile.bind(this));
     }
 };

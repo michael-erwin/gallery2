@@ -175,6 +175,12 @@ ol.breadcrumb a.active {
 .media-item-display .info .table td:first-child {
     width: 100px;
 }
+.media-item-display .info a.label:hover {
+    background-color: #3c8dbc !important;
+}
+.media-item-display .info button.btn {
+    width: 92px;
+}
 
 /* Favorites Modal */
 .favorite-thumbs {

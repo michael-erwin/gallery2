@@ -32,11 +32,19 @@
                                     <!--<li class="input-text" contenteditable="true"></li>-->
                                 </ul>
                             </div>
-                            <div class="data-label">Download Option</div>
+                            <div class="data-label">Downloadable Zip</div>
                             <div class="data-value">
-                                <div class="form-control">
-                                    <button type="button" class="btn btn-primary" data-id="download_btn" disabled>Download</button>
-                                    <button type="button" class="btn btn-primary" data-id="upload_btn">Upload</button>
+                                <div class="form-control downloadable_box">
+                                    <form style="display:none">
+                                        <input type="file" data-id="upload_source_file" accept="application/zip">
+                                    </form>
+                                    <div class="progress" data-id="progress_box">
+                                        <div class="progress-bar" role="progressbar" style="min-width: 2em;">
+                                        0%
+                                        </div>
+                                    </div>
+                                    <div data-id="downloadable_text"><span>None</span><button class="delete" title="Delete">×</button></div>
+                                    <button type="button" class="btn btn-default btn-sm" data-id="upload_btn">Upload</button>
                                 </div>
                             </div>
                         </div>

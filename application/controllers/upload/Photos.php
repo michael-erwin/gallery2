@@ -31,7 +31,7 @@ class Photos extends CI_Controller
 
         if(isset($_FILES['file']))
         {
-            $response = ['status'=>'error','code'=>1,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
             $category_id = is_numeric($category_id)? $category_id : 1;
             $path = $this->media_path;
             $title = explode('.',$_FILES['file']['name']);array_pop($title);
@@ -96,5 +96,102 @@ class Photos extends CI_Controller
                 echo json_encode($response);
             }
         }
+    }
+
+    public function zip()
+    {
+        if(isset($_FILES['zip_file']))
+        {
+            if(!in_array('all',$this->permissions) && !in_array('photo_edit',$this->permissions))
+            {
+                $response = [
+                    "status" => "error",
+                    "code"=> 403,
+                    "message" => "You're not authorized to perform this action.",
+                    "data" => null,
+                    "page" => null
+                ];
+                header("Content-Type: application/json");
+                echo json_encode($response);
+                exit();
+            }
+
+            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+            $id = clean_numeric_text($this->input->post('id'));
+            $uid = clean_alphanum_hash2($this->input->post('uid'));
+
+            if(strlen($id) == 0)
+            {
+                $response['message'] = "ID is invalid.";
+            }
+            elseif(strlen($uid) == 0)
+            {
+                $response['message'] = "UID is invalid.";
+            }
+            else
+            {
+                $zip_path = $this->media_path.'/photos/private/zip/'.$uid.'.zip';
+
+                if(file_exists($zip_path)) {
+                    chmod($zip_path,0755);
+                    @unlink($zip_path);
+                }
+
+                if(move_uploaded_file($_FILES['zip_file']['tmp_name'], $zip_path))
+                {
+                    @$this->db->query("UPDATE `photos` SET `has_zip`=1 WHERE `id`={$id}");
+                    $response['status'] = "ok";
+                    $response['code'] = 200;
+                    $response['message'] = "Zip file uploaded.";
+                }
+                else
+                {
+                    $response['message'] = "Unable to move uploaded file.";
+                    @$this->db->query("UPDATE `photos` SET `has_zip`=0 WHERE `id`={$id}");
+                }
+            }
+            header("Content-Type: application/json");
+            echo json_encode($response);
+        }
+    }
+
+    public function clear()
+    {
+        if(!in_array('all',$this->permissions) && !in_array('photo_edit',$this->permissions))
+            {
+            $response = [
+                "status" => "error",
+                "code"=> 403,
+                "message" => "You're not authorized to perform this action.",
+                "data" => null,
+                "page" => null
+            ];
+            header("Content-Type: application/json");
+            echo json_encode($response);
+            exit();
+        }
+
+        $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+        $id = clean_numeric_text($this->input->post('id'));
+        $uid = clean_alphanum_hash2($this->input->post('uid'));
+
+        if(strlen($id) == 0)
+        {
+            $response['message'] = "ID is invalid.";
+        }
+        elseif(strlen($uid) == 0)
+        {
+            $response['message'] = "UID is invalid.";
+        }
+        else
+        {
+            $zip_path = $this->media_path.'/photos/private/zip/'.$uid.'.zip';
+            @unlink($zip_path);
+            @$this->db->query("UPDATE `photos` SET `has_zip`=0 WHERE `id`={$id}");
+            $response['status'] = "ok";
+            $response['message'] = "Zip file removed.";
+        }
+        header("Content-Type: application/json");
+        echo json_encode($response);
     }
 }
