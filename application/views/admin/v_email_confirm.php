@@ -7,5 +7,3 @@
 <p>
     NOTICE: This message is a system generated email. Please do not reply.<br>
 </p>
-<p>Regards,</p>
-<p>Gallery Team</p>
