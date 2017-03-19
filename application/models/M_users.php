@@ -26,6 +26,7 @@ class M_users extends CI_Model
      */
     public function search($keywords,$limit,$page,$order='date_modified',$sort='ASC')
     {
+        $sort = strtoupper($sort);
         $keywords = $this->db->escape_str($keywords);
         $offset = $limit * ($page-1);
         $get_sql  = "SELECT `users`.`id`,`users`.`first_name`,`users`.`last_name`,`users`.`email`,`users`.`status`";
@@ -38,7 +39,7 @@ class M_users extends CI_Model
              $get_sql .= " OR `users`.`last_name` LIKE '%{$keywords}%' OR `users`.`status` LIKE '%{$keywords}%'";
         }
                     
-        $search_sql = $get_sql." ORDER BY `{$order}` {$sort} LIMIT {$limit} OFFSET {$offset}";
+        $search_sql = $get_sql." ORDER BY `users`.`{$order}` {$sort},`users`.`id` {$sort} LIMIT {$limit} OFFSET {$offset}";
                     
         $raw_data = null;
 
@@ -65,10 +66,21 @@ class M_users extends CI_Model
             {
                 $item_total = $total_qry->num_rows();
                 $page_total = ceil($item_total/$limit);
+
+                // Format date.
+                $filtered_result = [];
+                foreach($results as $item)
+                {
+                    $date_format = $this->config->item('log_date_format');
+                    $item['date_added'] = date($date_format,$item['date_added']);
+                    $item['date_modified'] = ($item['date_modified'] == 0)? '' : date($date_format,$item['date_modified']);
+                    $filtered_result[] = $item;
+                }
+
                 $response['status'] = "ok";
                 $response['code'] = 200;
                 $response['message'] = "Success.";
-                $response['data'] = $results;
+                $response['data'] = $filtered_result;
                 $response['page'] = ["current" => $page, "limit" => $limit, "total" => $page_total];
                 $response['dbg_info'] = $item_total;
             }
@@ -178,7 +190,7 @@ class M_users extends CI_Model
                 $response['status'] = "ok";
                 $response['code'] = 200;
                 $response['message'] = "New user added.";
-                $response['data'] = $this->fetch($limit,$page,true);
+                $response['data'] = $this->fetch($limit,$page,'date_added','DESC',true);
             }
         }
         return $response;
@@ -291,7 +303,7 @@ class M_users extends CI_Model
                 $response['status'] = "ok";
                 $response['code'] = 200;
                 $response['message'] = "User data updated.";
-                $response['data'] = $this->fetch($limit,$page,true);
+                $response['data'] = $this->fetch($limit,$page,'date_added','DESC',true);
             }
         }
         
@@ -501,12 +513,13 @@ class M_users extends CI_Model
     *@return Array   Readily usable form for ajax response. Has basic fields
     *                'status','code','message' and other relevant data.
     */
-    public function fetch($limit,$page,$raw=false)
+    public function fetch($limit,$page,$order="date_added",$sort="DESC",$raw=false)
     {
+        $sort = strtoupper($sort);
         $offset = $limit * ($page-1);
         $get_sql = "SELECT `users`.`id`,`users`.`first_name`,`users`.`last_name`,`users`.`email`,`users`.`status`,`users`.`role_id`"
                     .",`roles`.`name` AS `role_name`,`users`.`token`,`users`.`date_added`,`users`.`date_modified`"
-                    ." FROM `users`  INNER JOIN `roles` ON `roles`.`id`=`users`.`role_id` LIMIT {$limit} OFFSET {$offset}";
+                    ." FROM `users`  INNER JOIN `roles` ON `roles`.`id`=`users`.`role_id` ORDER BY `users`.`{$order}` {$sort},`users`.`id` {$sort} LIMIT {$limit} OFFSET {$offset}";
         $get_qry = $this->db->query($get_sql);
         $raw_data = null;
 
@@ -519,6 +532,10 @@ class M_users extends CI_Model
                 "current" => 0,
                 "limit" => 0,
                 "total" => 0
+            ],
+            "filter" => [
+                "sort" => $sort,
+                "order" => $order
             ]
         ];
         
@@ -526,13 +543,22 @@ class M_users extends CI_Model
         {
             if($page_qry = $this->db->query("SELECT COUNT(id) AS total FROM `users`"))
             {
+                // Format date.
+                $filtered_result = [];
+                foreach($results as $item)
+                {
+                    $date_format = $this->config->item('log_date_format');
+                    $item['date_added'] = date($date_format,$item['date_added']);
+                    $item['date_modified'] = ($item['date_modified'] == 0)? '' : date($date_format,$item['date_modified']);
+                    $filtered_result[] = $item;
+                }
                 $page_total = ceil(($page_qry->result_array()[0]['total'])/$limit);
                 $response['status'] = "ok";
                 $response['code'] = 200;
                 $response['message'] = "Success.";
-                $response['data'] = $results;
+                $response['data'] = $filtered_result;
                 $response['page'] = ["current" => $page, "limit" => $limit, "total" => $page_total];
-                $raw_data = $results;
+                $raw_data = $filtered_result;
             }
             else
             {

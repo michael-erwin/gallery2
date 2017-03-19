@@ -28,7 +28,7 @@ admin_app.user_editor =
             'status': "",
             "role_id": ""
         },
-        last_sinature: null
+        last_signature: null
     },
     init: function() {
         this.self = $(this.self);
@@ -179,7 +179,7 @@ admin_app.user_editor =
             var data = $(e.target).serialize()+
                        '&page='+admin_app.user.data.page.current+
                        '&limit='+admin_app.user.data.page.limit;
-            if(this.data.last_sinature != data) {
+            if(this.data.last_signature != data) {
                 $.ajax({
                     method: 'post',
                     url: endpoint,
@@ -195,7 +195,7 @@ admin_app.user_editor =
                             this.enableFields();
                             this.self.modal('hide');
                             admin_app.user.getData.call(admin_app.user,response.data);
-                            this.data.last_sinature = data;
+                            this.data.last_signature = data;
                         }
                         else {
                             this.enableFields();

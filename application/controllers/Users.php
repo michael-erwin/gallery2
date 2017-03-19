@@ -120,8 +120,10 @@ class Users extends CI_Controller
         $keywords = $this->input->get('kw');
         $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
         $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
+        $order = ($this->input->get('order') !== null)? clean_alphanum_hash2($this->input->get('order')) : 'date_added';
+        $sort = ($this->input->get('sort') !== null)? clean_alpha_text($this->input->get('sort')) : 'DESC';
 
-        $response = $this->m_users->search($keywords,$limit,$page);
+        $response = $this->m_users->search($keywords,$limit,$page,$order,$sort);
 
         header("Content-Type: application/json");
         echo json_encode($response);
@@ -220,9 +222,11 @@ class Users extends CI_Controller
     */
     private function fetch()
     {
+        $order = ($this->input->get('order') !== null)? clean_alphanum_hash2($this->input->get('order')) : 'date_added';
+        $sort = ($this->input->get('sort') !== null)? clean_alpha_text($this->input->get('sort')) : 'DESC';
         $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
         $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
-        $response = $this->m_users->fetch($limit,$page);
+        $response = $this->m_users->fetch($limit,$page,$order,$sort);
 
         header("Content-Type: application/json");
         echo json_encode($response);

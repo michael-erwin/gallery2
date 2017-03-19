@@ -21,6 +21,10 @@ admin_app.user =
             current: 1,
             limit: 15,
             total: null
+        },
+        filter: {
+            order: 'date_added',
+            sort: 'desc'
         }
     },
     init: function() {
@@ -91,6 +95,7 @@ admin_app.user =
                     '<td>'+user.first_name+' '+user.last_name+'</td>'+
                     '<td>'+user.role_name+'</td>'+
                     '<td><span class="label label-'+status+'">'+user.status+'</span></td>'+
+                    '<td>'+user.date_added+'</td>'+
                     '<td>'+edit_btn+delete_btn+'</td>'+
                 '</tr>';
             }
@@ -101,8 +106,11 @@ admin_app.user =
                 '<td>'+empty_table_text+'</td>'+
             '</tr>';
         };
+        // Append table rows.
         this.objects.table_body.html(list_rows);
-
+        // Display order & sorting in table header.
+        this.self.find('th.sortable').removeClass('active asc desc');
+        this.self.find('th[data-column="'+this.data.filter.order+'"]').addClass('active '+this.data.filter.sort);
         // Results display button logic.
         var limit = this.data.page.limit;
         this.objects.display_buttons.each(function(){
@@ -130,6 +138,7 @@ admin_app.user =
         // Event bindings.
         this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
         this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
+        this.self.find('th.sortable').unbind().on('click',this.sortColumn.bind(this));
     },
     getData: function(data) {
         if(data) {
@@ -138,11 +147,16 @@ admin_app.user =
         }
         else{
             var endpoint = site.base_url+'users/manage/get_page';
-            var sdata = 'limit='+this.data.page.limit+'&page='+this.data.page.current;
+            var sdata = {
+                limit: this.data.page.limit,
+                page: this.data.page.current,
+                order: this.data.filter.order,
+                sort: this.data.filter.sort
+            };
             if($.trim(this.objects.search_box.val()) != "")
             {
                 endpoint = site.base_url+'users/manage/search';
-                sdata += '&kw='+this.objects.search_box.val();
+                sdata.kw = this.objects.search_box.val()
             }
             $.ajax({
                 url: endpoint,
@@ -172,7 +186,7 @@ admin_app.user =
         this.data.page.limit = Number($this.data('display'));
         this.getData();
     },
-    doLiveSearch(e) {
+    doLiveSearch: function(e) {
         if(e.which === 13) return false;
         function senKeys() {
             $.ajax({
@@ -262,5 +276,15 @@ admin_app.user =
             this.data.page.current = Number(this.data.page.current) + 1;
             this.getData();
         }
+    },
+    sortColumn: function(e) {
+        $this = $(e.target);
+        this.data.filter.order = $this.data('column');
+        if($this.hasClass('asc')) {
+            this.data.filter.sort = 'desc';
+        } else {
+            this.data.filter.sort = 'asc';
+        }
+        this.getData();
     }
 };

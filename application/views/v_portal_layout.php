@@ -13,8 +13,9 @@
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/portal.min.css">
 </head>
 <body class="hold-transition login-page">
+    <div id="page_background"></div>
     <?php echo @$main_form;?>
-
+    
     <script src="<?php echo base_url();?>assets/libs/jquery/jquery-2.2.4.min.js"></script>
     <script src="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.js"></script>
     <script src="<?php echo base_url();?>assets/plugins/toastr/toastr.min.js"></script>

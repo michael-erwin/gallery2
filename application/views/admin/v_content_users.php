@@ -38,10 +38,11 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Email</th>
-                <th>Name</th>
+                <th class="sortable" data-column="email" title="Click to sort">Email</th>
+                <th class="sortable" data-column="first_name" title="Click to sort">Name</th>
                 <th>Role</th>
-                <th>Status</th>
+                <th class="sortable" data-column="status" title="Click to sort">Status</th>
+                <th class="sortable" data-column="date_added" title="Click to sort">Date Added</th>
                 <th>Options</th>
             </tr>
         </thead>
