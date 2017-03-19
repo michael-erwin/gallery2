@@ -149,7 +149,9 @@ class Categories extends CI_Controller
         $data['page_title'] = "Categories";
         $data['meta_description'] = "Select category types";
         $data['meta_keywords'] = "";
-        // Build search wdiget html markups.
+        // Account actions menu
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
+        // Build search widget html markups.
         $data['search_widget'] = $this->load->view('common/v_search_widget',['type'=>"photos"],true);
         // Build pagination html markups.
         $pagination_data = [
@@ -192,6 +194,8 @@ class Categories extends CI_Controller
         $data['page_title'] = "Categories";
         $data['meta_description'] = "All media categories.";
         $data['meta_keywords'] = "";
+        // Account actions menu
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         // Build breadcrumbs html markups.
         $crumbs = ['Home'=>base_url(),'Categories'=>""];
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);
@@ -248,6 +252,8 @@ class Categories extends CI_Controller
         $data['page_title'] = $meta_data['title'];
         $data['meta_description'] = $meta_data['description'];
         $data['meta_keywords'] = "";
+        // Account actions menu
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         // Build breadcrumbs html markups.
         $main_link = preg_replace('/\s/','-',strtolower($main_title)).'-'.$main_id;
         $crumbs = [
@@ -439,6 +445,8 @@ class Categories extends CI_Controller
             'prev_disabled' => $prev_disabled,
             'next_disabled' => $next_disabled
         ];
+        // Account actions menu
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         # String: Pagination widget.
         $data['pagination'] = $this->load->view('common/v_pagination_widget_categories',$pagination_data,true);
         # String: HTML for item thumbnails.

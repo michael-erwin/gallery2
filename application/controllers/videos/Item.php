@@ -67,6 +67,9 @@ class Item extends CI_Controller
         $data['meta_description'] = $info['description'];
         $data['meta_keywords'] = $info['tags'];
 
+        // Account actions menu
+        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
+
         // Pagination display logic.
         $pagination_data = [
             'current_page' => 1,
