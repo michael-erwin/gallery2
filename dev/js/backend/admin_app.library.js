@@ -75,13 +75,16 @@ admin_app.library =
                             var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
-                                controls += '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>';
+                                controls += '<li title="Move to category" data-id="move_category">Move</b>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_share',site.permissions) !== -1){
+                                controls += '<li title="Sharing" data-id="sharing">Sharing</li>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1){
-                                controls += '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>';
+                                controls += '<li title="Edit" data-id="edit">Edit</li>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1){
-                                controls += '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>';
+                                controls += '<li title="Delete" data-id="delete">Delete</li>';
                             }
                             var bulk_select = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
@@ -95,7 +98,7 @@ admin_app.library =
                                 '<div class="thumb" >'+
                                     '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
-                                    '<div class="controls">'+controls+ '</div>'+
+                                    '<div class="controls"><a class="more" tabindex="1"><i class="fa fa-ellipsis-v"></i><ul class="options">'+controls+'</ul></a></div>'+
                                 '</div>'+
                                 '<div class="no-interact"></div>'+bulk_select+
                             '</div>';
@@ -109,6 +112,9 @@ admin_app.library =
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
                                 controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_share',site.permissions) !== -1){
+                                controls += '<button title="Sharing" class="btn btn-primary btn-xs" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1){
                                 controls += '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>';
@@ -143,17 +149,19 @@ admin_app.library =
                         for(var n=0;n<entries.length;n++) {
                             var video = entries[n];
                             var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
-                            //var vlink = site.base_url+'videos/view/fhd/'+video.uid;
                             var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
-                                controls += '<b title="Move to category" data-id="move_category"><i class="fa fa-lg fa-exchange"></i></b>';
+                                controls += '<li title="Move to category" data-id="move_category">Move</li>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('video_share',site.permissions) !== -1){
+                                controls += '<li title="Sharing" data-id="sharing">Sharing</li>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_edit',site.permissions) !== -1){
-                                controls += '<b title="Edit" data-id="edit"><i class="fa fa-lg fa-pencil"></i></b>';
+                                controls += '<li title="Edit" data-id="edit">Edit</li>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1){
-                                controls += '<b title="Delete" data-id="delete"><i class="fa fa-lg fa-trash"></i></b>';
+                                controls += '<li title="Delete" data-id="delete">Delete</li>';
                             }
                             var bulk_select = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
@@ -167,7 +175,7 @@ admin_app.library =
                                 '<div class="thumb" >'+
                                     '<a href="'+vlink+'" title="'+video.title+'" class="image-link media-item video-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
-                                    '<div class="controls">'+controls+'</div>'+
+                                    '<div class="controls"><a class="more" tabindex="1"><i class="fa fa-ellipsis-v"></i><ul class="options">'+controls+'</ul></a></div>'+
                                 '</div>'+
                                 '<div class="no-interact"></div>'+bulk_select+
                             '</div>';
@@ -178,11 +186,13 @@ admin_app.library =
                             for(var i=0;i<entries.length;i++) {
                                 var video = entries[i];
                                 var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
-                                //var vlink = site.base_url+'videos/view/fhd/'+video.uid;
                                 var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
                                 var controls = "";
                                 if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                     controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
+                                }
+                                if($.inArray('all',site.permissions) !== -1 || $.inArray('video_share',site.permissions) !== -1){
+                                    controls += '<button title="Sharing" class="btn btn-primary btn-xs" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
                                 }
                                 if($.inArray('all',site.permissions) !== -1 || $.inArray('video_edit',site.permissions) !== -1){
                                     controls += '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>';
@@ -260,6 +270,7 @@ admin_app.library =
             }
             // Bind functions.
             this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('click',this.moveToCategory.bind(this));
+            this.objects.content_box.find('.controls [data-id="sharing"]').unbind().on('click',this.shareMedia.bind(this));
             this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('click',this.editMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('click',this.deleteMedia.bind(this));
@@ -357,7 +368,7 @@ admin_app.library =
             });
         //}
     },
-    renderCategoryDropdown() {
+    renderCategoryDropdown: function() {
         var category_structure = {};
         var category_list = this.data.category_list;
         var category_html = '<option value="" selected>All</option>';
@@ -473,6 +484,9 @@ admin_app.library =
             category_id: parent.attr('data-category_id')
         };
         admin_app.category_selector.open(endpoint, data);
+    },
+    shareMedia: function(e){
+        admin_app.visibility_editor.open(this.data.type);
     },
     selectMedia: function(e){
         var item = $(e.target).parents(".media-entry");;

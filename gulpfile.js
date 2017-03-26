@@ -47,6 +47,7 @@ var backend_js_files = [
             './dev/js/backend/admin_app.video_editor.js',
             './dev/js/backend/admin_app.category.js',
             './dev/js/backend/admin_app.category_editor.js',
+            './dev/js/backend/admin_app.visibility_editor.js',
             './dev/js/backend/admin_app.category_selector.js',
             './dev/js/backend/admin_app.file_widget.js',
             './dev/js/backend/admin_app.uploader.js'

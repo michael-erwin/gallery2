@@ -50,6 +50,7 @@ class Library extends CI_Controller
         $data['objects']  = $this->load->view('admin/v_object_photo_editor','',true);
         $data['objects'] .= $this->load->view('admin/v_object_video_editor','',true);
         $data['objects'] .= $this->load->view('admin/v_object_category_selector',$content,true);
+        $data['objects'] .= $this->load->view('admin/v_object_visibility_editor','',true);
 
         // JS Scripts.
         $js_scripts['categories'] = json_encode($content['categories']);

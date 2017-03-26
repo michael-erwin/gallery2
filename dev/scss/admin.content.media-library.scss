@@ -87,7 +87,11 @@
     max-width: 300px;
 }
 .list-box .list .title {font-weight: bold;font-size: 15px;}
-.list-box .list .controls button {margin-left: 5px;}
+.list-box .list .controls button {
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+}
 
 /* Item Thumb View - Display of media items. */
 [data-id="content"].bulk_select_mode .thumb-box.active {opacity: 1}
@@ -130,23 +134,62 @@
 }
 .thumb-box .thumb > div.controls {
     position: absolute;
-    right: 8px;
-    bottom: 8px;
+    right: 12px;
+    top: 12px;
     color: rgba(255,255,255,0.8);
     display: none;
 }
 .thumb-box .thumb:hover > div.controls {display: block;}
 .thumb-box .thumb > div.controls i {
-    text-shadow: rgba(0,0,0,0.75) 0px 1px 1px;
+    
 }
-.thumb-box .thumb > div.controls b {
-    display: inline-block;
-    padding: 2px 5px;
+.thumb-box .thumb > div.controls a.more {
+    width: 21px;
+    height: 20px;
+    line-height: 18px;
+    color: white;
     cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+    text-shadow: 0px 1px 3px rgba(0,0,0,0.75);
+    border: 1px solid transparent;
 }
-.thumb-box .thumb > div.controls b:hover {
-    color: rgba(255,255,255,1);
-    background-color: rgba(0,0,0,0.6);
+.thumb-box .thumb > div.controls a.more:hover {
+    border-color: rgba(255,255,255,0.75);
+}
+.thumb-box .thumb > div.controls a.more:focus {
+    color: #333;
+    background-color: rgba(255,255,255,1);
+    text-shadow: none;
+    box-shadow: 1px 1px 6px 0 rgba(0,0,0,.75);
+}
+.thumb-box .thumb > div.controls a.more:focus ul.options {
+    display: block;
+}
+.thumb-box .thumb > div.controls ul.options {
+    display: block;
+    width: 80px;
+    position: absolute;
+    top: 20px; right: 22px;
+    background-color: white;
+    color: #333;
+    list-style-type: none;
+    padding-left: 0;
+    display: none;
+    box-shadow: 1px 1px 6px 0 rgba(0,0,0,.75);
+}
+.thumb-box .thumb > div.controls ul.options li {
+    width: 100%;
+    border-top: 1px solid #eee;
+    line-height: 20px;
+}
+.thumb-box .thumb > div.controls ul.options li:first-child {
+    border-top-style: none;
+}
+.thumb-box .thumb > div.controls ul.options li:hover {
+    color: #111;
+    background-color: #ddd;
 }
 .thumb-box .checkbox-ui {background-color: rgba(255,255,255,0.8);box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.75);position: absolute;left: 18px;top: 18px;display: none;}
 .thumb-box:hover .checkbox-ui {display: inline-block;}

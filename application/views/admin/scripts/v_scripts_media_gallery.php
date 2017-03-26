@@ -8,6 +8,7 @@
             admin_app.photo_editor.init();
             admin_app.video_editor.init();
             admin_app.category_selector.init();
+            admin_app.visibility_editor.init();
             admin_app.library.init();
             $('.silent-link').unbind().on('click',admin_page.content.get);
         });
