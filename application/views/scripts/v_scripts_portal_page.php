@@ -18,11 +18,12 @@ $backdrop_photo = base_url($folder.$photos[$i]);
         var src = '<?php echo $backdrop_photo;?>';
         $img = $('<img src="'+src+'">');
         $img.on('load',function(){
+            $(this).remove();
             console.log('Image loaded.');
-            $('#page_background').css({
-                'background-image': 'url("'+src+'")',
-                'display': 'block'
-            });
+            $('#page_background').css({'background-image': 'url("'+src+'")'});
+            setTimeout(function() {
+                 $('#page_background').css({'display': 'block'});
+            }, 500);
         });
         $img.appendTo('#page_background');
     }(jQuery))
