@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var pref = require('gulp-autoprefixer');
 var gcat = require('gulp-concat');
 var mcss = require('gulp-clean-css');
-var name = require('gulp-rename');
 var sass = require('gulp-sass');
 var ugli = require('gulp-uglify');
 var strp = require('gulp-strip-comments');

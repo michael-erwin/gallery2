@@ -11,7 +11,19 @@ foreach($files as $file)
     }
 }
 $i = rand(0,count($photos)-1);
-$data['backdrop_photo'] = base_url($folder.$photos[$i]);
+$backdrop_photo = base_url($folder.$photos[$i]);
 ?><script>
-    console.log(<?php echo $i;?>);
+    ;(function($){
+        //$('#page_background').
+        var src = '<?php echo $backdrop_photo;?>';
+        $img = $('<img src="'+src+'">');
+        $img.on('load',function(){
+            console.log('Image loaded.');
+            $('#page_background').css({
+                'background-image': 'url("'+src+'")',
+                'display': 'block'
+            });
+        });
+        $img.appendTo('#page_background');
+    }(jQuery))
 </script>

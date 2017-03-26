@@ -5,8 +5,41 @@ input:-webkit-autofill {
 input:-webkit-autofill:disabled {
     -webkit-box-shadow: 0 0 0px 1000px #eeeeee inset;
 }
+
+.portal-item {
+    width: 360px;
+    margin: 7% auto;
+    border-radius: 2px !important;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
 .portal-item input.form-control.error {
     border-color: red !important;
+}
+.portal-item .form-box-head {
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 300;
+    padding: 5px;
+    color: white;
+    background: linear-gradient(to bottom, #333 0%,#252525 100%);
+    margin-bottom: 0px;
+    border: 1px solid white;
+}
+.portal-item .form-box-head a,
+.portal-item .form-box-head b {
+    color: white;
+}
+.portal-item .form-box-body {
+    background: #fff;
+    padding: 20px;
+    border-top: 0;
+    color: #666;
+}
+.portal-item .form-box-msg {
+    margin: 0;
+    text-align: center;
+    padding: 0 20px 20px 20px;
 }
 #page_background {
     position: absolute;
@@ -15,4 +48,13 @@ input:-webkit-autofill:disabled {
     height: 100%;
     background-size: cover;
     z-index: -1;
+    animation: fadeIn 1.5s ease-in;
+}
+#page_background img {
+    display: none;
+}
+@keyframes fadeIn {
+  from {opacity: 0; }
+
+  to {opacity: 1;}
 }

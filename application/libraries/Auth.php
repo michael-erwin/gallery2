@@ -60,7 +60,7 @@ class Auth
      */
     function sign_in($email,$password,$remember=false)
     {
-        $sql_user = "SELECT `users`.`*`,`roles`.`id` AS `role_id`,`roles`.`name` AS `role_name` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `email`='{$email}' AND `status`='active'";
+        $sql_user = "SELECT `users`.*,`roles`.`id` AS `role_id`,`roles`.`name` AS `role_name` FROM `users` INNER JOIN `roles` ON `users`.`role_id`=`roles`.`id` WHERE `email`='{$email}' AND `status`='active'";
         $query = $this->db->query($sql_user);
         if($query->num_rows() > 0)
         {

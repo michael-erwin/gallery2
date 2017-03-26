@@ -53,6 +53,7 @@ class Account extends CI_Controller
     {
         $data['title']     = "Gallery - Sign In";
         $data['main_form'] = $this->load->view('common/v_sign_in',null,true);
+        $data['js_script'] = $this->load->view('scripts/v_scripts_portal_page',null,true);
         $this->load->view('v_portal_layout',$data);
     }
 
@@ -60,6 +61,7 @@ class Account extends CI_Controller
     {
         $data['title']     = "Gallery - Sign Up";
         $data['main_form'] = $this->load->view('common/v_sign_up',null,true);
+        $data['js_script'] = $this->load->view('scripts/v_scripts_portal_page',null,true);
         $this->load->view('v_portal_layout',$data);
     }
 
@@ -142,6 +144,7 @@ class Account extends CI_Controller
                     {
                         $data['title']     = "Gallery - Reset Your Password";
                         $data['main_form'] = $this->load->view('common/v_reset_pw',null,true);
+                        $data['js_script'] = $this->load->view('scripts/v_scripts_portal_page',null,true);
                         $this->load->view('v_portal_layout',$data);
                     }
                 }
@@ -157,6 +160,7 @@ class Account extends CI_Controller
     {
         $data['title']     = "Gallery - Reset Password";
         $data['main_form'] = $this->load->view('common/v_forgot_pw',null,true);
+        $data['js_script'] = $this->load->view('scripts/v_scripts_portal_page',null,true);
         $this->load->view('v_portal_layout',$data);
     }
 }

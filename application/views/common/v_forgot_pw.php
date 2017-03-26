@@ -1,9 +1,9 @@
-<div id="forgot_pw_box" class="portal-item login-box">
-        <div class="login-logo">
-            <a href="<?php echo base_url();?>"><b>Gallery</b></a>
+<div id="forgot_pw_box" class="portal-item form-box">
+        <div class="form-box-head">
+            <a href="<?php echo base_url();?>">Gallery</a>
         </div>
-        <div class="login-box-body">
-            <p class="login-box-msg">Enter your email to reset password</p>
+        <div class="form-box-body">
+            <p class="form-box-msg">Enter your email to reset password</p>
             <form method="post" novalidate>
                 <div class="form-group has-feedback">
                     <input type="email" name="email" class="form-control" placeholder="Email">

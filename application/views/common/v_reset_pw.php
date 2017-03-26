@@ -1,9 +1,9 @@
-<div id="reset_pw_box" class="portal-item login-box">
-        <div class="login-logo">
-            <a href="<?php echo base_url();?>"><b>Gallery</b></a>
+<div id="reset_pw_box" class="portal-item form-box">
+        <div class="form-box-head">
+            <a href="<?php echo base_url();?>">Gallery</a>
         </div>
-        <div class="login-box-body">
-            <p class="login-box-msg">Reset your password</p>
+        <div class="form-box-body">
+            <p class="form-box-msg">Reset your password</p>
             <form method="post" novalidate>
                 <input type="hidden" name="email" value="<?php echo $_GET['email'];?>">
                 <input type="hidden" name="token" value="<?php echo $_GET['token'];?>">

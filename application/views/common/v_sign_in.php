@@ -1,9 +1,9 @@
-<div id="signin_box" class="portal-item login-box">
-        <div class="login-logo">
-            <a href="<?php echo base_url();?>"><b>Gallery</b></a>
+<div id="signin_box" class="portal-item form-box">
+        <div class="form-box-head">
+            <a href="<?php echo base_url();?>">Gallery</a>
         </div>
-        <div class="login-box-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+        <div class="form-box-body">
+            <p class="form-box-msg">Sign in to start your session</p>
             <form method="post" novalidate>
                 <input type="hidden" name="redir" value="<?php echo @$_GET['redir'];?>">
                 <div class="form-group has-feedback">

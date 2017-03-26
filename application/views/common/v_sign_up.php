@@ -1,9 +1,9 @@
 <div id="signup_box" class="portal-item register-box">
-    <div class="register-logo">
-        <a href="<?php echo base_url();?>"><b>Gallery</b></a>
+    <div class="form-box-head">
+        <a href="<?php echo base_url();?>">Gallery</a>
     </div>
-        <div class="register-box-body">
-            <p class="login-box-msg">Sign up for new membership</p>
+        <div class="form-box-body">
+            <p class="form-box-msg">Sign up for new membership</p>
             <form method="post" novalidate>
                 <div class="form-group has-feedback">
                     <input type="text" name="fname" class="form-control" placeholder="First name">
