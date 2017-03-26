@@ -20,9 +20,9 @@ $backdrop_photo = base_url($folder.$photos[$i]);
         $img.on('load',function(){
             $(this).remove();
             console.log('Image loaded.');
-            $('#page_background').css({'background-image': 'url("'+src+'")'});
+            $('#page_background').css({'background-image': 'url("'+src+'")','display': 'block'});
             setTimeout(function() {
-                 $('#page_background').css({'display': 'block'});
+                 $('#page_background').css({'opacity': 1});
             }, 500);
         });
         $img.appendTo('#page_background');
