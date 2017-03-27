@@ -70,6 +70,7 @@ class Library extends CI_Controller
         $objects = $this->load->view('admin/v_object_photo_editor','',true);
         $objects .= $this->load->view('admin/v_object_video_editor','',true);
         $objects .= $this->load->view('admin/v_object_category_selector',$content,true);
+        $objects .= $this->load->view('admin/v_object_visibility_editor','',true);
 
         if ($option)
         {
