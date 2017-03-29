@@ -21,13 +21,22 @@
                         </div>
                         <div class="form-group clearfix row protected-content">
                             <div class="col-xs-12">
-                                <input type="text" class="form-control" placeholder="Search email" />
+                                <div class="search-box">
+                                    <input type="text" role="search-box" class="form-control" placeholder="Search email" />
+                                    <ul role="hint-box" class="hint-box">
+                                        <li>No results.</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group clearfix row protected-content">
                             <div class="col-xs-12">
                                 <ul class="input-tags">
-                                    <li>sample@email.com</li>
+                                    <!-- <li>
+                                        <input type="hidden" name="id[]" value="">
+                                        <span class="name">john-cena-doe-jr@email.com</span>
+                                        <span class="del">×</span>
+                                    </li> -->
                                 </ul>
                             </div>
                         </div>

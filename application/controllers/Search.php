@@ -34,6 +34,21 @@ class Search extends CI_Controller
             elseif($method == "tags") {
                 $this->fetchTags();
             }
+            elseif($method == "email")
+            {
+                if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
+                {
+                    $response = [
+                        "status" => "error",
+                        "code" => 403,
+                        "message" => "You don't have permission to perform this action."
+                    ];
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
+                $this->fetchEmail();
+            }
             else
             {
                 $this->fetch($method);
@@ -43,6 +58,43 @@ class Search extends CI_Controller
         {
             $this->fetch("photos");
         }
+    }
+
+    private function fetchEmail()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Unknown error has occured.",
+            "data" => [ "items" => [], "total" => 0 ]
+        ];
+
+        $keyword = preg_replace('/[^a-zA-Z0-9\.\-_]/', '', $this->input->get('kw'));
+        if(strlen($keyword) > 0)
+        {
+            $email_sql = "SELECT `id`,`email` FROM `users` WHERE `email` LIKE '%{$keyword}%' ORDER BY `email` ASC LIMIT 5";
+            $email_qry = $this->db->query($email_sql);
+            $results = $email_qry->result_array();
+            $response['status'] = "ok";
+            $response['code'] = 200;
+            $response['message'] = "Success.";
+            $response['data'] = [
+                "items" => $results,
+                "total" => count($results)
+            ];
+        }
+        else
+        {
+            $response['status'] = "ok";
+            $response['code'] = 200;
+            $response['message'] = "Success.";
+            $response['data'] = [
+                "items" => [],
+                "total" => 0
+            ];
+        }
+        header("Content-Type: application/json");
+        echo json_encode($response);
     }
 
     private function fetchTags()

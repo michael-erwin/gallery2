@@ -486,7 +486,7 @@ admin_app.library =
         admin_app.category_selector.open(endpoint, data);
     },
     shareMedia: function(e){
-        admin_app.visibility_editor.open(this.data.type);
+        admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type);
     },
     selectMedia: function(e){
         var item = $(e.target).parents(".media-entry");;

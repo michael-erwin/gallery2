@@ -76,16 +76,6 @@ class Users extends CI_Controller
                 }
                 $this->fetch();
             }
-            elseif($param_2 == "search")
-            {
-                if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
-                {
-                    header("Content-Type: application/json");
-                    echo json_encode($response);
-                    exit();
-                }
-                $this->search();
-            }
         }
         elseif($param_1 == "sign-up")
         {

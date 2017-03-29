@@ -1,0 +1,68 @@
+#modal_visibility_editor .search-box {
+    position: relative;
+}
+#modal_visibility_editor ul.hint-box {
+    position: absolute;
+    z-index: 2;
+    background-color: white;
+    width: 100%;
+    border: 1px solid #d2d6de;
+    border-top-color: transparent;
+    list-style-type: none;
+    padding-left: 0;
+    display: none;
+}
+#modal_visibility_editor [role="search-box"]:focus ~ .hint-box {
+    display: block;
+}
+#modal_visibility_editor ul.hint-box li {
+    padding: 2px 8px;
+    border: 1px solid transparent;
+    border-bottom-color:#f0f0f0;
+    cursor: pointer;
+}
+#modal_visibility_editor ul.hint-box li.active {
+    color: white;
+    background-color: #3c8dbc;
+    border: 1px solid #3c8dbc;
+}
+#modal_visibility_editor ul.hint-box li:last-child {
+    border-bottom-color: transparent;
+}
+#modal_visibility_editor ul.input-tags {
+    overflow-y: auto;
+    max-height: 154px;
+}
+#modal_visibility_editor ul.input-tags li {
+    width: calc(50% - 8px);
+    position: relative;
+}
+#modal_visibility_editor ul.input-tags li span.name {
+    display: block;
+    max-width: calc(100% - 15px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+#modal_visibility_editor ul.input-tags li>span.del {
+    width: 10px;
+    display: block;
+    text-align: center;
+    color: rgba(0,0,0,.8);
+    cursor: pointer;
+    text-shadow: 1px 1px 1px rgba(255,255,255,.5);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 30px;
+    position: absolute;
+    right: 8px;
+}
+#modal_visibility_editor ul.input-tags li>span.del:hover {
+    color: #890000;
+    text-shadow: none;
+}
+@media(max-width: 360px) {
+    #modal_visibility_editor ul.input-tags li {
+        width: calc(100% -8px);
+    }
+}
