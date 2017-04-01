@@ -36,7 +36,7 @@
                             <div class="data-value">
                                 <div class="form-control downloadable_box">
                                     <form style="display:none">
-                                        <input type="file" data-id="upload_source_file" accept="application/zip">
+                                        <input type="file" data-id="upload_source_file" accept="application/octet-stream">
                                     </form>
                                     <div class="progress" data-id="progress_box">
                                         <div class="progress-bar" role="progressbar" style="min-width: 2em;">
