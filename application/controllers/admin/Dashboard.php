@@ -27,6 +27,9 @@ class Dashboard extends CI_Controller
 
     public function index($option=null)
     {
+        // Permissions.
+        $data['permissions'] = json_encode($this->permissions);
+        
         // Sidebar - User Panel.
         $data['sidebar_user_panel'] = $this->load->view('admin/v_sidebar_user_panel','',true);
 

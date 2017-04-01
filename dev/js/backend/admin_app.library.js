@@ -98,7 +98,7 @@ admin_app.library =
                                 '<div class="thumb" >'+
                                     '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
-                                    '<div class="controls"><a class="more" tabindex="1"><i class="fa fa-ellipsis-v"></i><ul class="options">'+controls+'</ul></a></div>'+
+                                    '<div class="controls"><a class="more" tabindex="2"><i class="fa fa-ellipsis-v"></i><ul class="options">'+controls+'</ul></a></div>'+
                                 '</div>'+
                                 '<div class="no-interact"></div>'+bulk_select+
                             '</div>';
@@ -269,11 +269,11 @@ admin_app.library =
                 this.objects.content_box.removeClass('bulk_select_mode');
             }
             // Bind functions.
-            this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('click',this.moveToCategory.bind(this));
-            this.objects.content_box.find('.controls [data-id="sharing"]').unbind().on('click',this.shareMedia.bind(this));
-            this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
-            this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('click',this.editMedia.bind(this));
-            this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('click',this.deleteMedia.bind(this));
+            this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('mousedown',this.moveToCategory.bind(this));
+            this.objects.content_box.find('.controls [data-id="sharing"]').unbind().on('mousedown',this.shareMedia.bind(this));
+            this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('mousedown',this.selectMedia.bind(this));
+            this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('mousedown',this.editMedia.bind(this));
+            this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('mousedown',this.deleteMedia.bind(this));
             this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
             this.objects.content_box.find('a.video-preview').unbind('click').click(videomodal.open);
         }else{
