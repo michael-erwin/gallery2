@@ -101,6 +101,12 @@ admin_app.user_editor =
             });
             this.self.modal('show');
         };
+        if(this.objects.toggle_pass.is(':checked')) {
+            this.objects.input_password.prop('disabled',false);
+        }
+        else {
+            this.objects.input_password.prop('disabled',true);
+        }
         // Event bindings.
         
     },    
@@ -137,6 +143,7 @@ admin_app.user_editor =
         this.render();
     },
     edit: function(data) {
+        this.objects.form[0].reset();
         if(data){this.data.item = data};
         this.data.mode = 'update';
         this.render();

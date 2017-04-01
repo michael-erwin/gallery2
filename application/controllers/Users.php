@@ -177,7 +177,15 @@ class Users extends CI_Controller
         }
         else
         {
-            $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
+            $password = $this->input->post('password');
+            if($password)
+            {
+                $password = password_hash($this->input->post('password'),PASSWORD_BCRYPT);
+            }
+            else
+            {
+                $password = false;
+            }
             $verify_email = false;
         }
 

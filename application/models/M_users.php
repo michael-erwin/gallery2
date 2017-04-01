@@ -213,7 +213,7 @@ class M_users extends CI_Model
     *                                 'status','code','message' and other relevant data.
     *
     */
-    public function update($id="",$fname="",$lname="",$email="",$password="",$role=0,$status="inactive",$limit=15,$page=1,$verify_email)
+    public function update($id="",$fname="",$lname="",$email="",$password=false,$role=0,$status="inactive",$limit=15,$page=1,$verify_email)
     {
         $errors = 0;
         $response = [
@@ -278,9 +278,9 @@ class M_users extends CI_Model
 
         if($errors === 0)
         {
-            $add_sql = "UPDATE `users` SET "
-                        ."`first_name`='{$fname}',`last_name`='{$lname}',`email`='{$email}',`password`='{$password}',"
-                        ."`status`='{$status}',`role_id`={$role},`token`='{$token}',`date_modified`={$date} WHERE `id`={$id}";
+            $add_sql = "UPDATE `users` SET `first_name`='{$fname}',`last_name`='{$lname}',`email`='{$email}'";
+            if($password) $add_sql .= ",`password`='{$password}'";
+            $add_sql .= ",`status`='{$status}',`role_id`={$role},`token`='{$token}',`date_modified`={$date} WHERE `id`={$id}";
             if($this->db->query($add_sql))
             {
                 // Email verification

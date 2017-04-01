@@ -177,15 +177,15 @@
     <script>
         site = {"base_url": "<?php echo base_url();?>","permissions": <?php if(isset($permissions)): echo $permissions; else:  echo '[]'; endif?>}
         ;(function(){
-            setInterval(function(){
-                $.ajax({
-                    method: "GET",
-                    url: site.base_url+"account/permissions",
-                    success: function(response){
-                        site.permissions = response;
-                    }
-                })
-            },5000);
+            // setInterval(function(){
+            //     $.ajax({
+            //         method: "GET",
+            //         url: site.base_url+"account/permissions",
+            //         success: function(response){
+            //             site.permissions = response;
+            //         }
+            //     })
+            // },5000);
         }())
     </script>
     <!-- /Global Constants -->
