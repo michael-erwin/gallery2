@@ -15,6 +15,8 @@
                             <div class="box-wrapper">
                                 <ul class="submenu" id="menu_favorites">
                                     <li><a href="#account/profile">Profile</a></li>
+                                    <?php if(in_array('all', $_SESSION['permissions']) || in_array('admin_access', $_SESSION['permissions'])):
+                                    ?><li><a href="<?php echo base_url('admin');?>">Admin</a></li><?php endif;?>
                                     <li><a href="<?php echo base_url('account/signout');?>">Sign Out</a></li>
                                 </ul>
                             </div>
