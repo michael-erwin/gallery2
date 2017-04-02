@@ -139,7 +139,8 @@ class M_users extends CI_Model
         }
 
         // Validate email.
-        elseif(!preg_match('/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/', $email))
+        /*elseif(!preg_match('/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/', $email))*/
+        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL))
         {
             $response['message'] = "Email is invalid.";
             $errors++;
@@ -245,7 +246,8 @@ class M_users extends CI_Model
         }
 
         // Validate email.
-        elseif(!preg_match('/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/', $email))
+        //elseif(!preg_match('/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/', $email))
+        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL))
         {
             $response['message'] = "Email is invalid.";
             $errors++;

@@ -2,7 +2,7 @@ admin_app.visibility_editor =
 {
     self: '#modal_visibility_editor',
     config: {
-        
+        selected_level: 'public'
     },
     objects: {
         'form': null,
@@ -14,12 +14,17 @@ admin_app.visibility_editor =
     },
     search_clock: null,
     data: {
-        visibility: "public",
-        user_ids: [],
+        type: '',
+        item: {
+            'id': null,
+            'share_level': null
+        },
+        allowed_users: [],
         search_hints: []
     },
     init: function() {
         this.self = $(this.self);
+        this.objects.form = this.self.find('[data-id="editor_form"]');
         this.objects.search_box = this.self.find('[role="search-box"]');
         this.objects.hint_box = this.self.find('[role="hint-box"]');
         this.objects.main_radios = this.self.find('[name="visibility"]');
@@ -31,6 +36,7 @@ admin_app.visibility_editor =
 
         // Event bindings.
         this.objects.search_box.unbind('keydown').on('keydown',this.liveSearch.bind(this));
+        this.objects.form.submit(this.save.bind(this));
         this.self.find('[data-id="save_btn"]').unbind('click').on('click',this.save.bind(this));
         this.objects.main_radios.unbind('click').on('click',this.setValue.bind(this));
         this.objects.hint_box.delegate("li",{
@@ -40,35 +46,49 @@ admin_app.visibility_editor =
         this.objects.email_tag_box.delegate('.del').on('click',this.removeEmail);
 
         // Initialize events.
-        //this.getData();
         this.render();
     },
     render: function() {
         // Visibility display logic.
-        $this = this.data.visibility;
-        this.objects.main_radios.each(function(){
-            if($(this).val() == $this){
-                $(this).prop('checked',true);
-            }else{
-                $(this).prop('checked',false);
+        var selected_level = this.config.selected_level;
+        this.objects.form[0].reset();
+        this.objects.main_radios.prop('checked',false);
+        this.objects.email_tag_box.html("");
+        this.self.find('input[value="'+selected_level+'"]').prop('checked',true);
+        if(selected_level == 'protected'){
+            for(var i=0;i<this.data.allowed_users.length;i++){
+                this.addEmail.call(this,this.data.allowed_users[i]);
             }
-        });
-        if(this.data.visibility == "protected"){
             this.objects.protected_block.css('display','block');
         }else{
             this.objects.protected_block.css('display','none');
         }
-    },    
-    getData: function(data) {
-        if(data) {
-            this.data.permission_list = data;
-            this.render();
+    },
+    open: function(type,data) {
+        this.data.allowed_users = [];
+        this.data.type = type;
+        this.data.item = {
+            id: data.id,
+            share_level: data.share_level
+        };
+        this.objects.email_tag_box.removeClass('error');
+        if(data.share_level == "private"){
+            this.config.selected_level = "private";
+        }else if(data.share_level == "public"){
+            this.config.selected_level = "public";
+        }else{
+            this.config.selected_level = "protected";
         }
-        else{
+        this.render();
+        this.self.modal();
+
+        if(this.config.selected_level == "protected"){
+            this.disableFields();
+            var user_ids = String(this.data.item.share_level).replace(/[\[\]]/g,"");
             $.ajax({
-                url: site.base_url+'roles/manage/get_all',
+                url: site.base_url+'users/info',
                 method: 'get',
-                data: "",
+                data: 'ids='+user_ids,
                 context: this,
                 error: function(jqXHR,textStatus,errorThrown){
                     toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
@@ -76,26 +96,65 @@ admin_app.visibility_editor =
                 },
                 success: function(response) {
                     if(response.status == "ok") {
-                        this.data.role_list = response.data;
+                        this.data.allowed_users = response.data;
                     }
                     else {
                         toastr["error"](response.message);
                     }
+                    this.enableFields();
                     this.render();
                 }
             });
         }
     },
-    open: function(type) {
-        this.self.modal();
-    },
     save: function(e) {
         e.preventDefault();
         var errors = 0;
-        alert('No function assigned.');
+        var checked = this.self.find('[name="visibility"]:checked').val();
+        var user_ids = [];
+        var data = {
+            id: this.data.item.id,
+            share_level: checked,
+            user_ids: ''
+        };
+        
+        if(checked == "protected"){
+            this.objects.email_tag_box.find('input[name="id[]"]').each(function(){
+                user_ids.push(this.value);
+            });
+            if(user_ids.length == 0){
+                this.objects.email_tag_box.addClass('error');
+                errors++;
+            }else{
+                this.objects.email_tag_box.removeClass('error');
+                data.user_ids = user_ids.join(',');
+            }
+        }
+
+        if(errors == 0){
+            $.ajax({
+                url: site.base_url+this.data.type+'/share',
+                method: 'POST',
+                data: data,
+                context: this,
+                error: function(jqXHR,textStatus,errorThrown){
+                    toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
+                    this.render();
+                },
+                success: function(response) {
+                    this.self.modal('hide');
+                    if(response.status == "ok") {
+                        toastr["success"](response.message,"Updated");
+                        admin_app.library.getData();
+                    } else {
+                        toastr["error"](response.message);
+                    }
+                }
+            });
+        }
     },
     setValue: function(e){
-        this.data.visibility = e.target.value;
+        this.config.selected_level = e.target.value;
         this.render.call(this);
     },
     liveSearch: function(e){
@@ -183,7 +242,6 @@ admin_app.visibility_editor =
             var data = $(this.objects.hint_box.find('li.active')).data('info');
         };
         if(this.objects.email_tag_box.find('input[value="'+data.id+'"]').length > 0) error++;
-        console.log(data.id);
         var tag = 
             '<li>'+
                 '<input type="hidden" name="id[]" value="'+data.id+'">'+
@@ -200,9 +258,11 @@ admin_app.visibility_editor =
         $(e.target).parents('li').remove();
     },
     disableFields: function() {
-        
+        this.self.find('input').prop('disabled',true);
+        this.self.find('button').prop('disabled',true);
     },
     enableFields: function() {
-        
+        this.self.find('input').prop('disabled',false);
+        this.self.find('button').prop('disabled',false);
     }
 };

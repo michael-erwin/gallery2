@@ -37,7 +37,7 @@ class Users extends CI_Controller
         if($param_1 == "manage")
         {
             if($param_2 == "add")
-            {   
+            {
                 if(!in_array('all',$this->permissions) && !in_array('user_add',$this->permissions))
                 {
                     header("Content-Type: application/json");
@@ -76,6 +76,25 @@ class Users extends CI_Controller
                 }
                 $this->fetch();
             }
+            elseif($param_2 == "search")
+            {
+                if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
+                $this->search();
+            }
+        }
+        if($param_1 == "info"){
+            if(!in_array('all',$this->permissions) && !in_array('user_view',$this->permissions))
+            {
+                header("Content-Type: application/json");
+                echo json_encode($response);
+                exit();
+            }
+            $this->get_info();
         }
         elseif($param_1 == "sign-up")
         {
@@ -92,10 +111,6 @@ class Users extends CI_Controller
         elseif($param_1 == "reset-pw")
         {
             $this->reset_pw();
-        }
-        elseif($param_1 == "test")
-        {
-            $this->test();
         }
     }
 
@@ -213,7 +228,7 @@ class Users extends CI_Controller
     }
 
     /**
-    * Fetch all all entries in roles table.
+    * Fetch all entries in users table.
     * 
     * @return String  JSON formatted string.
     *
@@ -225,6 +240,52 @@ class Users extends CI_Controller
         $page = ($this->input->get('page') !== null)? clean_numeric_text($this->input->get('page')) : 1;
         $limit = ($this->input->get('limit') !== null)? clean_numeric_text($this->input->get('limit')) : 15;
         $response = $this->m_users->fetch($limit,$page,$order,$sort);
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    /**
+    * Fetch basic details of users with the given ids.
+    * 
+    * @return String  JSON formatted string.
+    *
+    */
+    private function get_info()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Invalid ids.",
+            "data" => null
+        ];
+
+        $ids = $this->input->get('ids');
+        if($ids)
+        {
+            $ids = explode(',', $ids);
+            $clean_ids = [];
+
+            foreach ($ids as $id) {
+                $clean_id = clean_numeric_text($id);
+                if(strlen($clean_id) > 0)
+                {
+                    $clean_ids[] = $clean_id;
+                }
+            }
+
+            if(count($clean_ids) > 0)
+            {
+                $clean_ids = implode(',', $clean_ids);
+                $get_sql   = "SELECT `id`,`email`,`first_name`,`last_name`,`status`,`role_id`,`date_added` FROM `users` WHERE `id` IN({$clean_ids}) ORDER BY `email`";
+                $get_qry   = $this->db->query($get_sql);
+
+                $response['status'] = "ok";
+                $response['code'] = 200;
+                $response['message'] = "Items retrieved.";
+                $response['data'] = $get_qry->result_array();
+            }
+        }
 
         header("Content-Type: application/json");
         echo json_encode($response);
@@ -298,7 +359,6 @@ class Users extends CI_Controller
             "data" => null
         ];
         $errors = 0;
-        $email_regex = '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
         $email = $this->input->post('email');
         $password = $this->input->post('password');
         $remember = !empty($this->input->post('remember'))? true : false;
@@ -310,7 +370,7 @@ class Users extends CI_Controller
             $response['code'] = 500;
             $response['message'] = "Email is required.";
         }
-        elseif(!preg_match($email_regex, $email))
+        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL))
         {
             $errors++;
             $response['code'] = 500;
@@ -395,10 +455,5 @@ class Users extends CI_Controller
 
         header("Content-Type: application/json");
         echo json_encode($response);
-    }
-
-    public function test()
-    {
-        
     }
 }

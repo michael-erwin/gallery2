@@ -22,11 +22,16 @@
                         <div class="form-group clearfix row protected-content">
                             <div class="col-xs-12">
                                 <div class="search-box">
-                                    <input type="text" role="search-box" class="form-control" placeholder="Search email" />
+                                    <input type="text" role="search-box" class="form-control" placeholder="Search email to include" />
                                     <ul role="hint-box" class="hint-box">
                                         <li>No results.</li>
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group clearfix row protected-content">
+                            <div class="col-xs-12">
+                                Who can see this content.
                             </div>
                         </div>
                         <div class="form-group clearfix row protected-content">

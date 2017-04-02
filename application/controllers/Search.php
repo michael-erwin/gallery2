@@ -4,7 +4,7 @@
 */
 class Search extends CI_Controller
 {
-    private $permissions;
+    private $permissions = [];
 
     function __construct()
     {
@@ -22,14 +22,14 @@ class Search extends CI_Controller
         {
             if($method == "videos")
             {
-                $this->fetch($method);
+                $this->fetchMedia($method);
             }
             elseif($method == "category")
             {
                 $type = ($param_1 == "videos")? $param_1 : "photos";
                 $category_id = (!empty(clean_numeric_text($param_2)))? explode('-', $param_2) : 1;
                 $category_id = is_array($category_id)? end($category_id) : $category_id;
-                $this->fetch($type,trim($category_id));
+                $this->fetchMedia($type,trim($category_id));
             }
             elseif($method == "tags") {
                 $this->fetchTags();
@@ -51,12 +51,12 @@ class Search extends CI_Controller
             }
             else
             {
-                $this->fetch($method);
+                $this->fetchMedia($method);
             }
         }
         else
         {
-            $this->fetch("photos");
+            $this->fetchMedia("photos");
         }
     }
 
@@ -114,7 +114,7 @@ class Search extends CI_Controller
         echo json_encode($response);
     }
 
-    private function fetch($type=null,$value=null)
+    private function fetchMedia($type=null,$value=null)
     {
         $type = ($type != "")? $type : "photos";
         $crumbs = [
@@ -131,36 +131,57 @@ class Search extends CI_Controller
         $limit = empty($limit)? 20 : $limit;
         $offset = $page * $limit;
         $mode = $this->input->get("m");
+        $edit = $this->input->get('edit');
 
         if(strlen($keys) < 3)
         {
             $keys = $this->db->escape_like_str($keys);
-            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}`";
+            $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
+            $tmp  = "";
+            $tmp .= !empty($category)? " `category_id` = ".$category : "";
+            $public_only = "`share_level`='public'";
+            $permission  = "photo_edit";
 
-            if(!empty($category))
+            if($type == "videos")
             {
-                $sql .= ($type == "videos")? " WHERE `category_id` = {$category} AND `complete`=1 AND " : " WHERE `category_id` = {$category} AND ";
+                $permission = "video_edit";
+                $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            else
-            {
-                $sql .= ($type == "videos")? " WHERE `complete`=1 AND " : " WHERE ";
+            if($edit){
+                if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
+                {
+                    $public_only = "";
+                }
             }
 
-            $sql .= "(`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%') LIMIT {$limit} OFFSET {$offset}";
+            $tmp .= !empty($tmp)? (!empty($public_only)? " AND {$public_only}" : "") : (!empty($public_only)? " {$public_only}" : "");
+            $sql .= !empty($tmp)? "{$tmp} AND " : "";
+            $sql .= " (`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%') LIMIT {$limit} OFFSET {$offset}";
         }
         else
         {
             $keys = $this->db->escape_str(preg_replace('/-+$/', '', $keys));
-            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}`";
-            if(!empty($category))
+            $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
+            $tmp  = "";
+            $tmp .= !empty($category)? " `category_id` = ".$category : "";
+            $public_only = "`share_level`='public'";
+            $permission  = "photo_edit";
+
+            if($type == "videos")
             {
-                $sql .= ($type == "videos")? "WHERE `category_id` = {$category} AND `complete`=1 AND " : "WHERE `category_id` = {$category} AND ";
+                $permission = "video_edit";
+                $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            else
-            {
-                $sql .= ($type == "videos")? "WHERE `complete`=1 AND " : " WHERE ";
+            if($edit){
+                if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
+                {
+                    $public_only = "";
+                }
             }
-            $sql .= "(MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE)) LIMIT {$limit} OFFSET {$offset}";
+
+            $tmp .= !empty($tmp)? (!empty($public_only)? " AND {$public_only}" : "") : (!empty($public_only)? " {$public_only}" : "");
+            $sql .= !empty($tmp)? "{$tmp} AND " : "";
+            $sql .= " (MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE)) LIMIT {$limit} OFFSET {$offset}";
         }
 
         $data = $this->db->query($sql);
@@ -185,6 +206,9 @@ class Search extends CI_Controller
                 'type' => $type,
                 'entries' => $items,
                 'total' => $total
+            ],
+            'dbg_info' => [
+                'sql' => $sql
             ]
         ];
 

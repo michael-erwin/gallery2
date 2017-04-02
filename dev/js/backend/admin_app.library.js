@@ -72,6 +72,7 @@ admin_app.library =
                     if(this.data.display == 'thumb') {
                         for(var n=0; n < entries.length; n++) {
                             var photo = entries[n];
+                            var data  = JSON.stringify(photo);
                             var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
@@ -94,7 +95,7 @@ admin_app.library =
                             var item_class = (selected > -1)? "active" : "";
                             var checked = (selected > -1)? "checked" : "";
                             html +=
-                            '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
+                            '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'" data-data=\''+data+'\'>'+
                                 '<div class="thumb" >'+
                                     '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
@@ -108,6 +109,7 @@ admin_app.library =
                         html += '<ul class="list-box">';
                         for(var i=0; i < entries.length; i++) {
                             var photo = entries[i];
+                            var data  = JSON.stringify(photo);
                             var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
@@ -126,7 +128,7 @@ admin_app.library =
                             var item_class = (selected > -1)? "active" : "";
                             var checked = (selected > -1)? "checked" : "";
                             html +=
-                                '<li class="media-entry list clearfix '+item_class+'" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'">'+
+                                '<li class="media-entry list clearfix '+item_class+'" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'" data-data=\''+data+'\'>'+
                                     '<div class="check-box">'+
                                         '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
                                     '</div>'+
@@ -148,6 +150,7 @@ admin_app.library =
                     if(this.data.display == 'thumb') {
                         for(var n=0;n<entries.length;n++) {
                             var video = entries[n];
+                            var data  = JSON.stringify(video);
                             var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
                             var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
                             var controls = "";
@@ -171,7 +174,7 @@ admin_app.library =
                             var item_class = (selected > -1)? "active" : "";
                             var checked = (selected > -1)? "checked" : "";
                             html +=
-                            '<div class="media-entry thumb-box col-lg-2 col-md-3 col-sm-4 col-xs-6 '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
+                            '<div class="media-entry thumb-box col-lg-2 col-md-3 col-sm-4 col-xs-6 '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'" data-data=\''+data+'\'>'+
                                 '<div class="thumb" >'+
                                     '<a href="'+vlink+'" title="'+video.title+'" class="image-link media-item video-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
@@ -185,6 +188,7 @@ admin_app.library =
                         html += '<ul class="list-box">';
                             for(var i=0;i<entries.length;i++) {
                                 var video = entries[i];
+                                var data  = JSON.stringify(video);
                                 var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
                                 var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
                                 var controls = "";
@@ -204,7 +208,7 @@ admin_app.library =
                                 var item_class = (selected > -1)? "active" : "";
                                 var checked = (selected > -1)? "checked" : "";
                                 html +=
-                                    '<li class="media-entry list clearfix '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'">'+
+                                    '<li class="media-entry list clearfix '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'" data-data=\''+data+'\'>'+
                                         '<div class="check-box">'+
                                             '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
                                         '</div>'+
@@ -348,7 +352,8 @@ admin_app.library =
             c: this.objects.category_dropdown_box.val(),
             p: this.data.page.current,
             l: this.data.page.limit,
-            m: 'json'
+            m: 'json',
+            edit: 1
         };
         //if(data.kw != this.data.keyword) {
             if(this.objects.active_search) this.objects.active_search.abort();
@@ -486,7 +491,9 @@ admin_app.library =
         admin_app.category_selector.open(endpoint, data);
     },
     shareMedia: function(e){
-        admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type);
+        var item = $(e.target).parents('.media-entry');
+        var data = item.data('data');
+        admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type,data);
     },
     selectMedia: function(e){
         var item = $(e.target).parents(".media-entry");;

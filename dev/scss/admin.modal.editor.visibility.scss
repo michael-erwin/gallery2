@@ -12,6 +12,9 @@
     padding-left: 0;
     display: none;
 }
+#modal_visibility_editor .error {
+    border-color: red !important;
+}
 #modal_visibility_editor [role="search-box"]:focus ~ .hint-box {
     display: block;
 }
