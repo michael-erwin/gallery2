@@ -139,7 +139,7 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $public_only = "`share_level`='public'";
+            $public_only = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")
@@ -164,7 +164,7 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $public_only = "`share_level`='public'";
+            $public_only = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")

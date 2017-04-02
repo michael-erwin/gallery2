@@ -97,7 +97,7 @@ admin_app.library =
                             html +=
                             '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'" data-data=\''+data+'\'>'+
                                 '<div class="thumb" >'+
-                                    '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
+                                    '<a href="'+site.base_url+'photos/preview/lg/'+photo.uid+'" title="'+photo.title+'" class="image-link media-item photo-preview" style="background-image:url(\''+thumb+'\')">'+
                                     '</a>'+
                                     '<div class="controls"><a class="more" tabindex="2"><i class="fa fa-ellipsis-v"></i><ul class="options">'+controls+'</ul></a></div>'+
                                 '</div>'+
@@ -133,10 +133,10 @@ admin_app.library =
                                         '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>'+
                                     '</div>'+
                                     '<div class="photo" style="background-image:url('+thumb+')">'+
-                                        '<a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">&nbsp;</a>'+
+                                        '<a href="'+site.base_url+'photos/preview/lg/'+photo.uid+'" class="photo-preview">&nbsp;</a>'+
                                     '</div>'+
                                     '<div class="detail">'+
-                                        '<div class="title"><a href="'+site.base_url+'photos/view/lg/'+photo.uid+'" class="photo-preview">'+photo.title+'</a></div>'+
+                                        '<div class="title"><a href="'+site.base_url+'photos/preview/lg/'+photo.uid+'" class="photo-preview">'+photo.title+'</a></div>'+
                                         '<div class="description">'+photo.description+'</div>'+
                                     '</div>'+
                                     '<div class="controls float-right">'+controls+'</div>'+
@@ -152,7 +152,7 @@ admin_app.library =
                             var video = entries[n];
                             var data  = JSON.stringify(video);
                             var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
-                            var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
+                            var vlink = site.base_url+'videos/preview/'+video.uid;
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                 controls += '<li title="Move to category" data-id="move_category">Move</li>';
@@ -190,7 +190,7 @@ admin_app.library =
                                 var video = entries[i];
                                 var data  = JSON.stringify(video);
                                 var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
-                                var vlink = site.base_url+'media/videos/private/full_size/'+video.uid+'.mp4';
+                                var vlink = site.base_url+'videos/preview/'+video.uid;
                                 var controls = "";
                                 if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                     controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
@@ -216,7 +216,7 @@ admin_app.library =
                                             '<a href="'+vlink+'" title="'+video.title+'" class="video-preview">&nbsp;</a>'+
                                         '</div>'+
                                         '<div class="detail">'+
-                                            '<div class="title"><a href="'+site.base_url+'videos/view/fhd/'+video.uid+'" title="'+video.title+'" class="video-preview">'+video.title+'</a></div>'+
+                                            '<div class="title"><a href="'+site.base_url+'videos/preview/'+video.uid+'" title="'+video.title+'" class="video-preview">'+video.title+'</a></div>'+
                                             '<div class="description">'+video.description+'</div>'+
                                         '</div>'+
                                         '<div class="controls float-right">'+controls+'</div>'+
