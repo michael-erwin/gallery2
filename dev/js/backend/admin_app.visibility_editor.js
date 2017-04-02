@@ -132,6 +132,7 @@ admin_app.visibility_editor =
         }
 
         if(errors == 0){
+            this.disableFields();
             $.ajax({
                 url: site.base_url+this.data.type+'/share',
                 method: 'POST',
@@ -139,7 +140,7 @@ admin_app.visibility_editor =
                 context: this,
                 error: function(jqXHR,textStatus,errorThrown){
                     toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
-                    this.render();
+                    this.enableFields();
                 },
                 success: function(response) {
                     this.self.modal('hide');
@@ -149,6 +150,7 @@ admin_app.visibility_editor =
                     } else {
                         toastr["error"](response.message);
                     }
+                    this.enableFields();
                 }
             });
         }
