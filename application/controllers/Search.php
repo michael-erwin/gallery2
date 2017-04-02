@@ -139,7 +139,7 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $public_only = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+            $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")
@@ -150,11 +150,11 @@ class Search extends CI_Controller
             if($edit){
                 if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
                 {
-                    $public_only = "";
+                    $visibility = "";
                 }
             }
 
-            $tmp .= !empty($tmp)? (!empty($public_only)? " AND {$public_only}" : "") : (!empty($public_only)? " {$public_only}" : "");
+            $tmp .= !empty($tmp)? (!empty($visibility)? " AND {$visibility}" : "") : (!empty($visibility)? " {$visibility}" : "");
             $sql .= !empty($tmp)? "{$tmp} AND " : "";
             $sql .= " (`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%') LIMIT {$limit} OFFSET {$offset}";
         }
@@ -164,7 +164,7 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $public_only = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+            $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")
@@ -175,11 +175,11 @@ class Search extends CI_Controller
             if($edit){
                 if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
                 {
-                    $public_only = "";
+                    $visibility = "";
                 }
             }
 
-            $tmp .= !empty($tmp)? (!empty($public_only)? " AND {$public_only}" : "") : (!empty($public_only)? " {$public_only}" : "");
+            $tmp .= !empty($tmp)? (!empty($visibility)? " AND {$visibility}" : "") : (!empty($visibility)? " {$visibility}" : "");
             $sql .= !empty($tmp)? "{$tmp} AND " : "";
             $sql .= " (MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE)) LIMIT {$limit} OFFSET {$offset}";
         }

@@ -96,7 +96,8 @@ class Item extends CI_Controller
 
     private function getInfo($uid)
     {
-        $sql = "SELECT * FROM `videos` WHERE `uid`='{$uid}'";
+        $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        $sql = "SELECT * FROM `videos` WHERE `uid`='{$uid}' AND `complete`=1 AND {$visibility}";
         $query = $this->db->query($sql);
         $result = $query->result_array();
         if(count($result) > 0)

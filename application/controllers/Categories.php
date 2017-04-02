@@ -341,7 +341,12 @@ class Categories extends CI_Controller
             ucwords($sub_title) => ""
         ];
         # Media entries data.
-        $tmp_items_sql   = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE `category_id`={$sub_id} ORDER BY `title` ASC LIMIT {$limit} OFFSET {$offset}";
+        $tmp_items_sql   = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE `category_id`={$sub_id}";
+        # Apply visibility logic.
+        if($type == "videos") $tmp_items_sql  .= " AND `complete`=1";
+        $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        $tmp_items_sql  .= " AND {$visibility}";
+        $tmp_items_sql  .= " ORDER BY `title` ASC LIMIT {$limit} OFFSET {$offset}";
         $tmp_items_query = $this->db->query($tmp_items_sql);
         $tmp_items_count = $this->db->query("SELECT FOUND_ROWS() AS `total`");
         $items_total     = $tmp_items_count->result_array()[0]['total'];
