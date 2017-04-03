@@ -99,6 +99,21 @@ class Categories extends CI_Controller
                 $this->get_all($media_type);
             }
         }
+        elseif($param_1 == "share")
+        {
+            $response = [
+                "status" => "error",
+                "code"=> 403,
+                "message" => "You don't have enough permission. Please contact system administrator."
+            ];
+            if(!in_array('all',$this->permissions) && !in_array('category_edit',$this->permissions))
+            {
+                header("Content-Type: application/json");
+                echo json_encode($response);
+                exit();
+            }
+            $this->share();
+        }
         elseif(preg_match('/^([a-zA-z\-\_]+)-([0-9]+)$/', $param_1, $main_cat_match))
         {  // If $param_1 parameter follows "main-category-name-1" pattern.
            // i.e. http://domain.com/categories/main-category-name-1
@@ -772,6 +787,75 @@ class Categories extends CI_Controller
             $response['message'] = "Success.";
             $response['data'] = $data;
         }
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    /**
+    *
+    */
+    private function share()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Invalid ids."
+        ];
+
+        $id = clean_numeric_text($this->input->post('id'));
+        $share_level = $this->input->post('share_level');
+        $user_ids = $this->input->post('user_ids');
+        $errors = 0;
+
+        if(strlen($id) > 0)
+        {
+            if($share_level == 'private' || $share_level == 'public')
+            {
+                $set_sql   = "UPDATE `categories` SET `share_level`='{$share_level}' WHERE `id`={$id}";
+            }
+            elseif($share_level == 'protected')
+            {
+                if($user_ids)
+                {
+                    $user_ids = explode(',', $user_ids);
+                    $clean_ids = [];
+
+                    foreach ($user_ids as $user_id) {
+                        $clean_id = clean_numeric_text($user_id);
+                        if(strlen($clean_id) > 0)
+                        {
+                            $clean_ids[] = '['.$clean_id.']';
+                        }
+                    }
+
+                    if(count($clean_ids) > 0)
+                    {
+                        $clean_ids = implode(',', $clean_ids);
+                        $set_sql   = "UPDATE `categories` SET `share_level`='{$clean_ids}' WHERE `id`={$id}";
+                    }
+                }
+            } else { $errors++; }
+
+            if($errors == 0)
+            {
+                if($this->db->query($set_sql))
+                {
+                    $response['status'] = "ok";
+                    $response['code'] = 200;
+                    $response['message'] = "Share level updated.";
+                    $response['dbg_info'] = [
+                        'syntax' => $set_sql,
+                        'share_level' => $share_level
+                    ];
+                }
+                else
+                {
+                    $response['code'] = 403;
+                    $response['message'] = "Db error has occured.";
+                }
+            }
+        }
+
         header("Content-Type: application/json");
         echo json_encode($response);
     }

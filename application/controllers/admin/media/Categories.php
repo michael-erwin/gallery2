@@ -26,7 +26,7 @@ class Categories extends CI_Controller
         $this->load->model('m_category');
     }
 
-    public function index($option=null)
+    public function index()
     {
         // Permissions.
         $data['permissions'] = json_encode($this->permissions);
@@ -46,7 +46,8 @@ class Categories extends CI_Controller
         $data['json']['breadcrumbs'] = json_encode($this->breadcrumbs);
 
         // Page objects.
-        $data['objects'] = $this->load->view('admin/v_object_category_editor','',true);
+        $data['objects']  = $this->load->view('admin/v_object_category_editor','',true);
+        $data['objects'] .= $this->load->view('admin/v_object_visibility_editor','',true);
 
         // JS Scripts.
         $data['js_scripts'] = $this->load->view('admin/scripts/v_scripts_media_categories','',true);

@@ -146,7 +146,12 @@ admin_app.visibility_editor =
                     this.self.modal('hide');
                     if(response.status == "ok") {
                         toastr["success"](response.message,"Updated");
-                        admin_app.library.getData();
+                        if(this.data.type == "photos" || this.data.type == "videos"){
+                            admin_app.library.getData();
+                        }
+                        if(this.data.type == "categories"){
+                            admin_app.category.getData();
+                        }
                     } else {
                         toastr["error"](response.message);
                     }

@@ -50,13 +50,13 @@ admin_app.role =
                     if(role.core == "no") {
                         if($.inArray('all',site.permissions) !== -1 || $.inArray('role_edit',site.permissions) !== -1){
                             options +=
-                            '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit">'+
+                            '<button class="btn btn-primary btn-xs mini" data-id="edit_entry" title="Edit">'+
                                 '<i class="fa fa-pencil"></i>'+
                             '</button>&nbsp;';
                         }
                         if($.inArray('all',site.permissions) !== -1 || $.inArray('role_delete',site.permissions) !== -1){
                             options +=
-                            '<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete">'+
+                            '<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete">'+
                                 '<i class="fa fa-trash"></i>'+
                             '</button>';
                         }

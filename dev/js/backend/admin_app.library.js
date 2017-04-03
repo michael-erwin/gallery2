@@ -113,16 +113,16 @@ admin_app.library =
                             var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
                             var controls = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
-                                controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
+                                controls += '<button title="Move to category" class="btn btn-primary btn-xs mini" data-id="move_category"><i class="fa fa-exchange"></i></button>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_share',site.permissions) !== -1){
-                                controls += '<button title="Sharing" class="btn btn-primary btn-xs" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
+                                controls += '<button title="Sharing" class="btn btn-primary btn-xs mini" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_edit',site.permissions) !== -1){
-                                controls += '<button title="Edit" class="btn btn-primary btn-xs" data-id="edit"><i class="fa fa-pencil"></i></button>';
+                                controls += '<button title="Edit" class="btn btn-primary btn-xs mini" data-id="edit"><i class="fa fa-pencil"></i></button>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1){
-                                controls += '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>';
+                                controls += '<button title="Delete" class="btn btn-danger btn-xs mini" data-id="delete"><i class="fa fa-trash"></i></button>';
                             }
                             var selected = $.inArray(photo.id,this.data.selected);
                             var item_class = (selected > -1)? "active" : "";

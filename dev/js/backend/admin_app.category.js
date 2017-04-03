@@ -52,6 +52,7 @@ admin_app.category =
                     mains[main_id].description = this.data.media_list[i]['description'];
                     mains[main_id].parent_id = this.data.media_list[i]['parent_id'];
                     mains[main_id].published = this.data.media_list[i]['published'];
+                    mains[main_id].share_level = this.data.media_list[i]['share_level'];
                     mains[main_id].core = this.data.media_list[i]['core'];
                     mains[main_id].date_added = this.data.media_list[i]['date_added'];
                     mains[main_id].date_modified = this.data.media_list[i]['date_modified'];
@@ -83,13 +84,16 @@ admin_app.category =
                 if(mains[item]['core'] == "no") {
                     option_button = "";
                     if($.inArray('all',site.permissions) !== -1 || $.inArray('category_add',site.permissions) !== -1){
-                        option_button += '<button class="btn btn-success btn-xs" data-id="new_entry" title="Add sub category."><i class="fa fa-plus"></i></button>';
+                        option_button += '<button class="btn btn-success btn-xs mini" data-id="new_entry" title="Add sub category."><i class="fa fa-plus"></i></button>';
                     }
                     if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
-                        option_button += '\n<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this main category."><i class="fa fa-pencil"></i></button>';
+                        option_button += '\n<button title="Sharing" class="btn btn-primary btn-xs mini" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
+                    }
+                    if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
+                        option_button += '\n<button class="btn btn-primary btn-xs mini" data-id="edit_entry" title="Edit this main category."><i class="fa fa-pencil"></i></button>';
                     }
                     if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
-                        option_button += '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
+                        option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
                     }
                 };
                 if(mains[item]['id'] > 1) {
@@ -115,10 +119,13 @@ admin_app.category =
                         if(mains[item]['subcats'][subcat]['core'] == "no") {              
                             option_button = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
-                                option_button += '<button class="btn btn-primary btn-xs" data-id="edit_entry" title="Edit this sub category."><i class="fa fa-pencil"></i></button>';
+                                option_button += '<button class="btn btn-primary btn-xs mini" data-id="edit_entry" title="Edit this sub category."><i class="fa fa-pencil"></i></button>';
+                            }
+                            if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
+                                option_button += '\n<button title="Sharing" class="btn btn-primary btn-xs mini" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
                             }
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
-                                option_button += '\n<button class="btn btn-danger btn-xs" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
+                                option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
                             }
                         };
                         var my_parent_id = mains[item]['subcats'][subcat]['parent_id'];
@@ -145,6 +152,7 @@ admin_app.category =
             // Attach events.
             this.self.find('button[data-id="new_entry"]').unbind().on('click',this.new_subcat.bind(this));
             this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
+            this.self.find('button[data-id="sharing"]').unbind().on('click',this.share.bind(this));
             this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
             this.self.find('#categories_table tbody i.active').unbind().on('click',this.toggleSubcat.bind(this));
         }else{
@@ -202,6 +210,11 @@ admin_app.category =
         var parent = $(e.target).parents('tr');
         var data = JSON.parse(parent.attr('data-all'));
         admin_app.category_editor.new.call(admin_app.category_editor,data.id);
+    },
+    share: function(e) {
+        var data = $(e.target).parents('tr').data('all');
+        console.log(data);
+        admin_app.visibility_editor.open("categories",data);
     },
     edit: function(e) {
         var parent = $(e.target).parents('tr');
