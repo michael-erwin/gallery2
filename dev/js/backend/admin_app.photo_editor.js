@@ -84,7 +84,7 @@ admin_app.photo_editor =
     render: function() {
         this.uploadZipEnd();
         this.objects.img_box.addClass("loading");
-        this.objects.img_box.find('img[data-id="photo"]').attr('src',site.base_url+'photos/view/lg/'+this.data.uid);
+        this.objects.img_box.find('img[data-id="photo"]').attr('src',site.base_url+'photos/preview/lg/'+this.data.uid);
         this.enableState();
         this.objects.meta_date_added.text(this.data.date_added);
         this.objects.meta_date_modified.text(this.data.date_modified);

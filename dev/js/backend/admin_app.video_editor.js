@@ -70,7 +70,7 @@ admin_app.video_editor =
     },
     render: function() {
         this.objects.vid_player.poster(site.base_url+'media/videos/public/480/'+this.data.uid+'.jpg');
-        this.objects.vid_player.src(site.base_url+'media/videos/public/480p/'+this.data.uid+'.mp4');
+        this.objects.vid_player.src(site.base_url+'videos/preview/'+this.data.uid);
         this.enableState();
         this.objects.meta_date_added.text(this.data.date_added);
         this.objects.meta_date_modified.text(this.data.date_modified);
