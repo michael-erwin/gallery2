@@ -222,6 +222,7 @@ admin_app.category =
         admin_app.category_editor.edit.call(admin_app.category_editor,data);
     },
     delete: function(e) {
+        console.log("Delete triggered.");
         var parent = $(e.target).parents('tr');
         var data = JSON.parse(parent.attr('data-all'));
         var id = data.id;

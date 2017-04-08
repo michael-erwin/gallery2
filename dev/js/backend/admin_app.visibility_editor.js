@@ -71,6 +71,7 @@ admin_app.visibility_editor =
             id: data.id,
             share_level: data.share_level
         };
+        this.objects.hint_box.html('<li>No results.</li>');
         this.objects.email_tag_box.removeClass('error');
         if(data.share_level == "private"){
             this.config.selected_level = "private";
