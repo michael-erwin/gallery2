@@ -37,14 +37,11 @@
                         <div class="form-group clearfix row protected-content">
                             <div class="col-xs-12">
                                 <ul class="input-tags">
-                                    <!-- <li>
-                                        <input type="hidden" name="id[]" value="">
-                                        <span class="name">john-cena-doe-jr@email.com</span>
-                                        <span class="del">×</span>
-                                    </li> -->
+
                                 </ul>
                             </div>
                         </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" data-id="save_btn">Save</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
