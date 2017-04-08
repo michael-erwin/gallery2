@@ -74,7 +74,11 @@ admin_app.library =
                             var photo = entries[n];
                             var data  = JSON.stringify(photo);
                             var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
+                            var selected = $.inArray(photo.id,this.data.selected);
+                            var item_class = (selected > -1)? "active" : "";
+                            var checked = (selected > -1)? "checked" : "";
                             var controls = "";
+
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
                                 controls += '<li title="Move to category" data-id="move_category">Move</b>';
                             }
@@ -91,9 +95,7 @@ admin_app.library =
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
                                 bulk_select += '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+photo.id+'"><i class="glyphicon glyphicon-ok"></i></label>';
                             }
-                            var selected = $.inArray(photo.id,this.data.selected);
-                            var item_class = (selected > -1)? "active" : "";
-                            var checked = (selected > -1)? "checked" : "";
+                            
                             html +=
                             '<div class="media-entry thumb-box col-lg-2 '+item_class+' col-md-3 col-sm-4 col-xs-6" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'" data-data=\''+data+'\'>'+
                                 '<div class="thumb" >'+
@@ -111,7 +113,11 @@ admin_app.library =
                             var photo = entries[i];
                             var data  = JSON.stringify(photo);
                             var thumb = site.base_url+'media/photos/public/128/'+photo.uid+'.jpg';
+                            var selected = $.inArray(photo.id,this.data.selected);
+                            var item_class = (selected > -1)? "active" : "";
+                            var checked = (selected > -1)? "checked" : "";
                             var controls = "";
+
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_change_category',site.permissions) !== -1){
                                 controls += '<button title="Move to category" class="btn btn-primary btn-xs mini" data-id="move_category"><i class="fa fa-exchange"></i></button>';
                             }
@@ -124,9 +130,7 @@ admin_app.library =
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('photo_delete',site.permissions) !== -1){
                                 controls += '<button title="Delete" class="btn btn-danger btn-xs mini" data-id="delete"><i class="fa fa-trash"></i></button>';
                             }
-                            var selected = $.inArray(photo.id,this.data.selected);
-                            var item_class = (selected > -1)? "active" : "";
-                            var checked = (selected > -1)? "checked" : "";
+                            
                             html +=
                                 '<li class="media-entry list clearfix '+item_class+'" data-id="'+photo.id+'" data-category_id="'+photo.category_id+'" data-title="'+photo.title+'" data-data=\''+data+'\'>'+
                                     '<div class="check-box">'+
@@ -275,7 +279,7 @@ admin_app.library =
             // Bind functions.
             this.objects.content_box.find('.controls [data-id="move_category"]').unbind().on('mousedown',this.moveToCategory.bind(this));
             this.objects.content_box.find('.controls [data-id="sharing"]').unbind().on('mousedown',this.shareMedia.bind(this));
-            this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('mousedown',this.selectMedia.bind(this));
+            this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('mousedown',this.editMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('mousedown',this.deleteMedia.bind(this));
             this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
@@ -496,7 +500,7 @@ admin_app.library =
         admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type,data);
     },
     selectMedia: function(e){
-        var item = $(e.target).parents(".media-entry");;
+        var item = $(e.target).parents(".media-entry");
         var checkbox = $(e.target);
         var id = checkbox.val();
         var index = $.inArray(id,this.data.selected);;
