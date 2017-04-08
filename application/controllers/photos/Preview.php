@@ -17,19 +17,32 @@ class Preview extends CI_Controller
         $this->watermark = $this->config->item('mg_watermark');
     }
 
-    public function md($name = null)
+    public function md($filename = null)
     {
+        $name = explode('-', $filename);
+        $uid = end($name);
         $path = $this->media_path;
         $mark = $this->watermark;
         $file = "{$path}/photos/private/full_size/{$uid}.jpg";
         $overlay = "{$path}/photos/private/watermark/{$mark}";
 
-        if ($name && file_exists($file))
+        $share_level = $this->validate_request($uid);
+
+        if (file_exists($file))
         {
-            $picture = $this->simpleimage->load($file);
-            $picture->best_fit(768, 768);
-            $picture->overlay($overlay,"tile");
-            $picture->output();
+            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions) && $share_level !== "protected")
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->best_fit(1280, 1280);
+                $picture->overlay($overlay,"tile");
+                $picture->output();
+            }
+            else
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->best_fit(1280, 1280);
+                $picture->output();
+            }
         }
         else
         {
@@ -46,12 +59,23 @@ class Preview extends CI_Controller
         $file = "{$path}/photos/private/full_size/{$uid}.jpg";
         $overlay = "{$path}/photos/private/watermark/{$mark}";
 
+        $share_level = $this->validate_request($uid);
+
         if (file_exists($file))
         {
-            $picture = $this->simpleimage->load($file);
-            $picture->best_fit(1080, 1080);
-            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions)) $picture->overlay($overlay,"tile");
-            $picture->output();
+            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions) && $share_level !== "protected")
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->best_fit(1920, 1920);
+                $picture->overlay($overlay,"tile");
+                $picture->output();
+            }
+            else
+            {
+                $picture = $this->simpleimage->load($file);
+                $picture->best_fit(1920, 1920);
+                $picture->output();
+            }
         }
         else
         {
@@ -68,9 +92,11 @@ class Preview extends CI_Controller
         $file = "{$path}/photos/private/full_size/{$uid}.jpg";
         $overlay = "{$path}/photos/private/watermark/{$mark}";
 
+        $share_level = $this->validate_request($uid);
+
         if (file_exists($file))
         {
-            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions))
+            if(!in_array('all',$this->permissions) && !in_array('media_view',$this->permissions) && $share_level !== "protected")
             {
                 $picture = $this->simpleimage->load($file);
                 $picture->best_fit(1080, 1080);
@@ -86,6 +112,30 @@ class Preview extends CI_Controller
         else
         {
             show_404();
+        }
+    }
+
+    private function validate_request($uid = null)
+    {
+        $uid = clean_alphanum_hash2($uid);
+        $visibility = isset($_SESSION['user']['id'])? "AND (`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "AND `share_level`='public'";
+        if(in_array('all', $this->permissions) || in_array('photo_edit', $this->permissions))
+        {
+            $visibility = "";
+        }
+        $get_sql = "SELECT `id`,`share_level` FROM `photos` WHERE `uid`='{$uid}' {$visibility}";
+        $get_qry = $this->db->query($get_sql);
+        $item = $get_qry->result_array();
+        if(count($item) > 0)
+        {
+            $share_level = $item[0]['share_level'];
+            if($share_level !== "public" && $share_level !== "private") $share_level = "protected";
+            return $share_level;
+        }
+        else
+        {
+            show_404();
+            exit();
         }
     }
 }
