@@ -157,7 +157,11 @@ admin_app.library =
                             var data  = JSON.stringify(video);
                             var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
                             var vlink = site.base_url+'videos/preview/'+video.uid;
+                            var selected = $.inArray(video.id,this.data.selected);
+                            var item_class = (selected > -1)? "active" : "";
+                            var checked = (selected > -1)? "checked" : "";
                             var controls = "";
+
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                 controls += '<li title="Move to category" data-id="move_category">Move</li>';
                             }
@@ -174,9 +178,7 @@ admin_app.library =
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                 bulk_select += '<label class="checkbox-ui" title="Bulk select"><input type="checkbox" '+checked+' value="'+video.id+'"><i class="glyphicon glyphicon-ok"></i></label>';
                             }
-                            var selected = $.inArray(video.id,this.data.selected);
-                            var item_class = (selected > -1)? "active" : "";
-                            var checked = (selected > -1)? "checked" : "";
+                            
                             html +=
                             '<div class="media-entry thumb-box col-lg-2 col-md-3 col-sm-4 col-xs-6 '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'" data-data=\''+data+'\'>'+
                                 '<div class="thumb" >'+
@@ -195,7 +197,11 @@ admin_app.library =
                                 var data  = JSON.stringify(video);
                                 var thumb = site.base_url+'media/videos/public/128/'+video.uid+'.jpg';
                                 var vlink = site.base_url+'videos/preview/'+video.uid;
+                                var selected = $.inArray(video.id,this.data.selected);
+                                var item_class = (selected > -1)? "active" : "";
+                                var checked = (selected > -1)? "checked" : "";
                                 var controls = "";
+                                
                                 if($.inArray('all',site.permissions) !== -1 || $.inArray('video_change_category',site.permissions) !== -1){
                                     controls += '<button title="Move to category" class="btn btn-primary btn-xs" data-id="move_category"><i class="fa fa-exchange"></i></button>';
                                 }
@@ -208,9 +214,7 @@ admin_app.library =
                                 if($.inArray('all',site.permissions) !== -1 || $.inArray('video_delete',site.permissions) !== -1){
                                     controls += '<button title="Delete" class="btn btn-danger btn-xs" data-id="delete"><i class="fa fa-trash"></i></button>';
                                 }
-                                var selected = $.inArray(video.id,this.data.selected);
-                                var item_class = (selected > -1)? "active" : "";
-                                var checked = (selected > -1)? "checked" : "";
+                                
                                 html +=
                                     '<li class="media-entry list clearfix '+item_class+'" data-id="'+video.id+'" data-category_id="'+video.category_id+'" data-title="'+video.title+'" data-data=\''+data+'\'>'+
                                         '<div class="check-box">'+
