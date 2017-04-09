@@ -307,13 +307,18 @@ admin_app.library =
     runBulkAction: function(e){
         var $this = this;
         var action = e.target.value;
-        if(action == "chage_category"){
+        if(action == "change_category"){
             var endpoint = site.base_url+this.data.type+'/move';
             var data = {
                 id: this.data.selected,
                 category_id: null
             };
             admin_app.category_selector.open(endpoint, data);
+        }
+        if(action == "change_visibility"){
+            var data = { id: this.data.selected.join(','), share_level: 'multiple' };
+            admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type,data);
+            $(e.target).val('default');
         }
         else if(action == "delete"){
             var item_count = this.data.selected.length;

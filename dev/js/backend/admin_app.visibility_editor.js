@@ -77,6 +77,8 @@ admin_app.visibility_editor =
             this.config.selected_level = "private";
         }else if(data.share_level == "public"){
             this.config.selected_level = "public";
+        }else if(data.share_level == "multiple"){
+            this.config.selected_level = "multiple";
         }else{
             this.config.selected_level = "protected";
         }
@@ -118,7 +120,10 @@ admin_app.visibility_editor =
             share_level: checked,
             user_ids: ''
         };
-        
+        if(!checked) {
+            toastr['error']('No visibility option selected.','Error');
+            errors++;
+        }
         if(checked == "protected"){
             this.objects.email_tag_box.find('input[name="id[]"]').each(function(){
                 user_ids.push(this.value);

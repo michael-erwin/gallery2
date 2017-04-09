@@ -33,39 +33,64 @@ class Share extends CI_Controller
             "message" => "Invalid ids."
         ];
 
-        $id = clean_numeric_text($this->input->post('id'));
+        $id = $this->input->post('id');
         $share_level = $this->input->post('share_level');
         $user_ids = $this->input->post('user_ids');
         $errors = 0;
 
-        if(strlen($id) > 0)
+        if($id)
         {
-            if($share_level == 'private' || $share_level == 'public')
-            {
-                $set_sql   = "UPDATE `photos` SET `share_level`='{$share_level}' WHERE `id`={$id}";
-            }
-            elseif($share_level == 'protected')
-            {
-                if($user_ids)
-                {
-                    $user_ids = explode(',', $user_ids);
-                    $clean_ids = [];
+            $id = explode(',', $id);
+            $clean_ids = [];
 
-                    foreach ($user_ids as $user_id) {
-                        $clean_id = clean_numeric_text($user_id);
-                        if(strlen($clean_id) > 0)
+            if(is_array($id))
+            {
+                foreach ($id as $raw_id) {
+                    $clean_id = clean_numeric_text($raw_id);
+                    if(strlen($clean_id) > 0) $clean_ids[] = $clean_id;
+                }
+            }
+            else
+            {
+                $clean_id = clean_numeric_text($id);
+                if(strlen($clean_id) > 0) $clean_ids[] = $clean_id;
+            }
+
+            if(count($clean_ids) == 0)
+            {
+                $error++;
+            }
+            else
+            {
+                $clean_ids = implode(',', $clean_ids);
+                
+                if($share_level == 'private' || $share_level == 'public')
+                {
+                    $set_sql   = "UPDATE `photos` SET `share_level`='{$share_level}' WHERE `id` IN({$clean_ids})";
+                }
+                elseif($share_level == 'protected')
+                {
+                    if($user_ids)
+                    {
+                        $user_ids = explode(',', $user_ids);
+                        $clean_ids = [];
+
+                        foreach ($user_ids as $user_id) {
+                            $clean_id = clean_numeric_text($user_id);
+                            if(strlen($clean_id) > 0)
+                            {
+                                $clean_ids[] = '['.$clean_id.']';
+                            }
+                        }
+
+                        if(count($clean_ids) > 0)
                         {
-                            $clean_ids[] = '['.$clean_id.']';
+                            $clean_ids = implode(',', $clean_ids);
+                            $set_sql   = "UPDATE `photos` SET `share_level`='{$clean_ids}' WHERE `id`={$id}";
                         }
                     }
-
-                    if(count($clean_ids) > 0)
-                    {
-                        $clean_ids = implode(',', $clean_ids);
-                        $set_sql   = "UPDATE `photos` SET `share_level`='{$clean_ids}' WHERE `id`={$id}";
-                    }
-                }
-            } else { $errors++; }
+                } else { $errors++; }
+            }
 
             if($errors == 0)
             {

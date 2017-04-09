@@ -15,7 +15,8 @@
             </select>
             <select class="form-control input-sm" data-id="bulk_operation">
                 <option value="default" selected="true">Bulk Operation</option>
-                <option value="chage_category">Change Category</option>
+                <option value="change_category">Change Category</option>
+                <option value="change_visibility">Change Visibility</option>
                 <option value="delete">Delete</option>
             </select>
         </div>
