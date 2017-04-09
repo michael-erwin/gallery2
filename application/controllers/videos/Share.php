@@ -35,7 +35,7 @@ class Share extends CI_Controller
 
         $id = $this->input->post('id');
         $share_level = $this->input->post('share_level');
-        $user_ids = $this->input->post('user_ids');
+        $share_with = $this->input->post('user_ids');
         $errors = 0;
 
         if($id)
@@ -70,25 +70,22 @@ class Share extends CI_Controller
                 }
                 elseif($share_level == 'protected')
                 {
-                    if($user_ids)
+                    if($share_with)
                     {
-                        $user_ids = explode(',', $user_ids);
-                        $clean_ids = [];
+                        $share_with = explode(',', $share_with);
+                        $clean_share_with = [];
 
-                        foreach ($user_ids as $user_id) {
-                            $clean_id = clean_numeric_text($user_id);
-                            if(strlen($clean_id) > 0)
-                            {
-                                $clean_ids[] = '['.$clean_id.']';
-                            }
+                        foreach ($share_with as $user_id) {
+                            $clean_user_id = clean_numeric_text($user_id);
+                            if(strlen($clean_user_id) > 0) $clean_share_with[] = '['.$clean_user_id.']';
                         }
 
-                        if(count($clean_ids) > 0)
+                        if(count($clean_share_with) > 0)
                         {
-                            $clean_ids = implode(',', $clean_ids);
-                            $set_sql   = "UPDATE `videos` SET `share_level`='{$clean_ids}' WHERE `id`={$id}";
-                        }
-                    }
+                            $clean_share_with = implode(',', $clean_share_with);
+                            $set_sql  = "UPDATE `videos` SET `share_level`='{$clean_share_with}' WHERE `id` IN({$clean_ids})";
+                        } else { $errors++; }
+                    }  else { $errors++; }
                 } else { $errors++; }
             }
 
