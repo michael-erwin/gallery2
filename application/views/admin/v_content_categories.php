@@ -23,7 +23,7 @@
             <tr>
                 <th colspan="2">Title</th>
                 <th>Description</th>
-                <th>Published</th>
+                <th>Visibility</th>
                 <th>Options</th>
             </tr>
         </thead>

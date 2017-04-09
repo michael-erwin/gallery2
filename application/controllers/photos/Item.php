@@ -98,12 +98,22 @@ class Item extends CI_Controller
     private function getInfo($uid)
     {
         $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
-        $sql = "SELECT * FROM `photos` WHERE `uid`='{$uid}' AND {$visibility}";
-        $query = $this->db->query($sql);
-        $result = $query->result_array();
-        if(count($result) > 0)
+        $item_sql = "SELECT * FROM `photos` WHERE `uid`='{$uid}' AND {$visibility}";
+        $item_qry = $this->db->query($item_sql);
+        $item_res = $item_qry->result_array();
+        if(count($item_res) > 0)
         {
-            return $result[0];
+            $item_id = $item_res[0]['category_id'];
+            $category_sql = "SELECT `id` FROM `categories` WHERE `id`={$item_id} AND {$visibility}";
+            $category_qry = $this->db->query($category_sql);
+            if($category_qry->num_rows() > 0)
+            {
+                return $item_res[0];
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {

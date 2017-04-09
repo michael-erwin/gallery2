@@ -35,8 +35,10 @@ class Index extends CI_Controller
         $data['backdrop_photo'] = base_url($folder.$photos[$i]);
 
         // Get category for thumb listing.
-        $sql = "SELECT * FROM `categories` WHERE type='all' AND `level`=1 AND `published`='yes' ORDER BY `title` ASC";
-        $query = $this->db->query($sql); $categories = $query->result_array();
+        $category_sql  = "SELECT * FROM `categories` WHERE type='all' AND `level`=1 AND `published`='yes'";
+        $category_sql .= isset($_SESSION['user']['id'])? " AND (`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `share_level`='public'";
+        $category_sql .= " ORDER BY `title` ASC";
+        $category_res  = $this->db->query($category_sql); $categories = $category_res->result_array();
         foreach($categories as $item)
         {
             $sef_title = preg_replace('/\s/','-',strtolower($item['title'])).'-'.$item['id'];

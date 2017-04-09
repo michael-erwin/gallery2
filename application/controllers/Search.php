@@ -132,6 +132,8 @@ class Search extends CI_Controller
         $offset = $page * $limit;
         $mode = $this->input->get("m");
         $edit = $this->input->get('edit');
+        $visibility = $this->input->get('v');
+        $sql_visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
 
         if(strlen($keys) < 3)
         {
@@ -139,7 +141,6 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")
@@ -147,14 +148,9 @@ class Search extends CI_Controller
                 $permission = "video_edit";
                 $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            if($edit){
-                if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
-                {
-                    $visibility = "";
-                }
-            }
+            if($edit) $sql_visibility = $this->validate_request($visibility, $permission);
 
-            $tmp .= !empty($tmp)? (!empty($visibility)? " AND {$visibility}" : "") : (!empty($visibility)? " {$visibility}" : "");
+            $tmp .= !empty($tmp)? (!empty($sql_visibility)? " AND {$sql_visibility}" : "") : (!empty($sql_visibility)? " {$sql_visibility}" : "");
             $sql .= !empty($tmp)? "{$tmp} AND " : "";
             $sql .= " (`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%') LIMIT {$limit} OFFSET {$offset}";
         }
@@ -164,7 +160,6 @@ class Search extends CI_Controller
             $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
-            $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
             $permission  = "photo_edit";
 
             if($type == "videos")
@@ -172,14 +167,9 @@ class Search extends CI_Controller
                 $permission = "video_edit";
                 $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            if($edit){
-                if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
-                {
-                    $visibility = "";
-                }
-            }
+            if($edit) $sql_visibility = $this->validate_request($visibility, $permission);
 
-            $tmp .= !empty($tmp)? (!empty($visibility)? " AND {$visibility}" : "") : (!empty($visibility)? " {$visibility}" : "");
+            $tmp .= !empty($tmp)? (!empty($sql_visibility)? " AND {$sql_visibility}" : "") : (!empty($sql_visibility)? " {$sql_visibility}" : "");
             $sql .= !empty($tmp)? "{$tmp} AND " : "";
             $sql .= " (MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE)) LIMIT {$limit} OFFSET {$offset}";
         }
@@ -309,6 +299,40 @@ class Search extends CI_Controller
 
         $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
         $this->load->view("v_results_layout",$data);
+    }
+
+    private function validate_request($visibility="any",$permission="none")
+    {
+        if(in_array('all', $this->permissions) || in_array($permission, $this->permissions))
+        {
+            if($visibility == "public")
+            {
+                return "`share_level`='public'";
+            }
+            elseif($visibility == "private")
+            {
+                return "`share_level`='private'";
+            }
+            elseif($visibility == "protected")
+            {
+                return "(`share_level`!='public' AND `share_level`!='private')";
+            }
+            else
+            {
+                return "";
+            }
+        }
+        else
+        {
+            $response = [
+                'status' => 'error',
+                'code' => 403,
+                'message' => 'Access denied.'
+            ];
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
     }
 
     private function formatSizeUnits($bytes)

@@ -33,6 +33,7 @@ admin_app.library =
         // Assign objects.
         this.objects.media_type_dropdown_box = this.self.find('[data-id="media_type"]');
         this.objects.category_dropdown_box = this.self.find('[data-id="category"]');
+        this.objects.visibility_dropdown_box = this.self.find('[data-id="visibility"]');
         this.objects.bulk_operation_dropdown_box = this.self.find('[data-id="bulk_operation"]');
         this.objects.search_form = this.self.find('[data-id="search_form"]');
         this.objects.search_box = this.self.find('[data-id="search_box"]');
@@ -44,8 +45,9 @@ admin_app.library =
         this.objects.pagination_total = this.self.find('.m-pagination .total');
         this.objects.content_box = this.self.find('[data-id="content"]');
         // Bind events.
-        this.objects.media_type_dropdown_box.unbind().on('change',this.renderMediaType.bind(this));
+        this.objects.media_type_dropdown_box.unbind().on('change',this.setMediaType.bind(this));
         this.objects.category_dropdown_box.unbind().on('change',this.setMediaCategory.bind(this));
+        this.objects.visibility_dropdown_box.unbind().on('change',this.setVisibility.bind(this));
         this.objects.bulk_operation_dropdown_box.unbind().on('change',this.runBulkAction.bind(this));
         this.objects.search_form.unbind().on('submit',this.doSearch.bind(this));
         this.objects.search_box.unbind().on('keydown',this.liveSearch.bind(this));
@@ -56,7 +58,7 @@ admin_app.library =
         this.objects.pagination_next.unbind().on('click',this.nextPage.bind(this));
         // Trigger initial contents.
         if($.inArray('all',site.permissions) !== -1 || $.inArray('media_view',site.permissions) !== -1){
-            this.renderMediaType();
+            this.setMediaType();
         }else{
             this.render();
         }
@@ -358,6 +360,7 @@ admin_app.library =
         var data = {
             kw: this.objects.search_box.val(),
             c: this.objects.category_dropdown_box.val(),
+            v: this.objects.visibility_dropdown_box.val(),
             p: this.data.page.current,
             l: this.data.page.limit,
             m: 'json',
@@ -384,7 +387,7 @@ admin_app.library =
     renderCategoryDropdown: function() {
         var category_structure = {};
         var category_list = this.data.category_list;
-        var category_html = '<option value="" selected>All</option>';
+        var category_html = '<option value="" selected>Any category</option>';
         // Build category structure.
         for(var i=0;i<category_list.length;i++) {
             if(category_list[i].level == 1){
@@ -418,7 +421,8 @@ admin_app.library =
         };
         this.objects.category_dropdown_box.html(category_html);
     },
-    renderMediaType: function(e) {
+    setMediaType: function(e) {
+        this.objects.search_box.val("");
         this.objects.pagination_index.val(1);
         this.data.type = this.objects.media_type_dropdown_box.val();
         this.data.page.current = 1;
@@ -439,8 +443,14 @@ admin_app.library =
         });
     },
     setMediaCategory: function(e){
+        this.objects.search_box.val("");
         this.objects.pagination_index.val(1);
         this.data.page.current = 1;
+        this.getData();
+    },
+    setVisibility: function(e){
+        this.objects.search_box.val("");
+        this.objects.pagination_index.val(1);
         this.getData();
     },
     switchDisplay: function(e){

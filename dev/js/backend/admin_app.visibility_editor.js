@@ -250,7 +250,6 @@ admin_app.visibility_editor =
             var data = $(this.objects.hint_box.find('li.active')).data('info');
         };
         if(this.objects.email_tag_box.find('input[value="'+data.id+'"]').length > 0) error++;
-        console.log(data.id);
         var tag = 
             '<li>'+
                 '<input type="hidden" name="id[]" value="'+data.id+'">'+

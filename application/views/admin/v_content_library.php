@@ -5,7 +5,13 @@
                 <option value="videos">Videos</option>
             </select>
             <select class="form-control input-sm" data-id="category">
-                <option value="0" selected>All</option>
+                <option value="0" selected>Any category</option>
+            </select>
+            <select class="form-control input-sm" data-id="visibility">
+                <option value="any" selected>Any visibility</option>
+                <option value="public">Public</option>
+                <option value="protected">Protected</option>
+                <option value="private">Private</option>
             </select>
             <select class="form-control input-sm" data-id="bulk_operation">
                 <option value="default" selected="true">Bulk Operation</option>

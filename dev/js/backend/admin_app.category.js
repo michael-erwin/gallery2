@@ -104,12 +104,13 @@ admin_app.category =
                         expand_button = '<i class="fa disabled '+expand_status+'"></i>';
                     }
                 };
+                var mains_share_level = (mains[item]['share_level']!=='public' && mains[item]['share_level']!=='private')? 'protected' : mains[item]['share_level'];
                 table_html +=
                 '<tr class="main-category" data-all=\''+JSON.stringify(mains[item])+'\'>'+
                     '<td class="handle">'+expand_button+'</td>'+
                     '<td>'+mains[item]['title']+'</td>'+
                     '<td>'+mains[item]['description']+'</td>'+
-                    '<td>'+mains[item]['published']+'</td>'+
+                    '<td>'+mains_share_level+'</td>'+
                     '<td>'+
                         option_button+
                     '</td>'+
@@ -135,12 +136,13 @@ admin_app.category =
                                 my_display = 'table-row';
                             }
                         };
+                        var subcats_share_level = (mains[item]['subcats'][subcat]['share_level']!=='public' && mains[item]['subcats'][subcat]['share_level']!=='private')? 'protected' : mains[item]['subcats'][subcat]['share_level'];
                         table_html +=
                         '<tr class="sub-category parent-id-'+my_parent_id+'" style="display:'+my_display+'" data-all=\''+JSON.stringify(mains[item]['subcats'][subcat])+'\'>'+
                             '<td class="handle"></td>'+
                             '<td>'+mains[item]['subcats'][subcat]['title']+'</td>'+
                             '<td>'+mains[item]['subcats'][subcat]['description']+'</td>'+
-                            '<td>'+mains[item]['subcats'][subcat]['published']+'</td>'+
+                            '<td>'+subcats_share_level+'</td>'+
                             '<td>'+
                                 option_button+
                             '</td>'+

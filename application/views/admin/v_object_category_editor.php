@@ -34,7 +34,7 @@
                                     <div data-id="icon-box-message">Sample text.</div>
                                 </div>
                                 <input type="text" class="form-control input-sm" name="icon" placeholder="url" title="Value can be absolute or relative url." />
-                                <label title="Click to set default thumbnail icon."><input type="checkbox" name="icon_default" value="1" />&nbsp; Set as default.</label>
+                                <label title="Click to set default thumbnail icon."><input type="checkbox" name="icon_default" value="1" />&nbsp; Set this as default icon.</label>
                             </div>
                         </div>
                         <div data-id="levels" class="form-group clearfix row">
@@ -52,7 +52,7 @@
                                 <select class="form-control input-sm list"></select>
                             </div>
                         </div>
-                        <div class="form-group clearfix row">
+                        <div class="form-group clearfix row" style="display: none">
                             <div class="col-sm-3">
                                 Publish
                             </div>

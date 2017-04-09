@@ -1,6 +1,6 @@
 <?php
 /**
-*
+* Categories controller.
 */
 class Categories extends CI_Controller
 {
@@ -230,8 +230,11 @@ class Categories extends CI_Controller
         $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
         // Build category thumbs html markups.
         $data['category_thumbs'] = "";
-        $sql = "SELECT * FROM `categories` WHERE type='all' AND `level`=1 AND `published`='yes' ORDER BY `title` ASC";
-        $query = $this->db->query($sql); $categories = $query->result_array();
+        $category_sql  = "SELECT * FROM `categories` WHERE type='all' AND `level`=1 AND `published`='yes'";
+        $category_sql .= isset($_SESSION['user']['id'])? " AND (`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `share_level`='public'";
+        $category_sql .= " ORDER BY `title` ASC";
+        $category_res  = $this->db->query($category_sql); $categories = $category_res->result_array();
+        // Loop category items for html text.
         foreach($categories as $item)
         {
             $sef_title = preg_replace('/\s/','-',strtolower($item['title'])).'-'.$item['id'];
@@ -248,9 +251,10 @@ class Categories extends CI_Controller
     }
 
     /**
-    * Function description.
-    * @param  type  $variable  Variable description.
-    * @return type             Return value description.
+    * Displays a page of subcategories under the given main catagory
+    * data.
+    * @param  array  $main_url_data  Array containing id and title.
+    * @return void                   Flush HTML buffer to browser.
     *
     */
     private function display_subcat_page($main_url_data)
@@ -260,12 +264,30 @@ class Categories extends CI_Controller
         $main_id    = $main_url_data['id'];
         $main_title = $main_url_data['title'];
         $sef_main_title = $main_title.'-'.$main_id;
+        // Validate visibility of main category.
+        $main_sql = "SELECT `share_level`,`title`,`description` FROM `categories` WHERE `id`={$main_id}";
+        $main_qry = $this->db->query($main_sql);
+        $main_res = $main_qry->result_array();
+        if(count($main_res) == 0)
+        {
+            show_404();
+            exit();
+        }
+        else
+        {
+            $main_data      = $main_res[0];
+            $share_pattern  = 'public';
+            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
+            $share_pattern  = "/{$share_pattern}/";
+            if(!preg_match($share_pattern, $main_data['share_level']))
+            {
+                show_404();
+                exit();
+            }
+        }
         // Page meta information.
-        $meta_sql = "SELECT `title`,`description` FROM `categories` WHERE `id`={$main_id}";
-        $meta_query = $this->db->query($meta_sql);
-        $meta_data = $meta_query->result_array()[0];
-        $data['page_title'] = $meta_data['title'];
-        $data['meta_description'] = $meta_data['description'];
+        $data['page_title'] = $main_res[0]['title'];
+        $data['meta_description'] = $main_res[0]['description'];
         $data['meta_keywords'] = "";
         // Account actions menu
         $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
@@ -343,10 +365,48 @@ class Categories extends CI_Controller
         $limit      = clean_numeric_text($this->input->get('l'));$limit = empty($limit)? 20 : $limit;
         $offset     = $page * $limit;
         $mode       = $this->input->get("m");
-        # Page meta values.
-        $tmp_meta_sql = "SELECT `title`,`description` FROM `categories` WHERE `id`={$sub_id}";
-        $tmp_meta_query = $this->db->query($tmp_meta_sql);
-        $tmp_meta_data = $tmp_meta_query->result_array()[0];
+        // Validate visibility of main category.
+        $main_sql = "SELECT `share_level`,`title`,`description` FROM `categories` WHERE `id`={$main_id}";
+        $main_qry = $this->db->query($main_sql);
+        $main_res = $main_qry->result_array();
+        if(count($main_res) == 0)
+        {
+            show_404();
+            exit();
+        }
+        else
+        {
+            $main_data      = $main_res[0];
+            $share_pattern  = 'public';
+            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
+            $share_pattern  = "/{$share_pattern}/";
+            if(!preg_match($share_pattern, $main_data['share_level']))
+            {
+                show_404();
+                exit();
+            }
+        }
+        // Validate visibility of sub category.
+        $sub_sql = "SELECT `share_level` FROM `categories` WHERE `id`={$sub_id}";
+        $sub_qry = $this->db->query($sub_sql);
+        $sub_res = $sub_qry->result_array();
+        if(count($sub_res) == 0)
+        {
+            show_404();
+            exit();
+        }
+        else
+        {
+            $sub_data      = $sub_res[0];
+            $share_pattern  = 'public';
+            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
+            $share_pattern  = "/{$share_pattern}/";
+            if(!preg_match($share_pattern, $sub_data['share_level']))
+            {
+                show_404();
+                exit();
+            }
+        }
         # Breadrumbs data.
         $main_uri = preg_replace('/\s/','-',strtolower($main_title)).'-'.$main_id;
         $crumbs = [
@@ -389,8 +449,8 @@ class Categories extends CI_Controller
             ]
         ];
         $page_meta = [
-            'title' => $tmp_meta_data['title'],
-            'description' => $tmp_meta_data['description'],
+            'title' => $main_data['title'],
+            'description' => $main_data['description'],
             'keywords' => ''
         ];
 

@@ -29,7 +29,7 @@ class M_category extends CI_Model
     * @return integer|boolean        Id number of inserted row on success, false on failure.
     *
     */
-    public function add ($level=null, $type = null, $title = null, $description=null, $icon = null, $icon_default=0, $publish=null, $parent_id = null)
+    public function add ($level=null, $type = null, $title = null, $description=null, $icon = null, $icon_default=0, $publish='yes', $parent_id = null)
     {
         $parent_id = isset($parent_id)? (is_numeric($parent_id)? $parent_id : 0) : 0;
 
@@ -77,7 +77,7 @@ class M_category extends CI_Model
     * @return integer|boolean        True on success, false on failure.
     *
     */
-    public function update ($id = null, $title = null, $description=null, $icon = null, $icon_default=0, $publish=null, $parent_id = null)
+    public function update ($id = null, $title = null, $description=null, $icon = null, $icon_default=0, $publish='yes', $parent_id = null)
     {
         $id = isset($id)? is_numeric($id)? $id : null : null;
         $parent_id = isset($parent_id)? (is_numeric($parent_id)? $parent_id : 0) : 0;
