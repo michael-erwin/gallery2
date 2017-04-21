@@ -80,7 +80,7 @@ class Categories extends CI_Controller
                 }
                 $this->delete();
             }
-            elseif($param_2 == "get_all")
+            elseif($param_2 == "get_by_type")
             {
                 if(!in_array('all',$this->permissions) && !in_array('category_view',$this->permissions))
                 {
@@ -96,66 +96,178 @@ class Categories extends CI_Controller
                     exit();
                 }
                 $media_type = clean_alpha_text($this->input->get('type'));
-                $this->get_all($media_type);
+                $this->get_by_type($media_type);
             }
         }
         elseif($param_1 == "share")
         {
-            $response = [
-                "status" => "error",
-                "code"=> 403,
-                "message" => "You don't have enough permission. Please contact system administrator."
-            ];
-            if(!in_array('all',$this->permissions) && !in_array('category_edit',$this->permissions))
+            $task = $param_2;
+            $pvt_link = $param_3;
+            if($task == "get")
             {
-                header("Content-Type: application/json");
-                echo json_encode($response);
-                exit();
-            }
-            $this->share();
-        }
-        elseif(preg_match('/^([a-zA-z\-\_]+)-([0-9]+)$/', $param_1, $main_cat_match))
-        {  // If $param_1 parameter follows "main-category-name-1" pattern.
-           // i.e. http://domain.com/categories/main-category-name-1
-           // Extract from URI name and id.
+                if(strlen($pvt_link) == 32 && preg_match('/[a-z0-9]+/', $pvt_link))
+                {
+                    if($info = $this->get_by_shareid($pvt_link))
+                    {
+                        if($info['level'] == 1)
+                        {
+                            $urn_data['main'] = $info;
+                            $this->display_subcat_page($urn_data,$pvt_link);
+                        }
+                        elseif($info['level'] == 2)
+                        {
+                            if(!$urn_data['main'] = $this->get_by_id($info['parent_id']))
+                            {
+                                show_404(); exit();
+                            }
 
-            $main_url_data = ['id' => $main_cat_match[2],'title' => $main_cat_match[1]];
-
-            if(preg_match('/^([a-zA-z\-\_]+)-([0-9]+)$/', $param_2, $sub_cat_match))
-            {  // If $param_2 parameter follows "sub-category-name-1" pattern.
-               // i.e. http://domain.com/categories/main-category-name-1/sub-category-name-2
-
-                if(preg_match('/^([a-zA-z]+)$/', $param_3, $type_match))
-                { // If $param_3 parameter follows "abcde" pattern.
-                  // i.e. http://domain.com/categories/main-1/sub-2/photos
-
-                    if(!in_array($type_match[0], $allowed_media_types)) {
-                        $media_type = $allowed_media_types[0];
+                            $urn_data['sub'] = $info;
+                            $urn_data['page'] = 1;
+                            $this->display_media_page($urn_data,$pvt_link);
+                        }
+                        else
+                        {
+                            show_404();
+                            exit();
+                        }
                     }
-                    else{$media_type = $type_match[0];}
+                    else
+                    {
+                        show_404();
+                        exit();
+                    }
                 }
                 else
                 {
-                    $media_type = $allowed_media_types[0];
+                    show_404();
+                    exit();
                 }
-                $sub_url_data = ['id' => $sub_cat_match[2],'title' => $sub_cat_match[1]];
-                $page = preg_match('/^[0-9]+$/', $param_4)? $param_4 : 1;
-                $this->get_media_items($media_type,$main_url_data,$sub_url_data,$page);
             }
-            else{
-                //$this->display_subcat_page($param_1,$main);
-                $this->display_subcat_page($main_url_data);
+            else
+            {
+                $response = [
+                    "status" => "error",
+                    "code"=> 403,
+                    "message" => "You don't have enough permission. Please contact system administrator."
+                ];
+                if(!in_array('all',$this->permissions) && !in_array('category_edit',$this->permissions))
+                {
+                    header("Content-Type: application/json");
+                    echo json_encode($response);
+                    exit();
+                }
+                $this->share();
             }
         }
-        else{
-            $this->display_maincat_page();
+        else
+        {
+            $main_urn = strtolower($this->uri->segment(2));
+            $subc_urn = strtolower($this->uri->segment(3));
+            $type_urn = strtolower($this->uri->segment(4));
+            $page_num = preg_match('/^[0-9]+$/', $this->uri->segment(5))? $this->uri->segment(5) : 1;
+            $share_id = clean_alphanum_hash($this->input->get('share_id'));
+            $urn_data = [];
+
+            if(preg_match('/^([a-zA-z0-9\-\_]+)-([0-9]+)$/', $main_urn, $main_match)) // Main category
+            {  // If $main_urn parameter follows "main-category-name-1" pattern.
+               // i.e. http://domain.com/categories/main-category-name-1
+               // Extract from URI name and id.
+
+                $share_id_exist = false;
+
+                if(strlen($share_id) == 32)
+                {
+                    $check_data =  $this->get_by_shareid($share_id);
+
+                    if(!$check_data)
+                    {
+                        if(!$urn_data['main'] = $this->get_by_id($main_match[2]))
+                        {
+                            show_404(); exit();
+                        }
+                    }
+                    elseif($check_data['level'] == 2)
+                    {
+                        $urn_data['sub'] = $check_data;
+                        $share_id_exist = true;
+                        if(!$urn_data['main'] = $this->get_by_id($main_match[2]))
+                        {
+                            show_404(); exit();
+                        }
+                    }
+                    else
+                    {
+                        $urn_data['main'] = $check_data;
+                        if($check_data['id'] == $main_match[2]) $share_id_exist = true;
+                    }
+                }
+                else
+                {
+                    if(!$urn_data['main'] = $this->get_by_id($main_match[2]))
+                    {
+                        show_404(); exit();
+                    }
+                }
+
+                if(preg_match('/^([a-zA-z0-9\-\_]+)-([0-9]+)$/', $subc_urn, $subc_match)) // Sub category
+                {  // If $subc_urn parameter follows "sub-category-name-1" pattern.
+                   // i.e. http://domain.com/categories/main-category-name-1/sub-category-name-2
+
+                    if(preg_match('/^([a-zA-z]+)$/', $type_urn, $type_match)) // photos or videos
+                    { // If $type_urn parameter follows "abcde" pattern.
+                      // i.e. http://domain.com/categories/main-1/sub-2/photos
+
+                        if(!in_array($type_match[0], $allowed_media_types))
+                        {
+                            $media_type = $allowed_media_types[0];
+                        }
+                        else 
+                        { $media_type = $type_match[0]; }
+                    }
+                    else
+                    {
+                        $media_type = $allowed_media_types[0];
+                    }
+
+                    if(!isset($urn_data['sub']))
+                    {
+                        if(!$urn_data['sub'] = $this->get_by_id($subc_match[2]))
+                        {
+                            show_404(); exit();
+                        }
+                    }
+
+                    $urn_data['page'] = $page_num;
+
+                    if($share_id_exist)
+                    {
+                        $this->display_media_page($urn_data,$share_id);
+                    }
+                    else
+                    {
+                        $this->display_media_page($urn_data);
+                    }
+                }
+                elseif($share_id_exist)
+                {
+                    $this->display_subcat_page($urn_data,$share_id);
+                }
+                else
+                {
+                    $this->display_subcat_page($urn_data);
+                }
+            }
+            else
+            {
+                $this->display_maincat_page();
+            }
         }
     }
 
     /**
     * Function description.
-    * @param  type  $variable  Variable description.
-    * @return type             Return value description.
+    * @param   type  $variable  Variable description.
+    * @return  type             Return value description.
     *
     */
     private function display_media_type_page()
@@ -181,7 +293,7 @@ class Categories extends CI_Controller
         ];
         $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
         // Build breadcrumbs html markups.
-        $crumbs = ['Home'=>base_url(),'Categories'=>""];
+        $crumbs = ['Categories'=>""];
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);
         // Build category thumbs html markups.
         $data['category_thumbs'] = "";
@@ -197,14 +309,13 @@ class Categories extends CI_Controller
     }
 
     /**
-    * Function description.
-    * @param  string  $type  Media type name in plural i.e. photos.
-    * @return void           Flush HTML buffer to browser.
+    * Renders HTML page with main category thumbnails.
+    * @return  void  Flush HTML buffer to browser.
     *
     */
     private function display_maincat_page()
     {
-        $type = 'photos';
+        $type = 'photos'; // Default search type.
         // Page meta information.
         $data['page_title'] = "Categories";
         $data['meta_description'] = "All media categories.";
@@ -212,7 +323,7 @@ class Categories extends CI_Controller
         // Account actions menu
         $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         // Build breadcrumbs html markups.
-        $crumbs = ['Home'=>base_url(),'Categories'=>""];
+        $crumbs = ['Categories'=>""];
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);
         // Build search wdiget html markups.
         $data['search_widget'] = $this->load->view('common/v_search_widget',['type'=>$type],true);
@@ -233,7 +344,7 @@ class Categories extends CI_Controller
         $category_sql  = "SELECT * FROM `categories` WHERE type='all' AND `level`=1 AND `published`='yes'";
         $category_sql .= isset($_SESSION['user']['id'])? " AND (`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `share_level`='public'";
         $category_sql .= " ORDER BY `title` ASC";
-        $category_res  = $this->db->query($category_sql); $categories = $category_res->result_array();
+        $categories  = ($this->db->query($category_sql))->result_array();
         // Loop category items for html text.
         foreach($categories as $item)
         {
@@ -257,47 +368,28 @@ class Categories extends CI_Controller
     * @return void                   Flush HTML buffer to browser.
     *
     */
-    private function display_subcat_page($main_url_data)
+    private function display_subcat_page($urn_data,$pvt_link=false)
     {
         // Prepare variables.
-        $type = "photos";
-        $main_id    = $main_url_data['id'];
-        $main_title = $main_url_data['title'];
-        $sef_main_title = $main_title.'-'.$main_id;
-        // Validate visibility of main category.
-        $main_sql = "SELECT `share_level`,`title`,`description` FROM `categories` WHERE `id`={$main_id}";
-        $main_qry = $this->db->query($main_sql);
-        $main_res = $main_qry->result_array();
-        if(count($main_res) == 0)
-        {
-            show_404();
-            exit();
-        }
-        else
-        {
-            $main_data      = $main_res[0];
-            $share_pattern  = 'public';
-            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
-            $share_pattern  = "/{$share_pattern}/";
-            if(!preg_match($share_pattern, $main_data['share_level']))
-            {
-                show_404();
-                exit();
-            }
-        }
+        $type = "photos"; // default media type.
+        $share_id = $pvt_link? "?share_id={$pvt_link}" : "";
+        $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        $main_category  = $urn_data['main'];
+        $sef_main_title = preg_replace('/\s/','-',strtolower($main_category['title'])).'-'.$main_category['id'];
+        $sub_categories = [];
+
+        $subc_sql = "SELECT * FROM `categories` WHERE `level`=2 AND `parent_id`={$main_category['id']} AND `published`='yes' AND {$visibility} ORDER BY `title` ASC";
+        $sub_categories = ($this->db->query($subc_sql))->result_array();
+
         // Page meta information.
-        $data['page_title'] = $main_res[0]['title'];
-        $data['meta_description'] = $main_res[0]['description'];
+        $data['page_title'] = $main_category['title'];
+        $data['meta_description'] = $main_category['description'];
         $data['meta_keywords'] = "";
         // Account actions menu
         $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         // Build breadcrumbs html markups.
-        $main_link = preg_replace('/\s/','-',strtolower($main_title)).'-'.$main_id;
-        $crumbs = [
-            'Home'=>base_url(),
-            'Categories'=>base_url('categories'),
-            ucwords($main_title)=>""
-        ];
+        // $main_link = preg_replace('/\s/','-',strtolower($main_category['title'])).'-'.$main_category['id'];
+        $crumbs = ['Categories'=>base_url('categories'), ucwords($main_category['title'])=>""];
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);
         // Build search wdiget html markups.
         $data['search_widget'] = $this->load->view('common/v_search_widget',['type'=>$type],true);
@@ -314,28 +406,27 @@ class Categories extends CI_Controller
         ];
         $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
         $data['category_thumbs'] = "";
-        $sql = "SELECT * FROM `categories` WHERE `parent_id`={$main_id} AND `level`=2 AND `published`='yes' ORDER BY `title` ASC";
-        $query = $this->db->query($sql); $categories = $query->result_array();
         $items_merge_data = [];
-        foreach($categories as $category)
+
+        foreach($sub_categories as $sub_category)
         {
-            
-            $sef_title = preg_replace('/\s/','-',strtolower($category['title'])).'-'.$category['id'];
-            $title = preg_replace(['/ /','/\n/'], ['_',''], $category['title']);
-            $type = $category['type'].'s';
-            if(!isset($items_merge_data[$title])) $items_merge_data[$title] = ['title'=>ucwords($category['title']),'icon'=>'','medias'=>[]];
-            if(!empty($category['icon_default']))
+            $sef_title = preg_replace('/\s/','-',strtolower($sub_category['title'])).'-'.$sub_category['id'];
+            $title = preg_replace(['/ /','/\n/'], ['_',''], $sub_category['title']);
+            $type = $sub_category['type'].'s';
+            if(!isset($items_merge_data[$title])) $items_merge_data[$title] = ['title'=>ucwords($sub_category['title']),'icon'=>'','medias'=>[]];
+            if(!empty($sub_category['icon_default']))
             {
-                $items_merge_data[$title]['icon'] = empty(trim($category['icon']))? "" : empty(parse_url($category['icon'], PHP_URL_SCHEME))? base_url($category['icon']) : $category['icon'];
+                $items_merge_data[$title]['icon'] = empty(trim($sub_category['icon']))? "" : empty(parse_url($sub_category['icon'], PHP_URL_SCHEME))? base_url($sub_category['icon']) : $sub_category['icon'];
             }
             $items_merge_data[$title]['medias'][$type] = [
                 'title' => ucwords($type),
-                'link'  => base_url("categories/{$sef_main_title}/{$sef_title}/{$type}/")
+                'link'  => base_url("categories/{$sef_main_title}/{$sef_title}/{$type}/{$share_id}")
             ];
         }
         foreach ($items_merge_data as $key => $value) {
             $data['category_thumbs'] .= $this->load->view('common/v_category_sub_thumb_frontend',$value,true);
         }
+
         $data['category_thumbs'] = compress_html($data['category_thumbs']);
         $this->load->view("v_results_layout",$data);
     }
@@ -344,7 +435,7 @@ class Categories extends CI_Controller
     * This function serves as controller to process requests for items under
     * specific subcategory and renders appropriate response. It gathers and
     * organize data to either serve as JSON response or call and pass it to the
-    * function 'get_media_items' to serve the HTML output.
+    * function 'display_media_page' to serve the HTML output.
     * @param  string   $type  Media type i.e. 'photos'.
     * @param  array    $main  Contains main category details with keys 'id' &
     *                         'title'.
@@ -354,76 +445,35 @@ class Categories extends CI_Controller
     * @return string          Releases to browser as HTML output.
     *
     */
-    private function get_media_items($type,$main_url_data,$sub_url_data,$page)
+    private function display_media_page($urn_data,$pvt_link=false)
     {
         // Main variables.
-        $main_id    = $main_url_data['id'];
-        $main_title = $main_url_data['title'];
-        $sub_id     = $sub_url_data['id'];
-        $sub_title  = $sub_url_data['title'];
-        $page      -= 1;
-        $limit      = clean_numeric_text($this->input->get('l'));$limit = empty($limit)? 20 : $limit;
-        $offset     = $page * $limit;
-        $mode       = $this->input->get("m");
-        // Validate visibility of main category.
-        $main_sql = "SELECT `share_level`,`title`,`description` FROM `categories` WHERE `id`={$main_id}";
-        $main_qry = $this->db->query($main_sql);
-        $main_res = $main_qry->result_array();
-        if(count($main_res) == 0)
-        {
-            show_404();
-            exit();
-        }
-        else
-        {
-            $main_data      = $main_res[0];
-            $share_pattern  = 'public';
-            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
-            $share_pattern  = "/{$share_pattern}/";
-            if(!preg_match($share_pattern, $main_data['share_level']))
-            {
-                show_404();
-                exit();
-            }
-        }
-        // Validate visibility of sub category.
-        $sub_sql = "SELECT `share_level` FROM `categories` WHERE `id`={$sub_id}";
-        $sub_qry = $this->db->query($sub_sql);
-        $sub_res = $sub_qry->result_array();
-        if(count($sub_res) == 0)
-        {
-            show_404();
-            exit();
-        }
-        else
-        {
-            $sub_data      = $sub_res[0];
-            $share_pattern  = 'public';
-            $share_pattern .= isset($_SESSION['user']['id'])? "|\[".$_SESSION['user']['id']."\]" : "";
-            $share_pattern  = "/{$share_pattern}/";
-            if(!preg_match($share_pattern, $sub_data['share_level']))
-            {
-                show_404();
-                exit();
-            }
-        }
+        $main_category = $urn_data['main'];
+        $sub_category  = $urn_data['sub'];
+        $type          = $sub_category['type'].'s';
+        $page          = $urn_data['page']-1;
+        $limit         = clean_numeric_text($this->input->get('l'));
+        $limit         = empty($limit)? 20 : $limit;
+        $offset        = $page * $limit;
+        $mode          = $this->input->get("m");
+        $pvt_link      = $pvt_link? "?share_id={$pvt_link}" : "";
+        $sef_main_title = preg_replace('/\s/','-',strtolower($main_category['title'])).'-'.$main_category['id'];
+        $sef_sub_title = preg_replace('/\s/','-',strtolower($sub_category['title'])).'-'.$sub_category['id'];
+
         # Breadrumbs data.
-        $main_uri = preg_replace('/\s/','-',strtolower($main_title)).'-'.$main_id;
-        $crumbs = [
-            'Home' => base_url(),
-            'Categories' => base_url('categories'),
-            ucwords($main_title) => base_url("categories/{$main_uri}"),
-            ucwords($sub_title) => ""
-        ];
+        $crumbs = ['Categories' => base_url('categories'), ucwords($main_category['title']) => base_url("categories/{$sef_main_title}{$pvt_link}"), ucwords($sub_category['title']) => ""];
         # Media entries data.
-        $tmp_items_sql   = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE `category_id`={$sub_id}";
+        $get_items_sql   = "SELECT * FROM `{$type}` WHERE `category_id`={$sub_category['id']}";
+        $count_items_sql = "SELECT count(`id`) as `total` FROM `{$type}` WHERE `category_id`={$sub_category['id']}";
+        $get_where_sql   = "";
         # Apply visibility logic.
-        if($type == "videos") $tmp_items_sql  .= " AND `complete`=1";
+        if($type == "videos") $get_where_sql .= " AND `complete`=1";
         $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
-        $tmp_items_sql  .= " AND {$visibility}";
-        $tmp_items_sql  .= " ORDER BY `title` ASC LIMIT {$limit} OFFSET {$offset}";
-        $tmp_items_query = $this->db->query($tmp_items_sql);
-        $tmp_items_count = $this->db->query("SELECT FOUND_ROWS() AS `total`");
+        $get_where_sql  .= " AND {$visibility}";
+
+        $get_limit_sql   = " ORDER BY `title` ASC LIMIT {$limit} OFFSET {$offset}";
+        $tmp_items_count = $this->db->query($count_items_sql.$get_where_sql);
+        $tmp_items_query = $this->db->query($get_items_sql.$get_where_sql.$get_limit_sql);
         $items_total     = $tmp_items_count->result_array()[0]['total'];
         $items_data      = $tmp_items_query->result_array();
 
@@ -431,10 +481,10 @@ class Categories extends CI_Controller
         $response = [
             'type' => $type,
             'keywords' => "",
-            'category_id' => $sub_id,
-            'category_name' => $sub_title,
-            'main_category_id' => $main_id,
-            'main_category_name' => $main_title,
+            'category_id' => $sub_category['id'],
+            'category_name' => $sub_category['title'],
+            'main_category_id' => $main_category['id'],
+            'main_category_name' => $main_category['title'],
             'crumbs' => $crumbs,
             'route' => 'categories',
             'page' => [
@@ -449,8 +499,8 @@ class Categories extends CI_Controller
             ]
         ];
         $page_meta = [
-            'title' => $main_data['title'],
-            'description' => $main_data['description'],
+            'title' => $sub_category['title'],
+            'description' => $sub_category['description'],
             'keywords' => ''
         ];
 
@@ -531,15 +581,22 @@ class Categories extends CI_Controller
         $data['pagination'] = $this->load->view('common/v_pagination_widget_categories',$pagination_data,true);
         # String: HTML for item thumbnails.
         $data['thumbs'] = "";
-        foreach($response['items']['entries'] as $item)
+        if(count($response['items']['entries']) > 0)
         {
-            $thumb_data['data'] = json_encode($item);
-            $thumb_data['title'] = $item['title'];
-            $thumb_data['uid'] = $item['uid'];
-            $thumb_data['seo_title'] = preg_replace('/\s/', '-', $item['title']).'-'.$item['uid'];
-            $data['thumbs'] .= $this->load->view("common/v_result_thumbs_{$type}",$thumb_data,true);
+            foreach($response['items']['entries'] as $item)
+            {
+                $thumb_data['data'] = json_encode($item);
+                $thumb_data['title'] = $item['title'];
+                $thumb_data['uid'] = $item['uid'];
+                $thumb_data['seo_title'] = preg_replace('/\s/', '-', $item['title']).'-'.$item['uid'];
+                $data['thumbs'] .= $this->load->view("common/v_result_thumbs_{$type}",$thumb_data,true);
+            }
+            $data['thumbs'] = compress_html($data['thumbs']);
         }
-        $data['thumbs'] = compress_html($data['thumbs']);
+        else
+        {
+            $data['thumbs'] = $this->load->view('common/v_result_alert',['message'=>'No items.'],true);
+        }
         # String: JS for results app to init.
         $data['result_js_init'] = $this->load->view('scripts/v_scripts_results',['result'=>$response],true);
         $this->load->view("v_results_layout",$data);
@@ -602,7 +659,7 @@ class Categories extends CI_Controller
                 $errors++;
                 $response['message'] .= "Database insert failed. ";
             }
-            if(!$data = $this->m_category->get_all($level_type))
+            if(!$data = $this->m_category->get_by_type($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -694,7 +751,7 @@ class Categories extends CI_Controller
                     $errors++;
                     $response['message'] .= "Database update failed. ";
                 }
-                if(!$data = $this->m_category->get_all($level_type))
+                if(!$data = $this->m_category->get_by_type($level_type))
                 {
                     $errors++;
                     $response['message'] .= "Data fetch failed. ";
@@ -708,7 +765,7 @@ class Categories extends CI_Controller
                 $errors++;
                 $response['message'] .= "Database update failed. ";
             }
-            if(!$data = $this->m_category->get_all($level_type))
+            if(!$data = $this->m_category->get_by_type($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -804,7 +861,7 @@ class Categories extends CI_Controller
                 $response['message'] .= "Row delete failed. ";
             }
             // Get latest record after delete.
-            if(!$data = $this->m_category->get_all($media_type_id))
+            if(!$data = $this->m_category->get_by_type($media_type_id))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -828,12 +885,123 @@ class Categories extends CI_Controller
         echo json_encode($response);
     }
     /**
+    *
+    */
+    private function share()
+    {
+        $response = [
+            "status" => "error",
+            "code" => 500,
+            "message" => "Invalid ids."
+        ];
+
+        $id = clean_numeric_text($this->input->post('id'));
+        $sub_ids = explode(',', $this->input->post('sub_ids'));
+        $clean_sub_ids = [];
+        $level = $this->input->post('level');
+        $share_level = $this->input->post('share_level');
+        $pvt_share_id = clean_alphanum_hash($this->input->post('pvt_share_id'));
+        $user_ids = $user_ids = explode(',', $this->input->post('user_ids'));
+        $errors = 0;
+        $parent_level = ($level==1)? "mc_share_level" : "sc_share_level";
+        
+        foreach ($sub_ids as $sub_id) {
+            $clean_sub_id = clean_numeric_text($sub_id);
+            if(strlen($clean_sub_id) > 0) $clean_sub_ids[] = $clean_sub_id;
+        }
+        if(strlen($id) > 0)
+        {
+            if($share_level == 'private' || $share_level == 'public')
+            {
+                $share_level = clean_alpha_text($share_level);
+            }
+            elseif($share_level == 'protected')
+            {
+                $clean_ids = [];
+                foreach ($user_ids as $user_id) {
+                    $clean_id = clean_numeric_text($user_id);
+                    if(strlen($clean_id) > 0)
+                    {
+                        $clean_ids[] = '['.$clean_id.']';
+                    }
+                }
+                if(count($clean_ids) > 0)
+                {
+                    $share_level =implode(',', $clean_ids);
+                }
+                else
+                {
+                    $share_level = 'private';
+                }
+            } else { $errors++; }
+
+            if($errors == 0)
+            {
+                if($level == 1)
+                {
+                    $set_main_sql  = "UPDATE `categories` ";
+                    $set_main_sql .= "SET `categories`.`share_level`='{$share_level}',`categories`.`pvt_share_id`='{$pvt_share_id}'";
+                    $set_main_sql .= " WHERE `categories`.`id`={$id}";
+
+                    if(count($clean_sub_ids) > 0)
+                    {
+                        $clean_sub_ids = implode(',', $clean_sub_ids);
+                        $set_sub_sql  = "UPDATE `categories` ";
+                        $set_sub_sql .= "LEFT JOIN `photos` ON `categories`.`id`=`photos`.`category_id` ";
+                        $set_sub_sql .= "LEFT JOIN `videos` ON `categories`.`id`=`videos`.`category_id` ";
+                        $set_sub_sql .= "SET `photos`.`mc_share_level`='{$share_level}',`videos`.`mc_share_level`='{$share_level}'";
+                        $set_sub_sql .= " WHERE `categories`.`id` IN ({$clean_sub_ids})";
+                    }
+                }
+                elseif($level == 2)
+                {
+                    $set_main_sql  = "UPDATE `categories` ";
+                    $set_main_sql .= "LEFT JOIN `photos` ON `categories`.`id`=`photos`.`category_id` ";
+                    $set_main_sql .= "LEFT JOIN `videos` ON `categories`.`id`=`videos`.`category_id` ";
+                    $set_main_sql .= "SET `categories`.`share_level`='{$share_level}',`categories`.`pvt_share_id`='{$pvt_share_id}'";
+                    $set_main_sql .= ",`photos`.`sc_share_level`='{$share_level}',`videos`.`sc_share_level`='{$share_level}'";
+                    $set_main_sql .= " WHERE `categories`.`id`={$id}";
+                }
+
+                if($this->db->query($set_main_sql))
+                {
+                    $response['status'] = "ok";
+                    $response['code'] = 200;
+                    $response['message'] = "Target category updated.";
+
+                    if(isset($set_sub_sql))
+                    {
+                        if($this->db->query($set_sub_sql))
+                        {
+                            $response['message'] .= " Associated media for subcats updated.";
+                        }
+                        else
+                        {
+                            $response['status'] = "error";
+                            $response['code'] = 500;
+                            $response['message'] .= " Associated media for subcats updated failed.";
+                        }
+                    }
+                }
+                else
+                {
+                    $response['code'] = 403;
+                    $response['message'] = "Db error has occured.";
+                }
+            }
+        }
+
+        header("Content-Type: application/json");
+        echo json_encode($response);
+    }
+
+    /**
     * Function description.
     * @param  type  $variable  Variable description.
     * @return type             Return value description.
     *
     */
-    private function get_all($type)
+    private function get_by_type($type)
     {
         $type = rtrim($type,'s'); // Removes letter 's' at the end.
         $response = [
@@ -854,69 +1022,40 @@ class Categories extends CI_Controller
     /**
     *
     */
-    private function share()
+    private function get_by_id($id,$no_visi=false)
     {
-        $response = [
-            "status" => "error",
-            "code" => 500,
-            "message" => "Invalid ids."
-        ];
+        $clean_id = clean_numeric_text($id);
+        $clean_id = (strlen($clean_id) > 0)? $clean_id : 0;
+        $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        $item_sql = "SELECT * FROM `categories` WHERE `id`={$clean_id} AND {$visibility}";
+        $item_res = ($this->db->query($item_sql))->result_array();
 
-        $id = clean_numeric_text($this->input->post('id'));
-        $share_level = $this->input->post('share_level');
-        $user_ids = $this->input->post('user_ids');
-        $errors = 0;
-
-        if(strlen($id) > 0)
+        if(count($item_res) > 0)
         {
-            if($share_level == 'private' || $share_level == 'public')
-            {
-                $set_sql   = "UPDATE `categories` SET `share_level`='{$share_level}' WHERE `id`={$id}";
-            }
-            elseif($share_level == 'protected')
-            {
-                if($user_ids)
-                {
-                    $user_ids = explode(',', $user_ids);
-                    $clean_ids = [];
-
-                    foreach ($user_ids as $user_id) {
-                        $clean_id = clean_numeric_text($user_id);
-                        if(strlen($clean_id) > 0)
-                        {
-                            $clean_ids[] = '['.$clean_id.']';
-                        }
-                    }
-
-                    if(count($clean_ids) > 0)
-                    {
-                        $clean_ids = implode(',', $clean_ids);
-                        $set_sql   = "UPDATE `categories` SET `share_level`='{$clean_ids}' WHERE `id`={$id}";
-                    }
-                }
-            } else { $errors++; }
-
-            if($errors == 0)
-            {
-                if($this->db->query($set_sql))
-                {
-                    $response['status'] = "ok";
-                    $response['code'] = 200;
-                    $response['message'] = "Share level updated.";
-                    $response['dbg_info'] = [
-                        'syntax' => $set_sql,
-                        'share_level' => $share_level
-                    ];
-                }
-                else
-                {
-                    $response['code'] = 403;
-                    $response['message'] = "Db error has occured.";
-                }
-            }
+            return $item_res[0];
         }
+        else
+        {
+            return false;
+        }
+    }
 
-        header("Content-Type: application/json");
-        echo json_encode($response);
+    /**
+    *
+    */
+    private function get_by_shareid($share_id)
+    {
+        $share_id = clean_alphanum_hash($share_id);
+        $item_sql = "SELECT * FROM `categories` WHERE `share_level`='private' AND `pvt_share_id`='{$share_id}'";
+        $item_res = ($this->db->query($item_sql))->result_array();
+
+        if(count($item_res) > 0)
+        {
+            return $item_res[0];
+        }
+        else
+        {
+            return false;
+        }
     }
 }

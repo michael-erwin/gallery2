@@ -51,6 +51,30 @@ class Account extends CI_Controller
             header("Content-Type: application/json");
             echo json_encode($this->permissions);
         }
+        elseif($task == "md5")
+        {
+            $granted = array_intersect($this->permissions, ['all','photo_edit','video_edit','category_edit']);
+            if(count($granted) > 0)
+            {
+                $response = [
+                    "status" => "ok",
+                    "code" => 200,
+                    "message" => "Success.",
+                    "data" => md5(uniqid($_SESSION['user']['id'],true))
+                ];
+            }
+            else
+            {
+                $response = [
+                    "status" => "error",
+                    "code" => 500,
+                    "message" => "Your session has expired.",
+                    "data" => null
+                ];
+            }
+            header("Content-Type: application/json");
+            echo json_encode($response);
+        }
         else
         {
             $this->signIn($redirect);

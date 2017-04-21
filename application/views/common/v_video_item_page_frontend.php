@@ -19,6 +19,7 @@
                     <tr><td>Title</td><td><?php echo @$title;?></td></tr>
                     <tr><td>Description</td><td><?php echo @$description;?></td></tr>
                     <tr><td>Dimension</td><td><?php echo @$dimension;?></td></tr>
+                    <tr><td>Duration</td><td><?php echo @$duration;?></td></tr>
                     <tr><td>File size</td><td><?php echo @$file_size;?></td></tr>
                 </tbody>
             </table>

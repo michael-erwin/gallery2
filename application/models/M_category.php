@@ -46,7 +46,7 @@ class M_category extends CI_Model
             if(in_array($type,$allowed_types))
             {
                 $sql  = "INSERT INTO `categories` SET `level`={$level}, `type`='{$type}', `title`='{$title}', `description`='{$description}',";
-                $sql .= " `icon`='{$icon}', `icon_default`={$icon_default}, `published`='{$publish}', `parent_id`={$parent_id}, date_added={$date}";
+                $sql .= " `icon`='{$icon}', `icon_default`={$icon_default}, `published`='{$publish}', `share_level`='private', `parent_id`={$parent_id}, date_added={$date}";
                 if ($query = $this->db->query($sql))
                 {
                     return $this->db->insert_id();

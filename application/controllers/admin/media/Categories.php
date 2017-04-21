@@ -70,7 +70,8 @@ class Categories extends CI_Controller
         else {
             $body = clean_whitespace($this->load->view('admin/v_content_categories','',true));
             // Page objects.
-            $objects = $this->load->view('admin/v_object_category_editor','',true);
+            $objects  = $this->load->view('admin/v_object_category_editor','',true);
+            $objects .= $this->load->view('admin/v_object_visibility_editor','',true);
 
             if ($option)
             {

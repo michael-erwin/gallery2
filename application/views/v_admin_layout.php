@@ -121,8 +121,8 @@
     </div><!-- /.wrapper -->
     <!-- Page specific objects -->
     <div id="objects_holder">
-    <?php echo @$objects;?>
-    </div>
+    <?php echo @$objects;
+    ?></div>
     <!-- /Page specific objects -->
     <!-- Common Modals -->
     <div class="modal common" id="modal_message" tabindex="-1" role="dialog">

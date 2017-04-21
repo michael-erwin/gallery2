@@ -12,7 +12,7 @@ class Search extends CI_Controller
         $this->permissions = $this->auth->get_permissions();
     }
 
-    public function _remap($options=null)
+    public function _remap()
     {
         $method = $this->uri->segment(2);
         $param_1 = $this->uri->segment(3);
@@ -117,11 +117,7 @@ class Search extends CI_Controller
     private function fetchMedia($type=null,$value=null)
     {
         $type = ($type != "")? $type : "photos";
-        $crumbs = [
-            'Home' => base_url(),
-            ucfirst($type) => base_url("categories/{$type}"),
-            'Search' => ""
-        ];
+        $crumbs = ['Search' => ""];
         $keys = clean_title_text($this->input->get('kw'));
         $page = clean_numeric_text($this->input->get('p'));
         $page = empty($page)? 1 : $page;
@@ -135,10 +131,14 @@ class Search extends CI_Controller
         $visibility = $this->input->get('v');
         $sql_visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
 
+        $fetch_sql  = "SELECT `id`,`category_id`,`title`,`description`,`tags`,`uid`,`width`,`height`,`file_size`,`share_level`,`pvt_share_id`,`date_added`,`date_modified`";
+        $fetch_sql .= ($type == "photos")? ",`has_zip` FROM `{$type}` WHERE" : " FROM `{$type}` WHERE";
+        $count_sql  = "SELECT count(`id`) AS `total` FROM `{$type}` WHERE";
+        $where_sql  = "";
+
         if(strlen($keys) < 3)
         {
             $keys = $this->db->escape_like_str($keys);
-            $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
             $permission  = "photo_edit";
@@ -148,16 +148,23 @@ class Search extends CI_Controller
                 $permission = "video_edit";
                 $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            if($edit) $sql_visibility = $this->validate_request($visibility, $permission);
+            if($edit) // Disregard filter restriction if in valid edit mode from backend.
+            {
+                $sql_visibility = $this->validate_request($visibility, $permission);
+            }
+            else
+            {
+                $sql_visibility .= isset($_SESSION['user']['id'])? " AND (`mc_share_level`='public' OR `mc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `mc_share_level`='public'";
+                $sql_visibility .= isset($_SESSION['user']['id'])? " AND (`sc_share_level`='public' OR `sc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `sc_share_level`='public'";
+            }
 
             $tmp .= !empty($tmp)? (!empty($sql_visibility)? " AND {$sql_visibility}" : "") : (!empty($sql_visibility)? " {$sql_visibility}" : "");
-            $sql .= !empty($tmp)? "{$tmp} AND " : "";
-            $sql .= " (`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%') LIMIT {$limit} OFFSET {$offset}";
+            $where_sql .= !empty($tmp)? "{$tmp} AND " : "";
+            $where_sql .= " (`title` LIKE '%{$keys}%' OR `description` LIKE '%{$keys}%' OR `tags` LIKE '%{$keys}%')";
         }
         else
         {
             $keys = $this->db->escape_str(preg_replace('/-+$/', '', $keys));
-            $sql  = "SELECT SQL_CALC_FOUND_ROWS * FROM `{$type}` WHERE";
             $tmp  = "";
             $tmp .= !empty($category)? " `category_id` = ".$category : "";
             $permission  = "photo_edit";
@@ -167,15 +174,23 @@ class Search extends CI_Controller
                 $permission = "video_edit";
                 $tmp .= !empty($tmp)? " AND `complete`=1" : " `complete`=1";
             }
-            if($edit) $sql_visibility = $this->validate_request($visibility, $permission);
+            if($edit) // Disregard filter restriction if in valid edit mode from backend.
+            {
+                $sql_visibility = $this->validate_request($visibility, $permission);
+            }
+            else
+            {
+                $sql_visibility .= isset($_SESSION['user']['id'])? " AND (`mc_share_level`='public' OR `mc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `mc_share_level`='public'";
+                $sql_visibility .= isset($_SESSION['user']['id'])? " AND (`sc_share_level`='public' OR `sc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : " AND `sc_share_level`='public'";
+            }
 
             $tmp .= !empty($tmp)? (!empty($sql_visibility)? " AND {$sql_visibility}" : "") : (!empty($sql_visibility)? " {$sql_visibility}" : "");
-            $sql .= !empty($tmp)? "{$tmp} AND " : "";
-            $sql .= " (MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE)) LIMIT {$limit} OFFSET {$offset}";
+            $where_sql .= !empty($tmp)? "{$tmp} AND " : "";
+            $where_sql .= " (MATCH (`title`,`description`,`tags`) AGAINST('*{$keys}*' IN BOOLEAN MODE))";
         }
 
-        $data = $this->db->query($sql);
-        $rows = $this->db->query("SELECT FOUND_ROWS() AS `total`");
+        $data = $this->db->query($fetch_sql.$where_sql." LIMIT {$limit} OFFSET {$offset}");
+        $rows = $this->db->query($count_sql.$where_sql);
 
         $items = $data->result_array();
         $total = $rows->result_array()[0]['total'];
@@ -198,7 +213,7 @@ class Search extends CI_Controller
                 'total' => $total
             ],
             'dbg_info' => [
-                'sql' => $sql
+                'sql' => $fetch_sql.$where_sql
             ]
         ];
 
@@ -256,7 +271,7 @@ class Search extends CI_Controller
             }
             else
             {
-                $data['thumbs'] = '<div class="alert alert-warning">No results.</div>';
+                $data['thumbs'] = $this->load->view('common/v_result_alert',['message'=>'No items.'],true);
             }
 
         }

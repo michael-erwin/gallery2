@@ -10,16 +10,16 @@
                     <div class="modal-body">
                         <div class="form-group clearfix row">
                             <div class="col-xs-4">
-                                <label><input type="radio" name="visibility" value="public" />&nbsp;Public</label>
+                                <label><input type="radio" name="visibility" value="public" data-for="public-content" />&nbsp;Public</label>
                             </div>
                             <div class="col-xs-4">
-                                <label><input type="radio" name="visibility" value="protected" />&nbsp;Protected</label>
+                                <label><input type="radio" name="visibility" value="protected" data-for="protected-content" />&nbsp;Protected</label>
                             </div>
                             <div class="col-xs-4">
-                                <label><input type="radio" name="visibility" value="private" />&nbsp;Private</label>
+                                <label><input type="radio" name="visibility" value="private" data-for="private-content" />&nbsp;Private</label>
                             </div>
                         </div>
-                        <div class="form-group clearfix row protected-content">
+                        <div class="form-group clearfix row content-block protected-content">
                             <div class="col-xs-12">
                                 <div class="search-box">
                                     <input type="text" role="search-box" class="form-control" placeholder="Search email to include" />
@@ -29,16 +29,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group clearfix row protected-content">
+                        <div class="form-group clearfix row content-block protected-content">
                             <div class="col-xs-12">
                                 Who can see this content.
                             </div>
                         </div>
-                        <div class="form-group clearfix row protected-content">
+                        <div class="form-group clearfix row content-block protected-content">
                             <div class="col-xs-12">
                                 <ul class="input-tags">
 
                                 </ul>
+                            </div>
+                        </div>
+                        <div class="form-group clearfix row content-block private-content">
+                            <div class="col-xs-12">
+                                Share using special link?
+                            </div>
+                        </div>
+                        <div class="form-group clearfix row content-block private-content">
+                            <div class="col-xs-12">
+                                <div class="input-group">
+                                    <input type="text" class="form-control input-sm" name="special_link" role="special_link_box" placeholder="URL" readonly>
+                                    <div class="input-group-addon input-sm">
+                                        <label>
+                                            <input type="checkbox" role="special_link_toggle" title="Click to enabled special link.">
+                                            Yes
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

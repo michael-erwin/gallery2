@@ -12,7 +12,7 @@ class Item extends CI_Controller
         $this->permissions = $this->auth->get_permissions();
     }
 
-    public function _remap($param)
+    public function _remap()
     {
         $item_name = $this->uri->segment(3);
         $name_pattern = '/\-([a-z0-9_]+$)/';
@@ -44,8 +44,9 @@ class Item extends CI_Controller
     {
         $type = "photos";
         $crumbs = [
-            'Home' => base_url(),
-            'Photos' => base_url("categories/photos"),
+            'Categories' => base_url("categories"),
+            $info['category']['main']['title'] => $info['category']['main']['link'],
+            $info['category']['sub']['title'] => $info['category']['sub']['link'],
             $info['title'] => ""
         ];
         $media = [
@@ -97,18 +98,53 @@ class Item extends CI_Controller
 
     private function getInfo($uid)
     {
-        $visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
-        $item_sql = "SELECT * FROM `photos` WHERE `uid`='{$uid}' AND {$visibility}";
+        //$visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        if(isset($_SESSION['user']['id']))
+        {
+            $item_visibility  = "(`photos`.`share_level`='public' OR `photos`.`share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
+            $item_visibility .= " AND (`photos`.`mc_share_level`='public' OR `photos`.`mc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
+            $item_visibility .= " AND (`photos`.`sc_share_level`='public' OR `photos`.`sc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
+        }
+        else
+        {
+            $item_visibility = "`photos`.`share_level`='public' AND `photos`.`mc_share_level`='public' AND `photos`.`sc_share_level`='public'";
+        }
+        $item_sql = "SELECT `photos`.*,`categories`.`title` AS `sc_title`,`categories`.`parent_id` AS `mc_id` FROM `photos` INNER JOIN `categories` ON `photos`.`category_id`=`categories`.`id` WHERE `uid`='{$uid}' AND {$item_visibility}";
         $item_qry = $this->db->query($item_sql);
         $item_res = $item_qry->result_array();
         if(count($item_res) > 0)
         {
-            $item_id = $item_res[0]['category_id'];
-            $category_sql = "SELECT `id` FROM `categories` WHERE `id`={$item_id} AND {$visibility}";
-            $category_qry = $this->db->query($category_sql);
-            if($category_qry->num_rows() > 0)
+            $mc_id = $item_res[0]['mc_id'];
+            $item_mc_sql = "SELECT `title` FROM `categories` WHERE `id`={$mc_id}";
+            $item_mc_qry = $this->db->query($item_mc_sql);
+            $item_mc_res = $item_mc_qry->result_array();
+            $mc_title_sef = strtolower(preg_replace('/ /', '-', $item_mc_res[0]['title'])).'-'.$item_res[0]['mc_id'];
+            $sc_title_sef = strtolower(preg_replace('/ /', '-', $item_res[0]['sc_title'])).'-'.$item_res[0]['category_id'];
+            if(count($item_mc_res) > 0)
             {
-                return $item_res[0];
+                return [
+                    'id' => $item_res[0]['id'],
+                    'uid' => $item_res[0]['uid'],
+                    'category' => [
+                        'main' => [
+                            'title' => $item_mc_res[0]['title'],
+                            'link' => base_url('categories/'.$mc_title_sef.'/')
+                        ],
+                        'sub' => [
+                            'title' => $item_res[0]['sc_title'],
+                            'link' => base_url('categories/'.$mc_title_sef.'/'.$sc_title_sef.'/photos/')
+                        ]
+                    ],
+                    'title' => $item_res[0]['title'],
+                    'description' => $item_res[0]['description'],
+                    'tags' => $item_res[0]['tags'],
+                    'width' => $item_res[0]['width'],
+                    'height' => $item_res[0]['height'],
+                    'file_size' => $item_res[0]['file_size'],
+                    'has_zip' => $item_res[0]['has_zip'],
+                    'date_added' => $item_res[0]['date_added'],
+                    'date_modified' => $item_res[0]['date_modified']
+                ];
             }
             else
             {

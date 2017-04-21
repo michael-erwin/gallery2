@@ -30,7 +30,10 @@
             });
         });
 <?php if(isset($_GET['auth_error'])):?>
-        toastr['warning']("<?php echo $_GET['auth_error'];?>","Warning");
+        toastr['warning']("<?php echo htmlentities($_GET['auth_error']);?>","Warning");
+<?php endif;?>
+<?php if(isset($_GET['auth_notice'])):?>
+        toastr['info']("<?php echo htmlentities($_GET['auth_notice']);?>","Notice");
 <?php endif;?>
     </script>
     <script src="<?php echo base_url();?>assets/js/portal.js"></script>
