@@ -5,6 +5,7 @@
         */
 
         (function(){
-            admin_app.user.init();
-            admin_app.user_editor.init();
+            admin_app.presentation.init();
+            admin_app.presentation_editor.init();
+            admin_app.visibility_editor.init();
         })();

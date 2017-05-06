@@ -35,6 +35,11 @@
                                     <i class="fa fa-dot-circle-o"></i> Upload
                                 </a>
                             </li>
+                            <li data-menu="presentation">
+                                <a class="page-link" href="<?php echo base_url();?>admin/media/presentation">
+                                    <i class="fa fa-dot-circle-o"></i> Presentation
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li data-menu="settings">

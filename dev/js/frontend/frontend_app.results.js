@@ -94,6 +94,7 @@ var results = {
                 l: this.data.page.limit,
                 m: 'json'
             };
+            if(page.share_id.length === 32) data.share_id = page.share_id;
         }
         //this.document.animate({scrollTop: "0px"},300,(function(){
         $.ajax({
@@ -213,6 +214,7 @@ var results = {
                           this.data.category_name+'-'+this.data.category_id+'/'+
                           this.data.type+'/'+
                           this.data.page.current;
+            if(page.share_id.length === 32) current_uri += '?share_id='+page.share_id;
         }
         history.replaceState(null, null, current_uri);
         // Bind events.

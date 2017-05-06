@@ -79,7 +79,7 @@
         busy();
         $.ajax({
             method: "POST",
-            url: site.base_url+"users/sign-up",
+            url: site.base_url+"account/signup",
             data: data,
             error: function(jqXHR,textStatus,errorThrown){
                 toastr["error"](textStatus, "Error "+jqXHR.status);
@@ -93,7 +93,6 @@
                         idle();
                         toastr['error'](response.message,"Error");
                     }
-                    console.log(response)
                 },1000);
             }
         });

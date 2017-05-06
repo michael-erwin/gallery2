@@ -10,7 +10,7 @@ class Categories extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
-        $this->load->model('m_category');
+        $this->load->model('m_categories');
     }
 
     /**
@@ -604,14 +604,7 @@ class Categories extends CI_Controller
 
     /**
     * Inserts new category record.
-    * @param  integer  $level        Post variable with values 1 or 2.
-    * @param  string   $type         Post variable - media type in plural form i.e. photos.
-    * @param  string   $title        Post variable description.
-    * @param  string   $description  Post variable description.
-    * @param  string   $icon         Post variable description.
-    * @param  string   $publish      Post variable description.
-    * @param  integer  $parent_id    Post variable description.
-    * @return string                 JSON text response.
+    * @return  string  JSON text response.
     *
     */
     private function add()
@@ -645,8 +638,7 @@ class Categories extends CI_Controller
         }
         // Check for duplicate entry.
         $sql_check = "SELECT `type`,`title` FROM `categories` WHERE `level`={$level} AND `type`='{$type}' AND `title`='{$title}'";
-        $query = $this->db->query($sql_check);
-        $found = $query->num_rows();
+        $found = ($this->db->query($sql_check))->num_rows();
         if($found > 0)
         {
             $errors++;
@@ -654,12 +646,23 @@ class Categories extends CI_Controller
         }
         else
         {
-            if(!$this->m_category->add($level, $type, $title, $description, $icon, $icon_default, $publish, $parent_id))
+            $fields = [
+                'level'=>$level,
+                'type'=>$type,
+                'title'=>$title,
+                'icon'=>$icon,
+                'icon_default'=>$icon_default,
+                'description'=>$description,
+                'parent_id'=>$parent_id,
+                'published'=>'yes',
+                'share_level'=>'public'
+            ];
+            if(!$this->m_categories->add($fields))
             {
                 $errors++;
                 $response['message'] .= "Database insert failed. ";
             }
-            if(!$data = $this->m_category->get_by_type($level_type))
+            if(!$data = $this->m_categories->get_all($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -681,13 +684,7 @@ class Categories extends CI_Controller
 
     /**
     * Update existing category record.
-    * @param  string   $type         Post variable - media type in plural form i.e. photos.
-    * @param  string   $title        Post variable description.
-    * @param  string   $description  Post variable description.
-    * @param  string   $icon         Post variable description.
-    * @param  string   $publish      Post variable description.
-    * @param  integer  $parent_id    Post variable description.
-    * @return string                 JSON text response.
+    * @return string  JSON text response.
     *
     */
     private function update()
@@ -701,10 +698,19 @@ class Categories extends CI_Controller
         $description = clean_body_text(trim($this->input->post('description')));
         $icon = trim($this->input->post('icon'));
         $icon_default = trim($this->input->post('icon_default'));
-        $publish = clean_alpha_text(trim($this->input->post('publish')));
         $parent_id = clean_numeric_text(trim($this->input->post('parent_id')));
 
+        // Prepare valirables.
         $errors = 0;
+        $fields = [
+            'level'=>$level,
+            'type'=>$type,
+            'title'=>$title,
+            'icon'=>$icon,
+            'icon_default'=>$icon_default,
+            'description'=>$description,
+            'parent_id'=>$parent_id
+        ];
         $response = [
             "status" => "error",
             "message" => "Unknown error has occured.",
@@ -722,17 +728,15 @@ class Categories extends CI_Controller
             $errors++;
             $response['message'] .= "Title field is missing. ";
         }
-        if(strlen($publish) == 0)
-        {
-            $publish = "yes";
-        }
+
         // Check for duplicate entry.
         $sql_check = "SELECT `id`,`type`,`title` FROM `categories` WHERE `level`={$level} AND `type`='{$type}' AND `title`='{$title}'";
-        $sql_check_query = $this->db->query($sql_check);
-        $found = $sql_check_query->num_rows();
-        if($found > 0)
+        $rows_found = ($this->db->query($sql_check))->result_array();
+
+        if(count($rows_found) > 0)
         {
-            $info = $sql_check_query->result_array()[0];
+            $info = $rows_found[0];
+
             if($id != $info['id'])
             {
                 $errors++;
@@ -746,12 +750,12 @@ class Categories extends CI_Controller
                     $sql_clear_default = "UPDATE `categories` SET `icon_default`=0 WHERE `title`='{$title}' AND `icon_default`=1";
                     $this->db->query($sql_clear_default);
                 }
-                if(!$this->m_category->update($id, $title, $description, $icon, $icon_default, $publish, $parent_id))
+                if(!$this->m_categories->update($fields,$id))
                 {
                     $errors++;
                     $response['message'] .= "Database update failed. ";
                 }
-                if(!$data = $this->m_category->get_by_type($level_type))
+                if(!$data = $this->m_categories->get_all($level_type))
                 {
                     $errors++;
                     $response['message'] .= "Data fetch failed. ";
@@ -760,12 +764,12 @@ class Categories extends CI_Controller
         }
         else
         {
-            if(!$this->m_category->update($id, $title, $description, $icon, $icon_default, $publish, $parent_id))
+            if(!$this->m_categories->update($fields,$id))
             {
                 $errors++;
                 $response['message'] .= "Database update failed. ";
             }
-            if(!$data = $this->m_category->get_by_type($level_type))
+            if(!$data = $this->m_categories->get_all($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -780,6 +784,10 @@ class Categories extends CI_Controller
             $response['data'] = $data;
             $response['debug_info'] = $level_type;
         }
+        else
+        {
+            $response['debug_info'] = "Error count: $errors";
+        }
 
         // Generate output.
         header("Content-Type: application/json");
@@ -787,8 +795,8 @@ class Categories extends CI_Controller
     }
     /**
     * Function description.
-    * @param  type  $variable  Variable description.
-    * @return type             Return value description.
+    * @param   type  $variable  Variable description.
+    * @return  type             Return value description.
     *
     */
     private function delete()
@@ -855,13 +863,13 @@ class Categories extends CI_Controller
             // Delete action:
             // Deletes all associated subcategories.
             // Move all associated media to category 1 (uncategorized).
-            if(!$deleted_rows = $this->m_category->delete($item_id,$media_type_id))
+            if(!$deleted_rows = $this->m_categories->delete($item_id,$media_type_id))
             {
                 $errors++;
                 $response['message'] .= "Row delete failed. ";
             }
             // Get latest record after delete.
-            if(!$data = $this->m_category->get_by_type($media_type_id))
+            if(!$data = $this->m_categories->get_all($media_type_id))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -1009,7 +1017,7 @@ class Categories extends CI_Controller
             "message" => "Unknown error has occured.",
             "data" => null
         ];
-        if($data = $this->m_category->get_all($type))
+        if($data = $this->m_categories->get_all($type))
         {
             $response['status'] = "ok";
             $response['message'] = "Success.";

@@ -5,6 +5,7 @@
         <div class="form-box-body">
             <p class="form-box-msg">Sign up for new membership</p>
             <form method="post" novalidate>
+                <input type="hidden" name="data" value="true">
                 <div class="form-group has-feedback">
                     <input type="text" name="fname" class="form-control" placeholder="First name">
                     <span class="fa fa-user-circle form-control-feedback"></span>

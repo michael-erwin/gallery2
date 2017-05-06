@@ -1,9 +1,5 @@
 <div class="content-toolbar content-box clearfix">
     <div class="control-left">
-        <select class="form-control input-sm" data-id="media_type">
-            <option value="photos" selected>Photos</option>
-            <option value="videos">Videos</option>
-        </select>
         <button class="btn btn-control btn-sm" data-id="new_button">New</button>
     </div>
     <div class="control-right">
@@ -18,12 +14,13 @@
     </div>
 </div>
 <div class="content-block">
-    <table id="categories_table" class="table table-bordered">
+    <table id="presentation_table" class="table table-bordered">
         <thead>
             <tr>
                 <th colspan="2">Title</th>
                 <th>Description</th>
                 <th>Visibility</th>
+                <th>Items</th>
                 <th>Options</th>
             </tr>
         </thead>

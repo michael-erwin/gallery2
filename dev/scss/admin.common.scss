@@ -126,6 +126,15 @@ ol.breadcrumb a.active {
 .form-control.error {
     border-color: red;
 }
+.form-control[readonly] {
+    background-color: white;
+}
+.form-control[disabled] {
+    background-color: #eeeeee !important;
+}
+.input-group-addon label {
+    margin-bottom: 0 !important;
+}
 
 /* Toolbar Area. */
 .content-toolbar {margin-bottom: 18px;}

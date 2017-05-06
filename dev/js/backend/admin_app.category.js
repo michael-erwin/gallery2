@@ -53,6 +53,7 @@ admin_app.category =
                     mains[main_id].parent_id = this.data.media_list[i]['parent_id'];
                     mains[main_id].published = this.data.media_list[i]['published'];
                     mains[main_id].share_level = this.data.media_list[i]['share_level'];
+                    mains[main_id].pvt_share_id = this.data.media_list[i]['pvt_share_id'];
                     mains[main_id].core = this.data.media_list[i]['core'];
                     mains[main_id].date_added = this.data.media_list[i]['date_added'];
                     mains[main_id].date_modified = this.data.media_list[i]['date_modified'];
@@ -71,6 +72,7 @@ admin_app.category =
                 var option_button = "";
                 var expand_button = "";
                 var expand_status = "";
+                var title_main    = mains[item]['title'];
                 if(typeof this.config.expanded_items[item] !== "undefined"){
                     if(this.config.expanded_items[item] === 1){
                         expand_status = 'expanded';
@@ -95,6 +97,8 @@ admin_app.category =
                     if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
                         option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
                     }
+                    title_main_sef = site.base_url+'categories/'+title_main.replace(' ','-')+'-'+mains[item]['id'];
+                    title_main = '<a href="'+title_main_sef+'" target="_blank">'+mains[item]['title']+'</a>';
                 };
                 if(mains[item]['id'] > 1) {
                     if(typeof mains[item]['subcats'] === "object"){
@@ -108,7 +112,7 @@ admin_app.category =
                 table_html +=
                 '<tr class="main-category" data-all=\''+JSON.stringify(mains[item])+'\'>'+
                     '<td class="handle">'+expand_button+'</td>'+
-                    '<td>'+mains[item]['title']+'</td>'+
+                    '<td>'+title_main+'</td>'+
                     '<td>'+mains[item]['description']+'</td>'+
                     '<td>'+mains_share_level+'</td>'+
                     '<td>'+
@@ -116,7 +120,8 @@ admin_app.category =
                     '</td>'+
                 '</tr>';
                 if(typeof mains[item]['subcats'] === "object") {
-                    for(var subcat in mains[item]['subcats']){
+                    for(var subcat in mains[item]['subcats']) {
+                        var title_sub = mains[item]['subcats'][subcat]['title'];
                         if(mains[item]['subcats'][subcat]['core'] == "no") {              
                             option_button = "";
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('category_edit',site.permissions) !== -1){
@@ -128,6 +133,8 @@ admin_app.category =
                             if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
                                 option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this sub category."><i class="fa fa-trash"></i></button>';
                             }
+                            title_sub_sef = title_main_sef+'/'+title_sub.replace(' ','-')+'-'+mains[item]['subcats'][subcat]['id']+'/'+this.data.media_type+'/';
+                            title_sub = '<a href="'+title_sub_sef+'" target="_blank">'+title_sub+'</a>';
                         };
                         var my_parent_id = mains[item]['subcats'][subcat]['parent_id'];
                         var my_display = 'none';
@@ -140,7 +147,7 @@ admin_app.category =
                         table_html +=
                         '<tr class="sub-category parent-id-'+my_parent_id+'" style="display:'+my_display+'" data-all=\''+JSON.stringify(mains[item]['subcats'][subcat])+'\'>'+
                             '<td class="handle"></td>'+
-                            '<td>'+mains[item]['subcats'][subcat]['title']+'</td>'+
+                            '<td>'+title_sub+'</td>'+
                             '<td>'+mains[item]['subcats'][subcat]['description']+'</td>'+
                             '<td>'+subcats_share_level+'</td>'+
                             '<td>'+
@@ -215,7 +222,6 @@ admin_app.category =
     },
     share: function(e) {
         var data = $(e.target).parents('tr').data('all');
-        console.log(data);
         admin_app.visibility_editor.open("categories",data);
     },
     edit: function(e) {

@@ -336,12 +336,14 @@ admin_app.category_editor =
                 context: this,
                 error: function(jqXHR,textStatus,errorThrown){
                     toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
+                    this.enableState();
                 },
                 success: function(response) {
                     if(response.status == "ok") {
                         this.data.editor_visible = false;
                         this.render();
                         admin_app.category.getData.call(admin_app.category,response.data);
+                        toastr["success"](response.message, "Success");
                     }
                     else {
                         this.data.editor_visible = false;
