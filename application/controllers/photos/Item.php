@@ -17,9 +17,10 @@ class Item extends CI_Controller
         $item_name = $this->uri->segment(3);
         $name_pattern = '/\-([a-z0-9_]+$)/';
         $mode = $this->input->get('m');
+        $share_id = clean_alphanum_hash($this->input->get('share_id'));
         if(preg_match($name_pattern, $item_name, $matches))
         {
-            $info = $this->getInfo($matches[1]);
+            $info = $this->getInfo($matches[1],$share_id);
             if($info) {
                 if($mode && $mode == "json")
                 {
@@ -96,14 +97,20 @@ class Item extends CI_Controller
         echo json_encode($info);
     }
 
-    private function getInfo($uid)
+    private function getInfo($uid,$share_id)
     {
-        //$visibility = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[".$_SESSION['user']['id']."]%')" : "`share_level`='public'";
+        $subcat_shared = false;
+
         if(isset($_SESSION['user']['id']))
         {
             $item_visibility  = "(`photos`.`share_level`='public' OR `photos`.`share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
+            if($share_id && strlen($share_id) == 32)
+            {
+                $check_subcat_sql = "SELECT `id` FROM `categories` WHERE `level`=2 AND `pvt_share_id`='{$share_id}'";
+                if(($this->db->query($check_subcat_sql))->num_rows() > 0) $subcat_shared = true;
+            }
+            if(!$subcat_shared) $item_visibility .= " AND (`photos`.`sc_share_level`='public' OR `photos`.`sc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
             $item_visibility .= " AND (`photos`.`mc_share_level`='public' OR `photos`.`mc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
-            $item_visibility .= " AND (`photos`.`sc_share_level`='public' OR `photos`.`sc_share_level` LIKE '%[".$_SESSION['user']['id']."]%')";
         }
         else
         {

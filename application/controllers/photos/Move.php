@@ -7,8 +7,8 @@ class Move extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
-        $this->load->model('m_photo');
-        $this->load->model('m_tag');
+        $this->load->model('m_photos');
+        $this->load->model('m_tags');
     }
 
     public function _remap($method=null)
@@ -40,7 +40,7 @@ class Move extends CI_Controller
 
             $category = clean_numeric_text($this->input->post('category_id'));
 
-            if($affected = $this->m_photo->update($id,"","","",$category))
+            if($affected = $this->m_photos->update($id,"","","",$category))
             {
                 $response['status'] = "ok";
                 $response['message'] = "{$affected} photo(s) updated.";

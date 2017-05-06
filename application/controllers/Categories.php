@@ -229,7 +229,21 @@ class Categories extends CI_Controller
                         $media_type = $allowed_media_types[0];
                     }
 
-                    if(!isset($urn_data['sub']))
+                    if(isset($urn_data['sub']))
+                    {
+                        if($subc_match[2] !== $urn_data['sub']['id'])
+                        {
+                            if(!$urn_data['sub'] = $this->get_by_id($subc_match[2]))
+                            {
+                                show_404(); exit();
+                            }
+                            elseif($urn_data['sub']['level'] != 2)
+                            {
+                                show_404(); exit();
+                            }
+                        }
+                    }
+                    else
                     {
                         if(!$urn_data['sub'] = $this->get_by_id($subc_match[2]))
                         {
@@ -387,33 +401,27 @@ class Categories extends CI_Controller
     }
 
     /**
-    * This function serves as controller to process requests for items under
-    * specific subcategory and renders appropriate response. It gathers and
-    * organize data to either serve as JSON response or call and pass it to the
-    * function 'display_media_page' to serve the HTML output.
-    * @param  string   $type  Media type i.e. 'photos'.
-    * @param  array    $main  Contains main category details with keys 'id' &
-    *                         'title'.
-    * @param  array    $sub   Contains sub category details with keys 'id' &
-    *                         'title'.
-    * @param  integer  $page  Page number of result set.
-    * @return string          Releases to browser as HTML output.
+    * Renders either JSON or HTML formatted response for items found under
+    * specific subcategory. HTML output through display_items_page function.
+    * @param  array         $urn_data  Main and sub category data.
+    * @param  string        $share_id  Private share id.
+    * @return array|string             Respose array for JSON string for HTML.
     *
     */
     private function display_media_page($urn_data,$share_id=false)
     {
         // Main variables.
-        $main_category = $urn_data['main'];
-        $sub_category  = $urn_data['sub'];
-        $type          = $sub_category['type'].'s';
-        $page          = $urn_data['page']-1;
-        $limit         = clean_numeric_text($this->input->get('l'));
-        $limit         = empty($limit)? 20 : $limit;
-        $offset        = $page * $limit;
-        $mode          = $this->input->get("m");
-        $pvt_link      = $share_id? "?share_id={$share_id}" : "";
+        $main_category  = $urn_data['main'];
+        $sub_category   = $urn_data['sub'];
+        $type           = $sub_category['type'].'s';
+        $page           = $urn_data['page']-1;
+        $limit          = clean_numeric_text($this->input->get('l'));
+        $limit          = empty($limit)? 20 : $limit;
+        $offset         = $page * $limit;
+        $mode           = $this->input->get("m");
+        $pvt_link       = $share_id? "?share_id={$share_id}" : "";
         $sef_main_title = preg_replace('/\s/','-',strtolower($main_category['title'])).'-'.$main_category['id'];
-        $sef_sub_title = preg_replace('/\s/','-',strtolower($sub_category['title'])).'-'.$sub_category['id'];
+        $sef_sub_title  = preg_replace('/\s/','-',strtolower($sub_category['title'])).'-'.$sub_category['id'];
 
         # Breadrumbs data.
         $crumbs = ['Categories' => base_url('categories'), ucwords($main_category['title']) => base_url("categories/{$sef_main_title}{$pvt_link}"), ucwords($sub_category['title']) => ""];
@@ -474,8 +482,8 @@ class Categories extends CI_Controller
     }
 
     /**
-    * This function renders HTML page output in results view layout for all
-    * items found under specific subcategory.
+    * Renders HTML page output in results view layout for all items found under
+    * specific subcategory.
     * @param  array   $response   Result set containing the following keys:
     *                             type, keywords, category_name, category_id,
     *                             crumbs, route, page, & items.
@@ -537,6 +545,8 @@ class Categories extends CI_Controller
         $data['pagination'] = $this->load->view('common/v_pagination_widget_categories',$pagination_data,true);
         # String: HTML for item thumbnails.
         $data['thumbs'] = "";
+        $query_str = "";
+        if(strlen($response['page']['share_id']) == 32) $query_str = "?share_id={$response['page']['share_id']}";
         if(count($response['items']['entries']) > 0)
         {
             foreach($response['items']['entries'] as $item)
@@ -545,6 +555,7 @@ class Categories extends CI_Controller
                 $thumb_data['title'] = $item['title'];
                 $thumb_data['uid'] = $item['uid'];
                 $thumb_data['seo_title'] = preg_replace('/\s/', '-', $item['title']).'-'.$item['uid'];
+                $thumb_data['query_str'] = $query_str;
                 $data['thumbs'] .= $this->load->view("common/v_result_thumbs_{$type}",$thumb_data,true);
             }
             $data['thumbs'] = compress_html($data['thumbs']);

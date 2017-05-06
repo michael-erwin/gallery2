@@ -13,7 +13,7 @@ class Delete extends CI_Controller
         $this->permissions = $this->auth->get_permissions();
         $this->config->load('media_gallery');
         $this->media_path = $this->config->item('mg_media_path');
-        $this->load->model("m_photo");
+        $this->load->model("m_photos");
     }
 
     public function _remap()
@@ -38,7 +38,7 @@ class Delete extends CI_Controller
                 echo json_encode($response);
                 exit();
             }
-            if($deleted = $this->m_photo->delete($id))
+            if($deleted = $this->m_photos->delete($id))
             {
                 $response["status"] = "ok";
                 $response["message"] = "{$deleted} files deleted.";

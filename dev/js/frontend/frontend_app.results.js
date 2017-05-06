@@ -125,6 +125,7 @@ var results = {
                     var thumb = site.base_url+'media/photos/public/256/'+photo.uid+'.jpg';
                     var seo_link = photo.title.split(' ');
                     seo_link = site.base_url+'photos/item/'+seo_link.join('-')+'-'+photo.uid;
+                    if(page.share_id.length==32) seo_link += '?share_id='+page.share_id;
                     html += '<div class="thumb-box centered col-md-3 col-sm-4 col-xs-6">'+
                                 '<div class="thumb" data-data=\''+data.replace("'","")+'\' data-media="photo">'+
                                     '<a title="'+photo.title+'" class="image-link photo-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
@@ -147,6 +148,7 @@ var results = {
                     var data = JSON.stringify(video);
                     var thumb = site.base_url+'media/videos/public/256/'+video.uid+'.jpg';
                     var seo_link = site.base_url+'videos/item/'+video.title.replace(' ','-')+'-'+video.uid;
+                    if(page.share_id.length==32) seo_link += '?share_id='+page.share_id;
                     html += '<div class="thumb-box centered col-md-3 col-sm-4 col-xs-6">'+
                                 '<div class="thumb" data-data=\''+data.replace("'","")+'\' data-media="video">'+
                                     '<a title="'+video.title+'" class="image-link video-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
