@@ -10,7 +10,7 @@ class Categories extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
-        $this->load->model('m_categories');
+        $this->load->model('m_category');
     }
 
     /**
@@ -265,50 +265,6 @@ class Categories extends CI_Controller
     }
 
     /**
-    * Function description.
-    * @param   type  $variable  Variable description.
-    * @return  type             Return value description.
-    *
-    */
-    private function display_media_type_page()
-    {
-        // Page meta information.
-        $data['page_title'] = "Categories";
-        $data['meta_description'] = "Select category types";
-        $data['meta_keywords'] = "";
-        // Account actions menu
-        $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
-        // Build search widget html markups.
-        $data['search_widget'] = $this->load->view('common/v_search_widget',['type'=>"photos"],true);
-        // Build pagination html markups.
-        $pagination_data = [
-            'type' => "photos",
-            'keywords' => "",
-            'category_id' => "",
-            'category_name' => "",
-            'current_page' => 1,
-            'total_page' => 1,
-            'prev_disabled' => true,
-            'next_disabled' => true
-        ];
-        $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
-        // Build breadcrumbs html markups.
-        $crumbs = ['Categories'=>""];
-        $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>$crumbs],true);
-        // Build category thumbs html markups.
-        $data['category_thumbs'] = "";
-        $items = [
-            ["icon"=>"assets/img/category_icons/core/photos.jpg","link"=>base_url('categories/photos'),"title"=>"Photos"],
-            ["icon"=>"assets/img/category_icons/core/videos.jpg","link"=>base_url('categories/videos'),"title"=>"Videos"]
-        ];
-        foreach($items as $item)
-        {
-            $data['category_thumbs'] .= preg_replace("/\n/",'',$this->load->view('common/v_category_thumb_frontend',$item,true));
-        }
-        $this->load->view("v_results_layout",$data);
-    }
-
-    /**
     * Renders HTML page with main category thumbnails.
     * @return  void  Flush HTML buffer to browser.
     *
@@ -362,8 +318,7 @@ class Categories extends CI_Controller
     }
 
     /**
-    * Displays a page of subcategories under the given main catagory
-    * data.
+    * Displays a page of subcategories under the given main catagory data.
     * @param  array  $main_url_data  Array containing id and title.
     * @return void                   Flush HTML buffer to browser.
     *
@@ -445,7 +400,7 @@ class Categories extends CI_Controller
     * @return string          Releases to browser as HTML output.
     *
     */
-    private function display_media_page($urn_data,$pvt_link=false)
+    private function display_media_page($urn_data,$share_id=false)
     {
         // Main variables.
         $main_category = $urn_data['main'];
@@ -456,7 +411,7 @@ class Categories extends CI_Controller
         $limit         = empty($limit)? 20 : $limit;
         $offset        = $page * $limit;
         $mode          = $this->input->get("m");
-        $pvt_link      = $pvt_link? "?share_id={$pvt_link}" : "";
+        $pvt_link      = $share_id? "?share_id={$share_id}" : "";
         $sef_main_title = preg_replace('/\s/','-',strtolower($main_category['title'])).'-'.$main_category['id'];
         $sef_sub_title = preg_replace('/\s/','-',strtolower($sub_category['title'])).'-'.$sub_category['id'];
 
@@ -490,7 +445,8 @@ class Categories extends CI_Controller
             'page' => [
                 'current' => $page+1,
                 'total' => ceil($items_total / $limit),
-                'limit' => $limit
+                'limit' => $limit,
+                'share_id' => $share_id
             ],
             'items' => [
                 'type' => $type,
@@ -544,14 +500,14 @@ class Categories extends CI_Controller
         $sef_link .= $response['category_name'].'-'.$response['category_id'];
         if($response['page']['current'] > 1)
         {
-            $ppage_num     = $response['page']['current']-1;
-            $prev_link     = base_url("categories/{$type}/{$sef_link}/{$ppage_num}");
+            $page_num      = $response['page']['current']-1;
+            $prev_link     = base_url("categories/{$type}/{$sef_link}/{$page_num}");
             $prev_disabled = false;
         }
         else
         {
-            $ppage_num     = 1;
-            $prev_link     = base_url("categories/{$type}/{$sef_link}/{$ppage_num}");
+            $page_num      = 1;
+            $prev_link     = base_url("categories/{$type}/{$sef_link}/{$page_num}");
             $prev_disabled = true;
         }
         if($response['page']['current'] < $response['page']['total'])
@@ -597,6 +553,8 @@ class Categories extends CI_Controller
         {
             $data['thumbs'] = $this->load->view('common/v_result_alert',['message'=>'No items.'],true);
         }
+        # Share id.
+        if(isset($response['page']['share_id'])) $data['share_id'] = $response['page']['share_id'];
         # String: JS for results app to init.
         $data['result_js_init'] = $this->load->view('scripts/v_scripts_results',['result'=>$response],true);
         $this->load->view("v_results_layout",$data);
@@ -657,12 +615,12 @@ class Categories extends CI_Controller
                 'published'=>'yes',
                 'share_level'=>'public'
             ];
-            if(!$this->m_categories->add($fields))
+            if(!$this->m_category->add($fields))
             {
                 $errors++;
                 $response['message'] .= "Database insert failed. ";
             }
-            if(!$data = $this->m_categories->get_all($level_type))
+            if(!$data = $this->m_category->get_all($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -750,12 +708,12 @@ class Categories extends CI_Controller
                     $sql_clear_default = "UPDATE `categories` SET `icon_default`=0 WHERE `title`='{$title}' AND `icon_default`=1";
                     $this->db->query($sql_clear_default);
                 }
-                if(!$this->m_categories->update($fields,$id))
+                if(!$this->m_category->update($fields,$id))
                 {
                     $errors++;
                     $response['message'] .= "Database update failed. ";
                 }
-                if(!$data = $this->m_categories->get_all($level_type))
+                if(!$data = $this->m_category->get_all($level_type))
                 {
                     $errors++;
                     $response['message'] .= "Data fetch failed. ";
@@ -764,12 +722,12 @@ class Categories extends CI_Controller
         }
         else
         {
-            if(!$this->m_categories->update($fields,$id))
+            if(!$this->m_category->update($fields,$id))
             {
                 $errors++;
                 $response['message'] .= "Database update failed. ";
             }
-            if(!$data = $this->m_categories->get_all($level_type))
+            if(!$data = $this->m_category->get_all($level_type))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -863,13 +821,13 @@ class Categories extends CI_Controller
             // Delete action:
             // Deletes all associated subcategories.
             // Move all associated media to category 1 (uncategorized).
-            if(!$deleted_rows = $this->m_categories->delete($item_id,$media_type_id))
+            if(!$deleted_rows = $this->m_category->delete($item_id,$media_type_id))
             {
                 $errors++;
                 $response['message'] .= "Row delete failed. ";
             }
             // Get latest record after delete.
-            if(!$data = $this->m_categories->get_all($media_type_id))
+            if(!$data = $this->m_category->get_all($media_type_id))
             {
                 $errors++;
                 $response['message'] .= "Data fetch failed. ";
@@ -1017,7 +975,7 @@ class Categories extends CI_Controller
             "message" => "Unknown error has occured.",
             "data" => null
         ];
-        if($data = $this->m_categories->get_all($type))
+        if($data = $this->m_category->get_all($type))
         {
             $response['status'] = "ok";
             $response['message'] = "Success.";

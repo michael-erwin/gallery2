@@ -166,7 +166,7 @@
     <script src="<?php echo base_url();?>assets/js/search-hint.js"></script>
     <script>
         var site = {base_url:"<?php echo base_url();?>"};
-        var page = {share_id:"<?php echo @$_GET['share_id'];?>"}
+        var page = {share_id:"<?php echo (isset($share_id)? $share_id : (isset($_GET['share_id'])? $_GET['share_id'] : ""));?>"}
         $(document).ready(function(){favorites.init();results.init();$(window).scroll(function (event) {var scroll = $(window).scrollTop();var isFixedTopbar = false;if(scroll > 43) {isFixedTopbar = true;}if(isFixedTopbar){$("header").addClass("fixed-top");$("#search_bar").addClass("fixed-top");$("#thumbs_display").addClass("scrolling-top");}else{$("header").removeClass("fixed-top");$("#search_bar").removeClass("fixed-top");$("#thumbs_display").removeClass("scrolling-top");}});$('form[action="search"] [name="kw"]').searchHint();});
     </script>
     <?php echo @$result_js_init;?>
