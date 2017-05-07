@@ -6,6 +6,15 @@
     100% { transform: rotate(360deg); }
 }
 
+/* Skin Related */
+.skin-custom.sidebar-mini .sidebar-user-icon {
+    color: white;
+    font-size: 54px;
+}
+.skin-custom.sidebar-mini.sidebar-collapse .sidebar-user-icon {
+    font-size: 28px;
+}
+
 /* Common */
 .float-right {float:right}
 .float-left {float:left}

@@ -51,14 +51,15 @@
                             <!-- Menu Toggle Button -->
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             <!-- The user photo in the navbar-->
-                            <img alt="User Photo" class="user-image" src="<?php echo base_url();?>assets/img/user.jpg">
+                            <!-- <img alt="User Photo" class="user-image" src="<?php echo base_url();?>assets/img/user.jpg"> -->
+                            <i class="fa fa-user-circle" aria-hidden="true"></i>
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs"><?php echo @$_SESSION['user']['first_name'];?> <?php echo @$_SESSION['user']['last_name'];?></span></a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
-                                    <img alt="User Photo" class="img-circle" src="<?php echo base_url();?>assets/img/user.jpg">
-                                    <p><?php echo @$_SESSION['user']['first_name'];?> <?php echo @$_SESSION['user']['last_name'];?> - <?php echo @$_SESSION['user']['role_name'];?> <small>Member since Jan. 2015</small></p>
+                                    <i class="fa fa-user-circle" aria-hidden="true" style="color:white;font-size:50px;display:inline-block;margin-top: 28px"></i>
+                                    <p><?php echo @$_SESSION['user']['first_name'];?> <?php echo @$_SESSION['user']['last_name'];?> <small><?php echo @$_SESSION['user']['role_name'];?></small></p>
                                 </li>
                                 <!-- Menu Body -->
                                 <!-- Menu Footer-->
