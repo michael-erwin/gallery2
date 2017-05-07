@@ -16,39 +16,49 @@ admin_app.presentation =
         // Bind events
         this.objects.new_button.unbind().on('click',this.new);
         // Get data.
-        if($.inArray('all',site.permissions) !== -1 || $.inArray('category_view',site.permissions) !== -1){
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_edit',site.permissions) !== -1){
             this.getData();
         }else{
             this.render();
         }
     },
     render: function() {
-        if($.inArray('all',site.permissions) !== -1 || $.inArray('category_view',site.permissions) !== -1){
+        if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_add',site.permissions) !== -1 || $.inArray('presentation_edit',site.permissions) !== -1){
             // Enable view.
             this.objects.new_button.prop('disabled',false);
             $('.content-block').css('display','block');
             $('#message_block').css('display','none');
 
-
-
             // Build HTML rows content of table.
-            var table_html = "";
-            for(var item in this.data.items){
+            var table_html = '';
+            var option_button = '';
 
-                if($.inArray('all',site.permissions) !== -1 || $.inArray('category_add',site.permissions) !== -1){
-                    this.objects.new_button.prop('disabled',false);
-                }else{
-                    this.objects.new_button.prop('disabled',true);
-                }
-                
-            };
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_add',site.permissions) !== -1){
+                option_button += '<button class="btn btn-primary btn-xs mini" data-id="edit_media" title="Add or edit media items."><i class="fa fa-file-image-o"></i></button>';
+            }
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_edit',site.permissions) !== -1){
+                option_button += '\n<button title="Sharing" class="btn btn-primary btn-xs mini" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
+            }
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_edit',site.permissions) !== -1){
+                option_button += '\n<button class="btn btn-primary btn-xs mini" data-id="edit_entry" title="Edit basic details."><i class="fa fa-pencil"></i></button>';
+            }
+            if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_delete',site.permissions) !== -1){
+                option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this entry."><i class="fa fa-trash"></i></button>';
+            }
+
+            for(var i=0;i<this.data.items.length;i++) {
+                var item = this.data.items[i];
+                var count = ($.trim(item.items).length == 0)? 0 : item.items.split(',').length;
+                table_html += '<tr data-all=\''+(JSON.stringify(item)).replace(/[']/g,"&#39;")+'\'>'+
+                                '<td>'+item.title+'</td><td>'+item.description+'</td><td>'+item.share_level+'</td><td>'+count+'</td><td>'+option_button+'</td>'+
+                              '</tr>';
+            }
             this.objects.table_body.html(table_html);
             // Attach events.
-            // this.self.find('button[data-id="new_entry"]').unbind().on('click',this.new_subcat.bind(this));
-            // this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit.bind(this));
-            // this.self.find('button[data-id="sharing"]').unbind().on('click',this.share.bind(this));
-            // this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
-            // this.self.find('#categories_table tbody i.active').unbind().on('click',this.toggleSubcat.bind(this));
+            this.self.find('button[data-id="edit_media"]').unbind().on('click',this.edit_media.bind(this));
+            this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit_basic.bind(this));
+            this.self.find('button[data-id="sharing"]').unbind().on('click',this.share.bind(this));
+            this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
         }else{
             this.objects.new_button.prop('disabled',true);
             $('.content-block').css('display','none');
@@ -57,55 +67,63 @@ admin_app.presentation =
         }
     },
     getData: function(data) {
-        /*if(data) {
-            this.data.media_list = data;
+        if(data) {
+            this.data.items = data;
             this.render();
         }
         else{
             $.ajax({
-                url: site.base_url+'admin/media/categories/json',
+                url: site.base_url+'presentations/get',
                 method: 'get',
-                data: 'list='+this.objects.media_type_dropdown.val(),
                 context: this,
                 error: function(jqXHR,textStatus,errorThrown){
                     toastr["error"]("Failed to load content.", "Error "+jqXHR.status);
                 },
                 success: function(response) {
-                    this.data.media_list = response;
-                    this.render();
+                    if(response.status == "ok") {
+                        this.data.items = response.data.items;
+                        this.render();
+                    } else {
+                        toastr["error"](response.message, "Error");
+                    }
                 }
             });
-        }*/
+        }
     },
     new: function(e) {
-        admin_app.presentation_editor.open.call(admin_app.presentation_editor);
+        admin_app.presentation_entry_editor.new.call(admin_app.presentation_entry_editor);
     },
-    edit: function(e) {
+    edit_basic: function(e) {
         var parent = $(e.target).parents('tr');
-        var data = JSON.parse(parent.attr('data-all'));
-        admin_app.presentation_editor.edit.call(admin_app.presentation_editor,data);
+        var data = parent.data('all');
+        admin_app.presentation_entry_editor.edit.call(admin_app.presentation_entry_editor,data);
+    },
+    edit_media: function(e) {
+        var parent = $(e.target).parents('tr');
+        var data = parent.data('all');
+        toastr['info']('No function implemented yet.','Info');
     },
     share: function(e) {
-        var data = $(e.target).parents('tr').data('all');
-        admin_app.visibility_editor.open("categories",data);
+        var parent = $(e.target).parents('tr');
+        var data = parent.data('all');
+        admin_app.visibility_editor.open("presentations",data);
     },
     delete: function(e) {
-        console.log("Delete triggered.");
         var parent = $(e.target).parents('tr');
-        var data = JSON.parse(parent.attr('data-all'));
+        var data = parent.data('all');
         var id = data.id;
         var doDelete = function() {
             $.ajax({
-                url: site.base_url+'categories/manage/delete',
+                url: site.base_url+'presentations/delete',
                 method: "post",
-                data: 'id='+id+'&type='+this.objects.media_type_dropdown.val(),
+                data: 'id='+id,
                 context: this,
                 error: function(jqXHR,textStatus,errorThrown){
                     toastr["error"]("Failed to reach content.", "Error "+jqXHR.status);
                 },
                 success: function(response) {
                     if(response.status == "ok") {
-                        this.getData(response.data);
+                        this.getData();
                         toastr["success"](response.message);
                     }
                     else {
@@ -114,6 +132,6 @@ admin_app.presentation =
                 }
             });
         };
-        modal.confirm('Associated media under presentation "'+data.title+'" will be moved to uncategorized. Do you want to continue?',doDelete.bind(this));
+        modal.confirm('Do you want to delete entry named "'+data.title+'"?',doDelete.bind(this));
     }
 };

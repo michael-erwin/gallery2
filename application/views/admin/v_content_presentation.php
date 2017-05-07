@@ -17,7 +17,7 @@
     <table id="presentation_table" class="table table-bordered">
         <thead>
             <tr>
-                <th colspan="2">Title</th>
+                <th>Title</th>
                 <th>Description</th>
                 <th>Visibility</th>
                 <th>Items</th>

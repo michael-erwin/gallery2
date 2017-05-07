@@ -6,6 +6,7 @@
 
         (function(){
             admin_app.presentation.init();
-            admin_app.presentation_editor.init();
+            admin_app.presentation_entry_editor.init();
+            admin_app.presentation_content_editor.init();
             admin_app.visibility_editor.init();
         })();

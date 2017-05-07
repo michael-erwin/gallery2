@@ -1,7 +1,9 @@
-admin_app.presentation_editor =
+admin_app.presentation_content_editor =
 {
-    self: '#modal_presentation_editor',
-    config: {},
+    self: '#presentation_content_editor',
+    config: {
+        mode: 'new'
+    },
     objects: {
         
     },
@@ -10,13 +12,16 @@ admin_app.presentation_editor =
     },
     init: function() {
         this.self = $(this.self);
-        console.log('Editor initialized');
+        
     },
     render: function() {
         
     },
-    open: function() {
-        this.self.modal();
+    new: function() {
+        this.config.mode = "new";
+    },
+    edit: function() {
+        this.config.mode = "edit";
     },
     getData: function(data) {
         /*if(data) {

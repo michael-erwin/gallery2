@@ -196,6 +196,9 @@ admin_app.visibility_editor =
                         if(this.data.type == "categories"){
                             admin_app.category.getData();
                         }
+                        if(this.data.type == "presentations"){
+                            admin_app.presentation.getData();
+                        }
                     } else {
                         toastr["error"](response.message);
                     }
