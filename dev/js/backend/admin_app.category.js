@@ -97,8 +97,8 @@ admin_app.category =
                     if($.inArray('all',site.permissions) !== -1 || $.inArray('category_delete',site.permissions) !== -1){
                         option_button += '\n<button class="btn btn-danger btn-xs mini" data-id="delete_entry" title="Delete this main category."><i class="fa fa-trash"></i></button>';
                     }
-                    title_main_sef = site.base_url+'categories/'+title_main.replace(' ','-')+'-'+mains[item]['id'];
-                    title_main = '<a href="'+title_main_sef+'" target="_blank">'+mains[item]['title']+'</a>';
+                    var title_main_sef = site.base_url+'categories/'+title_main.replace(' ','-')+'-'+mains[item]['id'];
+                    var title_main = '<a href="'+title_main_sef+'" target="_blank">'+mains[item]['title']+'</a>';
                 };
                 if(mains[item]['id'] > 1) {
                     if(typeof mains[item]['subcats'] === "object"){

@@ -108,53 +108,76 @@ class M_category extends CI_Model
 
     /**
     * Delete a single or multiple category entry.
-    * @param   integer|array  $id     Number or array of numbers of the category to delete.
-    * @param   string         $type   Media type in singular form i.e. photo.
-    * @return  boolean                Returns numeric (affected rows) on success, false on failure.
+    * @param   integer  $id     ID number of the category to delete.
+    * @return  boolean          Returns numeric (affected rows) on success, false on failure.
     *
     */
-    public function delete($id,$type)
+    public function delete($id)
     {
         $ids = [];
-        $id = is_null($id)? "" : $id;
-        // Sanitize $id values either string or array.
-        if (is_array($id))
+        $id = clean_numeric_text($id);
+
+        if (strlen($id) > 0)
         {
-            foreach ($id as $row) {
-                $row = clean_numeric_text($row);
-                if(strlen($row) > 0) $ids[] = $row;
-            }
-            if(count($ids) > 0)
+            $cat_ids  = []; // Used in delete category statement.
+            $sub_ids  = []; // Used in update media statement.
+            $affected = 0;
+
+            // Determine category level to delete.
+            $info_sql  = "SELECT `id`,`level`,`type`,`core` FROM `categories` WHERE `id`={$id}";
+            $info_data = ($this->db->query($info_sql))->result_array();
+            
+            // Populate $cat_ids and $sub_ids.
+            if(count($info_data) > 0)
             {
-                $id = implode(',', $ids);
+                $info_data = $info_data[0];
+
+                if($info_data['core'] == "yes") return false; // Do no proceed if category is core item.
+
+                $cat_ids[] = $id;
+
+                if($info_data['level'] == 1) // Main category
+                {
+                    // Gt all subcategory ids.
+                    $subs_sql  = "SELECT `id`,`level`,`type` FROM `categories` WHERE `parent_id`={$id}";
+                    $subs_data = ($this->db->query($subs_sql))->result_array();
+                    if(count($subs_data) > 0)
+                    {
+                        foreach($subs_data as $sub_data)
+                        {
+                            $cat_ids[] = $sub_data['id'];
+                            $sub_ids[] = $sub_data['id'];
+                        }
+                    }
+                }
+                else
+                {
+                    $sub_ids[] = $id;
+                }
+                
+                // Execute category delete.
+                $cat_ids = implode(',', $cat_ids);
+                $del_sql = "DELETE FROM `categories` WHERE `id` IN ({$cat_ids})";
+                $this->db->query($del_sql);
+                $affected += $this->db->affected_rows();
+
+                // Execute media transfer.
+                if(count($sub_ids) > 0)
+                {
+                    $sub_ids = implode(',', $sub_ids);
+                    $move_photo_sql = "UPDATE `photos` SET `category_id`=1 WHERE `category_id` IN ({$sub_ids})";
+                    $move_video_sql = "UPDATE `videos` SET `category_id`=1 WHERE `category_id` IN ({$sub_ids})";
+                    $this->db->query($move_photo_sql);
+                    $affected += $this->db->affected_rows();
+                    $this->db->query($move_video_sql);
+                    $affected += $this->db->affected_rows();
+                }
+                return $affected;
             }
             else
             {
-                $id = "";
+                return false;
             }
-        }
-        else
-        {
-            $id = clean_numeric_text($id);
-        }
-        // Validate $id value.
-        if (strlen($id) > 0)
-        {
-            // Delete category entries (main or sub) associated with id(s).
-            $sql_delete_1 = "DELETE FROM `categories` WHERE `id` IN ({$id})";
-            $this->db->query($sql_delete_1);
-            $affected_cats = $this->db->affected_rows();
-
-            // Delete all associated categories having same parent id(s). Essentially all sub categories.
-            $sql_delete_2 = "DELETE FROM `categories` WHERE `parent_id` IN ({$id})";
-            $this->db->query($sql_delete_2);
-
-            // Move associated media of subcategories to category with id of 1 (Uncategorized).
-            if($type=="video"){$type='videos';}elseif($type=="photo"){$type='photos';}
-            $sql_delete_3 = "UPDATE `{$type}` SET `category_id`=1 WHERE `category_id` IN ({$id})";
-            $this->db->query($sql_delete_3);
-
-            return $affected_cats;
         }
         else
         {

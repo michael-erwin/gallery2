@@ -188,7 +188,7 @@
     <script src="<?php echo base_url();?>assets/plugins/videojs/video.min.js"></script>
     <!-- Theme App -->
     <!-- <script src="<?php echo base_url();?>assets/js/theme.min.js"></script> -->
-    <script src="<?php echo base_url();?>dev/js/theme.js"></script>
+    <script src="<?php echo base_url();?>assets/js/theme.min.js"></script>
     <!-- Backend App -->
     <script src="<?php echo base_url();?>assets/js/backend.js"></script>
     <script>

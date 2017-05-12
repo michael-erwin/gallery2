@@ -7,7 +7,7 @@ class Info extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
-        $this->load->model('m_photos');
+        $this->load->model('m_photo');
     }
 
     public function _remap($option=null)
@@ -33,7 +33,7 @@ class Info extends CI_Controller
             "message" => "Id not set.",
             "data" => null
         ];
-        if($data = $this->m_photos->get_by_id($number))
+        if($data = $this->m_photo->get_by_id($number))
         {
             $result['status'] = "ok";
             $result['message'] = "Single entry retrieved successfully.";

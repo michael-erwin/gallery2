@@ -7,8 +7,8 @@ class Update extends CI_Controller
     {
         parent::__construct();
         $this->permissions = $this->auth->get_permissions();
-        $this->load->model('m_photos');
-        $this->load->model('m_tags');
+        $this->load->model('m_photo');
+        $this->load->model('m_tag');
     }
 
     public function _remap($method=null)
@@ -43,12 +43,12 @@ class Update extends CI_Controller
             $tags = clean_title_text($this->input->post('tags'));
             $category = clean_numeric_text($this->input->post('category_id'));
 
-            if($affected = $this->m_photos->update($id,$title,$description,$tags,$category))
+            if($affected = $this->m_photo->update($id,$title,$description,$tags,$category))
             {
                 $response['status'] = "ok";
                 $response['message'] = "{$affected} photo(s) updated.";
                 $response['debug_info']['affected_rows'] = $affected;
-                if(strlen($tags) > 2) $this->m_tags->add(explode(' ', $tags));
+                if(strlen($tags) > 2) $this->m_tag->add(explode(' ', $tags));
             }
             else
             {

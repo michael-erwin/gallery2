@@ -76,6 +76,7 @@ class Photos extends CI_Controller
                     if ($id = $this->m_photo->add($title,$uid,$width,$height,$size,$checksum,$category_id))
                     {
                         $response['status'] = "ok";
+                        $response['code'] = 200;
                         $response['message'] = "Photo added.";
                         $response['data'] = ['id'=>$id,'uid'=>$uid];
                     }
@@ -130,25 +131,37 @@ class Photos extends CI_Controller
             }
             else
             {
-                $zip_path = $this->media_path.'/photos/private/zip/'.$uid.'.zip';
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime  = finfo_file($finfo,$_FILES['zip_file']['tmp_name']);
+                finfo_close($finfo);
 
-                if(file_exists($zip_path)) {
-                    chmod($zip_path,0755);
-                    @unlink($zip_path);
-                }
-
-                if(move_uploaded_file($_FILES['zip_file']['tmp_name'], $zip_path))
+                if($mime != 'application/zip')
                 {
-                    @$this->db->query("UPDATE `photos` SET `has_zip`=1 WHERE `id`={$id}");
-                    $response['status'] = "ok";
-                    $response['code'] = 200;
-                    $response['message'] = "Zip file uploaded.";
+                    $response['message'] = "Only zip file is permitted.";
                 }
                 else
                 {
-                    $response['message'] = "Unable to move uploaded file.";
-                    @$this->db->query("UPDATE `photos` SET `has_zip`=0 WHERE `id`={$id}");
+                    $zip_path = $this->media_path.'/photos/private/zip/'.$uid.'.zip';
+
+                    if(file_exists($zip_path)) {
+                        chmod($zip_path,0755);
+                        @unlink($zip_path);
+                    }
+
+                    if(move_uploaded_file($_FILES['zip_file']['tmp_name'], $zip_path))
+                    {
+                        @$this->db->query("UPDATE `photos` SET `has_zip`=1 WHERE `id`={$id}");
+                        $response['status'] = "ok";
+                        $response['code'] = 200;
+                        $response['message'] = "New zip file saved.";
+                    }
+                    else
+                    {
+                        $response['message'] = "Unable to move uploaded file.";
+                        @$this->db->query("UPDATE `photos` SET `has_zip`=0 WHERE `id`={$id}");
+                    }
                 }
+
             }
             header("Content-Type: application/json");
             echo json_encode($response);
@@ -189,6 +202,7 @@ class Photos extends CI_Controller
             @unlink($zip_path);
             @$this->db->query("UPDATE `photos` SET `has_zip`=0 WHERE `id`={$id}");
             $response['status'] = "ok";
+            $response['code'] = 200;
             $response['message'] = "Zip file removed.";
         }
         header("Content-Type: application/json");

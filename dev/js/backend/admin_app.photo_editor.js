@@ -332,12 +332,13 @@ admin_app.photo_editor =
                 var response = JSON.parse(xhr.responseText);
                 if(response.status == "ok"){
                     this.data.has_zip = 1;
-                    admin_app.library.getData.call(admin_app.library);
+                    try{admin_app.library.getData.call(admin_app.library);}catch(e){};
+                    toastr["success"](response.message,"Success");
                 }else{
                     toastr["error"](response.message,"Error");
                 }
             }catch(e){
-                toastr["error"]("Unknown response.","Error");
+                toastr["warning"]("Unknown response.","Warning");
             }
             setTimeout(this.uploadZipEnd.bind(this),1000);
         }.bind(this);
@@ -360,7 +361,8 @@ admin_app.photo_editor =
                     this.enableState();
                 },
                 success: function(response){
-                    admin_app.library.getData.call(admin_app.library);
+                    try { admin_app.library.getData.call(admin_app.library); }
+                    catch(e){}
                     setTimeout(function(){
                         if(response.status == "ok"){
                             toastr["success"](response.message);

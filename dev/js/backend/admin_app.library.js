@@ -516,6 +516,7 @@ admin_app.library =
     shareMedia: function(e){
         var item = $(e.target).parents('.media-entry');
         var data = item.data('data');
+        console.log(data);
         admin_app.visibility_editor.open.call(admin_app.visibility_editor,this.data.type,data);
     },
     selectMedia: function(e){

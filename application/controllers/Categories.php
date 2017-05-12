@@ -585,9 +585,9 @@ class Categories extends CI_Controller
         $title = clean_title_text(trim($this->input->post('title')));
         $description = clean_body_text(trim($this->input->post('description')));
         $icon = trim($this->input->post('icon'));
-        $icon_default = trim($this->input->post('icon_default'));
+        $icon_default = is_numeric($this->input->post('icon_default'))? $this->input->post('icon_default') : 0;
         $publish = clean_alpha_text(trim($this->input->post('publish')));
-        $parent_id = clean_numeric_text(trim($this->input->post('parent_id')));
+        $parent_id = clean_numeric_text($this->input->post('parent_id'));
 
         $errors = 0;
         $response = [
@@ -626,15 +626,15 @@ class Categories extends CI_Controller
                 'published'=>'yes',
                 'share_level'=>'public'
             ];
-            if(!$this->m_category->add($fields))
+            if(!$this->m_category->add($level, $type, $title, $description, $icon, $icon_default, $publish, $parent_id))
             {
                 $errors++;
-                $response['message'] .= "Database insert failed. ";
+                $response['message'] .= " Database insert failed. ";
             }
             if(!$data = $this->m_category->get_all($level_type))
             {
                 $errors++;
-                $response['message'] .= "Data fetch failed. ";
+                $response['message'] .= " Data fetch failed. ";
             }
         }
 
@@ -781,79 +781,43 @@ class Categories extends CI_Controller
         // Required fields.
         $media_type = clean_alpha_text($this->input->post('type'));
         $media_type_id = rtrim($media_type,'s');
-        $item_id = $this->input->post('id');
+        $item_id = clean_numeric_text($this->input->post('id'));
 
         // Check media type is accurate.
         if(in_array($media_type_id,$accept_media_type_ids))
         {
-            $ids = [];
-            if(is_array($item_id))
+            if(is_numeric($item_id))
             {
-                foreach($item_id as $row)
-                {
-                    $entry = clean_numeric_text($row);
-                    if(strlen($entry) == 0)
-                    {
-                        $errors++;
-                        break;
-                    }
-                    elseif($row == 1)
-                    {
-                        $errors++;
-                        $response['message'] = "Cannot delete default item. ";
-                        break;
-                    }
-                    else
-                    {
-                        $ids[] = $entry;
-                    }
-                }
-                if(count($ids) > 0)
-                {
-                    $item_id = $ids;
-                }
-                else
-                {
-                    $item_id = "";
-                }
-            }
-            else {
-                $item_id = clean_numeric_text($this->input->post('id'));
-            }
-            // Ensure $item_id is not empty.
-            if(!is_array($item_id))
-            {
-                if(strlen($item_id) == 0)
+                // Delete action:
+                // Deletes all associated subcategories.
+                // Move all associated media to category 1 (uncategorized).
+                if(!$this->m_category->delete($item_id))
                 {
                     $errors++;
-                    $response['message'] = "ID field is invalid. ";
+                    $response['message'] = "Row delete failed. ";
+                }
+                // Get latest record after delete.
+                if(!$data = $this->m_category->get_all($media_type_id))
+                {
+                    $errors++;
+                    $response['message'] .= "Data fetch failed. ";
                 }
             }
-            // Delete action:
-            // Deletes all associated subcategories.
-            // Move all associated media to category 1 (uncategorized).
-            if(!$deleted_rows = $this->m_category->delete($item_id,$media_type_id))
+            else
             {
-                $errors++;
-                $response['message'] .= "Row delete failed. ";
-            }
-            // Get latest record after delete.
-            if(!$data = $this->m_category->get_all($media_type_id))
-            {
-                $errors++;
-                $response['message'] .= "Data fetch failed. ";
-            }
+                $response['message'] .= "ID is wrong.";
+            } 
         }
         else
         {
-            $response['message'] .= "Unsupported media id : {$media_type_id}. ";
             $errors++;
+            $response['message'] .= "Unsupported media id : {$media_type_id}. ";
         }
         // Check for errors before output.
         if($errors == 0)
         {
             $response['status'] = "ok";
-            $response['message'] = "{$deleted_rows} category item(s) deleted.";
+            $response['message'] = "Category item(s) deleted.";
             $response['data'] = $data;
         }
 

@@ -60,7 +60,39 @@ class M_photo extends CI_Model
             $date = time();
             $category = $category? $this->db->escape($category) : 1;
 
-            $sql = "INSERT INTO `photos` SET `category_id`={$category}, `title`={$title}, `uid`='{$uid}', `width`={$width}, `height`={$height}, `file_size`={$size}, `checksum`='{$checksum}', date_added={$date}";
+            $sql  = "INSERT INTO `photos` SET `category_id`={$category}, `title`={$title}, `uid`='{$uid}', `width`={$width}, `height`={$height}, `file_size`={$size}, `checksum`='{$checksum}'";
+
+            if($category == 1)
+            {
+                $sql .= ", `share_level`='public'";
+            }
+            else
+            {
+                // Apply main and sub category visibility.
+                $category_sql  = "SELECT `s`.`level` AS `sc_level`,`s`.`type` AS `sc_type`,`s`.`parent_id` AS `sc_parent_id`,`s`.`share_level` AS `sc_share_level`,
+                                 `m`.`level` AS `mc_level`,`m`.`type` AS `mc_type`,`m`.`parent_id` AS `mc_parent_id`,`m`.`share_level` AS `mc_share_level`
+                                 FROM `categories` AS `s` INNER JOIN `categories` AS `m` ON `s`.`parent_id`=`m`.`id` WHERE `s`.`id`={$category}";
+                $category_data = ($this->db->query($category_sql))->result_array();
+                if(count($category_data) > 0)
+                {
+                    $category_data = $category_data[0];
+                    if($category_data['sc_type']=="photo" && $category_data['sc_level']==2 && $category_data['mc_level']==1)
+                    {
+                        $sql .= ", `share_level`='private', `mc_share_level`='{$category_data['mc_share_level']}', `sc_share_level`='{$category_data['sc_share_level']}'";
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                
+            }
+
+            $sql .= ", `date_added`={$date}";
 
             if ($query = $this->db->query($sql))
             {
