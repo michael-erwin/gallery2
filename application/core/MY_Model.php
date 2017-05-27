@@ -353,8 +353,8 @@ class MY_Model extends CI_Model
 
     /**
     * Function 'delete' delete table row(s) using id(s).
-    * @param  array  $ids     Ids of row(s) to delete.
-    * @return array           Formatted result.
+    * @param  string   $where   Conditional clause.
+    * @return array             Formatted result.
     *
     */
     public function delete_where ($where)

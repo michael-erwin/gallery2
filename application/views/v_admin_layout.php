@@ -6,6 +6,7 @@
     <title>Gallery - Admin</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Library Dependency -->
+    <link href="<?php echo base_url();?>assets/libs/jquery-ui/sortable-plain/jquery-ui.min.css" rel="stylesheet">
     <link href="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo base_url();?>assets/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet"> -->
@@ -181,6 +182,7 @@
     <!-- /Global Constants -->
     <!-- Library Dependencies -->
     <script src="<?php echo base_url();?>assets/libs/jquery/jquery-2.2.4.min.js"></script>
+    <script src="<?php echo base_url();?>assets/libs/jquery-ui/sortable-plain/jquery-ui.min.js"></script>
     <script src="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.js"></script>
     <!-- Plugins Dependency -->
     <script src="<?php echo base_url();?>assets/plugins/toastr/toastr.min.js"></script>

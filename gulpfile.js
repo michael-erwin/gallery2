@@ -49,7 +49,7 @@ var backend_js_files = [
             './dev/js/backend/admin_app.category_editor.js',
             './dev/js/backend/admin_app.presentation.js',
             './dev/js/backend/admin_app.presentation_entry_editor.js',
-            './dev/js/backend/admin_app.presentation_content_editor.js',
+            './dev/js/backend/admin_app.presentation_items_editor.js',
             './dev/js/backend/admin_app.visibility_editor.js',
             './dev/js/backend/admin_app.category_selector.js',
             './dev/js/backend/admin_app.file_widget.js',

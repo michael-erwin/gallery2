@@ -15,7 +15,18 @@ class Test extends CI_Controller
     }
     public function index()
     {
-        $share_level = isset($_SESSION['user']['id'])? "(`share_level`='public' OR `share_level` LIKE '%[{$_SESSION['user']['id']}]%')" : "`share_level`='public'";
-        echo $share_level;
+        $favcolor = "";
+
+        switch ($favcolor) {
+            case "red":
+                echo "Your favorite color is red!";
+                break;
+            case "blue":
+                echo "Your favorite color is blue!";
+                break;
+            case "green":
+                echo "Your favorite color is green!";
+                break;
+        }
     }
 }

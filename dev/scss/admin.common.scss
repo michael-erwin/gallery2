@@ -48,9 +48,19 @@ ol.breadcrumb a.active {
 .modal.common .modal-footer {
     padding: 15px;
 }
-.modal.common .btn {
+.modal .btn {
     padding: 5px;
     min-width: 70px;
+}
+.modal-dialog.modal-fluid {
+    width:  100% !important;
+    max-width: 1200px;
+    padding: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.modal-fuid .modal-content {
+    width: 100% !important;
 }
 .form-control.error {
     border-color: red;

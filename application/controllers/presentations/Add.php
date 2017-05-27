@@ -21,7 +21,7 @@ class Add extends CI_Controller
             'message' => 'Invalid request.'
         ];
 
-        if($title && $description)
+        if($title)
         {
             $title = trim($title);
             if(strlen($title) == 0)

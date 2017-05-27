@@ -5,3 +5,177 @@
 #modal_presentation_entry_editor .modal-dialog {
     
 }
+#modal_presentation_items_editor {
+    
+}
+#modal_presentation_items_editor .modal-body.no-interact [role="no-interact-overlay"] {
+    display: block;
+}
+#modal_presentation_items_editor .modal-body.no-interact li.item,
+#modal_presentation_items_editor .modal-body.no-interact li.add {
+    opacity: 0.7;
+}
+#modal_presentation_items_editor .modal-body [role="no-interact-overlay"] {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px; top: 0px;
+    background-color: rgba(255,255,255,0);
+    display: none;
+}
+#modal_presentation_items_editor .sortable-items {
+    width: 100%;
+    padding-left: 0;
+    margin-bottom: -5px; 
+    margin-right: -5px;
+}
+#modal_presentation_items_editor .sortable-items li {
+    width: calc(20% - 5px);
+    list-style-type: none;
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid #d8d8d8;
+    background-color: #f5f5f5;
+    position: relative;
+    border-radius: 4px;
+}
+#modal_presentation_items_editor .sortable-items li input.form-control {
+    height: 25px;
+    padding: 2px 5px;
+    background-color: #fcfcfc;
+}
+#modal_presentation_items_editor .sortable-items li:after {
+    content: "";
+    display: table;
+}
+#modal_presentation_items_editor .sortable-items li.sortable-item-placeholder {
+    border: 1px dashed red;
+    background-color: #fff5f0;
+}
+#modal_presentation_items_editor .sortable-items li .field {
+    margin-top: 5px;
+}
+#modal_presentation_items_editor .sortable-items li .image {
+    width: 100%;
+    line-height: 75%;
+    padding-bottom: 75%;
+    background-position: center center;
+    position: relative;
+    border: 1px solid #d2d6de;
+    background-color: #fcfcfc;
+    background-repeat: no-repeat;
+}
+#modal_presentation_items_editor .sortable-items li.item .image {
+    cursor: move;
+    background-size: cover;
+}
+#modal_presentation_items_editor .sortable-items li.item .remove {
+    position: absolute;
+    top: 0; right: 0;
+    padding: 4px 8px;
+    line-height: 1;
+    background-color: #f5f5f5;
+    z-index: 5;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom-left-radius: 4px;
+}
+#modal_presentation_items_editor .sortable-items li.item .remove:hover {
+    color: #c20;
+}
+#modal_presentation_items_editor .sortable-items li.item .series {
+    color: white;
+    background-color: rgba(0,0,0,0.8);
+    font-size: 2em;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 5px 13px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 1;
+}
+#modal_presentation_items_editor .sortable-items li.add {
+    background-color: transparent;
+}
+#modal_presentation_items_editor .sortable-items li.add .button-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px; top: 0px;
+    text-align: center;
+    font-size: 5em;
+    cursor: pointer;
+}
+#modal_presentation_items_editor .sortable-items li.add .button-overlay:hover {
+    color: #3c8dbc;
+}
+#modal_presentation_items_editor .sortable-items li.add .button-overlay i {
+    position: relative;
+    top: 50%;
+    transform: translateY(-75%);
+}
+#modal_presentation_items_editor .sortable-items li.add:before,
+#modal_presentation_items_editor .sortable-items li.sortable-item-placeholder:before {
+    content: "";
+    display: block;
+    width: 100%;
+    padding-bottom: calc(75% + 62px);
+}
+#modal_presentation_items_editor .sortable-items li.loading .image {
+    background-image: url('../img/ellipsis.gif');
+}
+#modal_presentation_items_editor .sortable-items li.loading .field,
+#modal_presentation_items_editor .sortable-items li.error .field {
+    width: 100%;
+    height: 25px;
+    background-color: #ececec;
+}
+#modal_presentation_items_editor .sortable-items li.loading .remove,
+#modal_presentation_items_editor .sortable-items li.loading .series,
+#modal_presentation_items_editor .sortable-items li.loading input,
+#modal_presentation_items_editor .sortable-items li.error .remove,
+#modal_presentation_items_editor .sortable-items li.error .series,
+#modal_presentation_items_editor .sortable-items li.error input
+{
+    display: none;
+}
+#modal_presentation_items_editor .sortable-items li.error .image {
+    background-image: none;
+}
+#modal_presentation_items_editor .sortable-items li.error .image .icon {
+    color: #e00;
+    font-size: 3em;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    display: inline-block;
+    line-height: 1;
+}
+#modal_presentation_items_editor .sortable-items li.error .image .icon:after {
+    content: '\f071';
+    font-family: "FontAwesome";
+}
+@media(max-width: 800px) {
+    #modal_presentation_items_editor .sortable-items li {
+        width: calc(25% - 5px);
+    }
+}
+@media(max-width: 600px) {
+    #modal_presentation_items_editor .modal-dialog.modal-fluid {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0;
+    }
+    #modal_presentation_items_editor .sortable-items li {
+        width: calc(33.33% - 5px);
+    }
+}
+@media(max-width: 450px) {
+    #modal_presentation_items_editor .sortable-items li {
+        width: calc(50% - 5px);
+    }
+}

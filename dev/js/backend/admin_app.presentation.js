@@ -55,8 +55,8 @@ admin_app.presentation =
             }
             this.objects.table_body.html(table_html);
             // Attach events.
-            this.self.find('button[data-id="edit_media"]').unbind().on('click',this.edit_media.bind(this));
-            this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit_basic.bind(this));
+            this.self.find('button[data-id="edit_media"]').unbind().on('click',this.edit_items.bind(this));
+            this.self.find('button[data-id="edit_entry"]').unbind().on('click',this.edit_entry.bind(this));
             this.self.find('button[data-id="sharing"]').unbind().on('click',this.share.bind(this));
             this.self.find('button[data-id="delete_entry"]').unbind().on('click',this.delete.bind(this));
         }else{
@@ -93,15 +93,15 @@ admin_app.presentation =
     new: function(e) {
         admin_app.presentation_entry_editor.new.call(admin_app.presentation_entry_editor);
     },
-    edit_basic: function(e) {
+    edit_entry: function(e) {
         var parent = $(e.target).parents('tr');
         var data = parent.data('all');
         admin_app.presentation_entry_editor.edit.call(admin_app.presentation_entry_editor,data);
     },
-    edit_media: function(e) {
+    edit_items: function(e) {
         var parent = $(e.target).parents('tr');
         var data = parent.data('all');
-        toastr['info']('No function implemented yet.','Info');
+        admin_app.presentation_items_editor.open.call(admin_app.presentation_items_editor,data);
     },
     share: function(e) {
         var parent = $(e.target).parents('tr');

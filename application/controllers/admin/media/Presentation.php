@@ -45,7 +45,8 @@ class Presentation extends CI_Controller
         $data['json']['breadcrumbs'] = json_encode($this->breadcrumbs);
 
         // Page objects.
-        $data['objects']  = $this->load->view('admin/v_object_presentation_editor','',true);
+        $data['objects']  = $this->load->view('admin/v_object_presentation_entry_editor','',true);
+        $data['objects'] .= $this->load->view('admin/v_object_presentation_items_editor','',true);
         $data['objects'] .= $this->load->view('admin/v_object_visibility_editor','',true);
 
         // JS Scripts.
@@ -59,7 +60,8 @@ class Presentation extends CI_Controller
     {
         $body = clean_whitespace($this->load->view('admin/v_content_presentation','',true));
         // Page objects.
-        $objects  = $this->load->view('admin/v_object_presentation_editor','',true);
+        $objects  = $this->load->view('admin/v_object_presentation_entry_editor','',true);
+        $objects .= $this->load->view('admin/v_object_presentation_items_editor','',true);
         $objects .= $this->load->view('admin/v_object_visibility_editor','',true);
 
         if ($option)

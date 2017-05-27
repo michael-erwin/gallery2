@@ -1,0 +1,13 @@
+@media(max-width: 450px) {
+    #presentation_table .btn.mini {
+        margin-bottom: 5px;
+    }
+}
+@media(max-width: 380px) {
+    #presentation_table th:nth-child(2) {
+        display: none;
+    }
+    #presentation_table td:nth-child(2) {
+        display: none;
+    }
+}
