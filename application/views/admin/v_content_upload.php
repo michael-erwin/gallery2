@@ -8,7 +8,7 @@
             <select class="form-control input-sm" name="category">
                 <!-- Option list here. -->
             </select>
-            <input id="file_input" type="file" name="files" multiple="true" style="display:none" />
+            <input id="file_input" type="file" name="files" accept=".jpg,video/*" multiple="true" style="display:none" />
         </div>
         <div class="control-right"></div>
     </form>

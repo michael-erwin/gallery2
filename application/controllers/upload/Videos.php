@@ -28,8 +28,6 @@ class Videos extends CI_Controller
 
             if(move_uploaded_file($_FILES['file']['tmp_name'], $source))
             {
-                $category_id = clean_numeric_text(($category_id));
-                $category_id = !empty($category_id)? $category_id : 1;
                 $title = explode('.',$_FILES['file']['name']);array_pop($title);
                 $title = implode('.', $title);
                 $size = 0;
@@ -38,10 +36,17 @@ class Videos extends CI_Controller
                 $duration = trim(shell_exec("ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {$source}"));
 
                 // Check for duplicate.
-                if($this->m_video->isPresent($checksum))
+                if(!is_numeric($category_id))
                 {
-                    @unlink($this->media_path."/videos/temp/{$uid}");
+                    $response['code'] = 403;
+                    $response['message'] = "Invalid ID";
+                }
+                elseif($this->m_video->isPresent($checksum,$category_id))
+                {
+                    $response['code'] = 2; // Change code to catch this type of error.
                     $response['message'] = "Duplicate entry found.";
+                    $response['dbg_info'] = $checksum;
+                    @unlink($this->media_path."/videos/temp/{$uid}");
                 }
                 else
                 {

@@ -27,12 +27,10 @@ class Photos extends CI_Controller
 
     public function index()
     {
-        $category_id = clean_numeric_text($this->input->post('category_id'));
-
         if(isset($_FILES['file']))
         {
-            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
-            $category_id = is_numeric($category_id)? $category_id : 1;
+            $category_id = $this->input->post('category_id');
+            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'dbg_info'=>null];
             $path = $this->media_path;
             $title = explode('.',$_FILES['file']['name']);array_pop($title);
             $title = implode('.', $title);
@@ -48,15 +46,19 @@ class Photos extends CI_Controller
                 $checksum = md5_file($source);
                 $orientation = ($width > $height)? "horizontal" : "vertical";
 
-                // Check file if already present.
-                if($this->m_photo->isPresent($checksum))
+                if(!is_numeric($category_id))
+                {
+                    $response['code'] = 403;
+                    $response['message'] = "Invalid ID";
+                }
+                elseif($this->m_photo->isPresent($checksum,$category_id))
                 {
                     $response['code'] = 2; // Change code to catch this type of error.
                     $response['message'] = "Duplicate entry found.";
-                    $response['debug_info'] = $checksum;
+                    $response['dbg_info'] = $checksum;
                 }
-                // Insert entry to database.
-                else{
+                else
+                { // Insert entry to database.
 
                     // Save original dimension to file system.
                     $full_size_file = "{$path}/photos/private/full_size/{$uid}.jpg";
@@ -83,6 +85,7 @@ class Photos extends CI_Controller
                     else
                     {
                         $response['message'] = "Database write failed.";
+                        $response['dbg_info'] = $id;
                         $this->m_photo->delete_file($uid);
                     }
                 }
@@ -117,7 +120,7 @@ class Photos extends CI_Controller
                 exit();
             }
 
-            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+            $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'dbg_info'=>null];
             $id = clean_numeric_text($this->input->post('id'));
             $uid = clean_alphanum_hash2($this->input->post('uid'));
 
@@ -184,7 +187,7 @@ class Photos extends CI_Controller
             exit();
         }
 
-        $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'debug_info'=>null];
+        $response = ['status'=>'error','code'=>500,'message'=>'Unknown error has occured.','data'=>null,'dbg_info'=>null];
         $id = clean_numeric_text($this->input->post('id'));
         $uid = clean_alphanum_hash2($this->input->post('uid'));
 
