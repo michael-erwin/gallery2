@@ -59,9 +59,7 @@
             </div>
         </main>
     </div>
-    <footer>
-
-    </footer>
+    <footer><?php echo @$this->config->item('company_name');?> &copy; <?php echo @date("Y");?></footer>
     <!-- Modals -->
     <div class="modal" id="modal_favorites" role="dialog">
         <div class="modal-dialog modal-lg" role="document">

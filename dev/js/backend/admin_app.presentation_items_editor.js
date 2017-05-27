@@ -73,8 +73,8 @@ admin_app.presentation_items_editor =
             };
         this.getData();
     },
-    getData: function() {
-        this.disableState();
+    getData: function(render=true) {
+        if(render === true) this.disableState();
         var endpoint = 'presentations/get/'+this.data.entry.id+'/items';
         $.ajax({
             url: site.base_url+endpoint,
@@ -88,7 +88,7 @@ admin_app.presentation_items_editor =
                 this.enableState();
                 if(response.status == "ok") {
                     this.data.items = response.data.items;
-                    this.render();
+                    if(render === true) this.render();
                 } else {
                     toastr["error"](response.message, "Error");
                 }
@@ -250,7 +250,6 @@ admin_app.presentation_items_editor =
     delete: function(e) {
         var item = $(e.target).parents('li.item');
         var info = item.data('info');
-            console.log(info);
         function delete_action() {
             this.disableState();
             var endpoint = 'presentations/delete/item';
@@ -264,7 +263,6 @@ admin_app.presentation_items_editor =
                     this.enableState();
                 },
                 success: function(response) {
-                    this.enableState();
                     if(response.status == "ok") {
                         this.getData();
                     } else {
@@ -279,16 +277,17 @@ admin_app.presentation_items_editor =
     updateSequenceItem: function() {
         // Apply numeric sequence.
         this.self.find('.item').each(function(index) {
+            $(this).data('index',index);
             $(this).find('.series').html(index+1);
         });
     },
     changeText: function(e) {
         var field = $(e.target);
         var field_name = field.attr('name');
-        var item_box  = field.parents('li.item');
-        var item_box_data = item_box.data('info');
+        var index  = field.parents('li.item').data('index');
+        var item_data = this.data.items[index];
 
-        var old_val = item_box_data[field_name];
+        var old_val = item_data[field_name];
         var new_val = field.val();
 
         // Check if data changed before deciding to update.
@@ -296,7 +295,7 @@ admin_app.presentation_items_editor =
             var endpoint = 'presentations/update/item';
 
             // Update object.
-            var new_data = 'id='+item_box_data.id+'&'+field_name+'='+new_val;
+            var new_data = 'id='+item_data.id+'&'+field_name+'='+new_val;
             $.ajax({
                 url: site.base_url+endpoint,
                 method: "post",
@@ -307,9 +306,8 @@ admin_app.presentation_items_editor =
                     this.enableState();
                 },
                 success: function(response) {
-                    this.enableState();
                     if(response.status == "ok") {
-                        this.getData();
+                        this.getData(false);
                     } else {
                         toastr["error"](response.message, "Error");
                     }

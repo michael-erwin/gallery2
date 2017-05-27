@@ -128,7 +128,7 @@ var results = {
                     if(page.share_id.length==32) seo_link += '?share_id='+page.share_id;
                     html += '<div class="thumb-box centered col-md-3 col-sm-4 col-xs-6">'+
                                 '<div class="thumb" data-data=\''+data.replace("'","")+'\' data-media="photo">'+
-                                    '<a title="'+photo.title+'" class="image-link photo-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
+                                    '<a title="'+photo.title+'" class="image-link modal-action photo-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
                                         '<img src="'+thumb+'" />'+
                                     '</a>'+
                                     '<div class="title">'+
@@ -151,7 +151,7 @@ var results = {
                     if(page.share_id.length==32) seo_link += '?share_id='+page.share_id;
                     html += '<div class="thumb-box centered col-md-3 col-sm-4 col-xs-6">'+
                                 '<div class="thumb" data-data=\''+data.replace("'","")+'\' data-media="video">'+
-                                    '<a title="'+video.title+'" class="image-link video-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
+                                    '<a title="'+video.title+'" class="image-link modal-action video-preview" href="'+seo_link+'" style="background-image:url(\''+thumb+'\')">'+
                                         '<img src="'+thumb+'" />'+
                                     '</a>'+
                                     '<div class="title">'+
@@ -224,7 +224,7 @@ var results = {
     },
     attachThumbActions: function() {
         //if(typeof videomodal !== "undefined") this.objects.thumbs_box.find('a.video-preview').unbind('click').click(videomodal.open);
-        this.objects.thumbs_box.find('a').unbind('click').click(modal_media.open.bind(modal_media));
+        this.objects.thumbs_box.find('a.modal-action').unbind('click').click(modal_media.open.bind(modal_media));
         this.objects.thumbs_box.find('[data-id="favorites"]').unbind('click').click(favorites.add.bind(favorites));
         this.objects.thumbs_box.find('[data-id="download"]').unbind('click').click(this.download.bind(this));
     },

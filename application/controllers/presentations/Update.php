@@ -17,18 +17,6 @@ class Update extends CI_Controller
         if($item == "item")
         {
             $this->update_item();
-            /*$response = [
-                'status' => 'error',
-                'code' => 500,
-                'message' => 'Invalid request.',
-                'data' => [
-                    'segment' => $item,
-                    'id' => $this->input->post('id'),
-                    'caption' => $this->input->post('caption')
-                ]
-            ];
-            header("Content-Type: application/json");
-            echo json_encode($response);*/
         }
         else
         {

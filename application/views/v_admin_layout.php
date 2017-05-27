@@ -116,7 +116,7 @@
                 Version 1.0.0
             </div>
             <!-- Default to the left -->
-            <strong>Copyright &copy; 2016 <a href="#">Media Gallery</a>.</strong> All rights reserved.
+            <strong><?php echo @$this->config->item('company_name');?> &copy; <?php echo @date("Y");?>.</strong> All rights reserved.
         </footer>
         <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>

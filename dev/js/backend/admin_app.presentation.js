@@ -34,7 +34,7 @@ admin_app.presentation =
             var option_button = '';
 
             if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_add',site.permissions) !== -1){
-                option_button += '<button class="btn btn-primary btn-xs mini" data-id="edit_media" title="Add or edit media items."><i class="fa fa-file-image-o"></i></button>';
+                option_button += '<button class="btn btn-primary btn-xs mini" data-id="edit_media" title="Manage item slides"><i class="fa fa-file-image-o"></i></button>';
             }
             if($.inArray('all',site.permissions) !== -1 || $.inArray('presentation_edit',site.permissions) !== -1){
                 option_button += '\n<button title="Sharing" class="btn btn-primary btn-xs mini" data-id="sharing"><i class="fa fa-share-alt"></i></button>';
@@ -48,9 +48,11 @@ admin_app.presentation =
 
             for(var i=0;i<this.data.items.length;i++) {
                 var item = this.data.items[i];
+                var seo_title = item.title.replace(' ','-')+'-'+item.id;
+                var share_level = (item.share_level != "private" && item.share_level != "public")? 'protected' : item.share_level;
                 var count = ($.trim(item.items).length == 0)? 0 : item.items.split(',').length;
                 table_html += '<tr data-all=\''+(JSON.stringify(item)).replace(/[']/g,"&#39;")+'\'>'+
-                                '<td>'+item.title+'</td><td>'+item.description+'</td><td>'+item.share_level+'</td><td>'+count+'</td><td>'+option_button+'</td>'+
+                                '<td><a href="'+site.base_url+'presentations/item/'+seo_title+'"target="_blank">'+item.title+'</a></td><td>'+item.description+'</td><td>'+share_level+'</td><td>'+count+'</td><td>'+option_button+'</td>'+
                               '</tr>';
             }
             this.objects.table_body.html(table_html);

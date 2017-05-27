@@ -8,6 +8,7 @@ class Test extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->load->model('M_Presentations');
     }
     public function _remap()
     {
@@ -15,18 +16,6 @@ class Test extends CI_Controller
     }
     public function index()
     {
-        $favcolor = "";
-
-        switch ($favcolor) {
-            case "red":
-                echo "Your favorite color is red!";
-                break;
-            case "blue":
-                echo "Your favorite color is blue!";
-                break;
-            case "green":
-                echo "Your favorite color is green!";
-                break;
-        }
+        
     }
 }

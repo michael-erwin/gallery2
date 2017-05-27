@@ -57,6 +57,7 @@ admin_app.uploader =
             this.objects.drop_box.removeClass("drag-over");
         }.bind(this));
         this.objects.drop_zone.on('click', function(e) {
+            this.objects.file_input.val(null);
             this.objects.file_input.trigger('click');
         }.bind(this));
         this.objects.file_input.on('change', function(e) {

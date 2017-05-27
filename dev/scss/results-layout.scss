@@ -1,8 +1,6 @@
 @import "etc/colors";
+@import "lightgallery-custom";
 /* Main */
-main {
-    /*background-color: #ddd;*/
-}
 main #search_bar {
     background-color: #f5f5f5;
     border-bottom: 1px solid #ddd;
@@ -183,7 +181,8 @@ main .thumb img {
     height: 100%;
     opacity: 0;
 }
-main .thumb .image-link {
+main .thumb .image-link,
+main .thumb .presentation-link {
     width: 100%;
     padding-bottom: 75%;
     display: block;
@@ -191,10 +190,14 @@ main .thumb .image-link {
     background-position: center center;
     background-size: cover;
     opacity: 0.9;
-    border: 1px solid #e5e5e5; 
+    border: 1px solid #e5e5e5;
 }
-main .thumb:hover .image-link {
+main .thumb:hover .image-link,
+main .thumb:hover .presentation-link {
     opacity: 1;
+}
+main .thumb .presentation-link {
+    cursor: zoom-in;
 }
 main .thumb:hover > div.title,
 main .thumb:hover > div.options {
