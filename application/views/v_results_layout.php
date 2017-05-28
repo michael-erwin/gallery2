@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="<?php echo base_url();?>assets/plugins/videojs/video-js.min.css" />
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/frontend-common.css" />
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/results-layout.css" />
+    <?php echo @$css_header_tags;?>
 </head>
 <body>
     <div id="page_wrapper">
@@ -148,13 +149,13 @@
     <script src="<?php echo base_url();?>assets/plugins/toastr/toastr.min.js"></script>
     <script src="<?php echo base_url();?>assets/plugins/videojs/video.min.js"></script>
     <!-- Frontend App -->
-    <script src="<?php echo base_url();?>assets/js/frontend.js"></script>
-    <script src="<?php echo base_url();?>assets/js/search-hint.js"></script>
     <script>
         var site = {base_url:"<?php echo base_url();?>"};
         var page = {share_id:"<?php echo (isset($share_id)? $share_id : (isset($_GET['share_id'])? $_GET['share_id'] : ""));?>"}
-        $(document).ready(function(){favorites.init();$(window).scroll(function (event) {var scroll = $(window).scrollTop();var isFixedTopbar = false;if(scroll > 43) {isFixedTopbar = true;}if(isFixedTopbar){$("header").addClass("fixed-top");$("#search_bar").addClass("fixed-top");$("#thumbs_display").addClass("scrolling-top");}else{$("header").removeClass("fixed-top");$("#search_bar").removeClass("fixed-top");$("#thumbs_display").removeClass("scrolling-top");}});$('form[action="search"] [name="kw"]').searchHint();});
+        $(document).ready(function(){results.init();;favorites.init();$(window).scroll(function (event) {var scroll = $(window).scrollTop();var isFixedTopbar = false;if(scroll > 43) {isFixedTopbar = true;}if(isFixedTopbar){$("header").addClass("fixed-top");$("#search_bar").addClass("fixed-top");$("#thumbs_display").addClass("scrolling-top");}else{$("header").removeClass("fixed-top");$("#search_bar").removeClass("fixed-top");$("#thumbs_display").removeClass("scrolling-top");}});$('form[action="search"] [name="kw"]').searchHint();});
     </script>
+    <script src="<?php echo base_url();?>assets/js/frontend.js"></script>
+    <script src="<?php echo base_url();?>assets/js/search-hint.js"></script>
     <?php echo @$result_js_init;?>
 </body>
 </html>

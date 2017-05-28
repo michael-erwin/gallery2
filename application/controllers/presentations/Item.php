@@ -76,11 +76,12 @@ class Item extends CI_Controller
         $share_id = $result['pvt_share_id'];
         $data['page_title'] = $result['title'];
         $data['meta_description'] = $result['description'];
+        $data['css_header_tags'] = $this->load->view('css/v_css_presentation',"",true);
         $data['account_actions'] = $this->load->view('common/v_menu_account_actions',null,true);
         $data['thumbs'] = '';
         $data['breadcrumbs'] = $this->load->view('common/v_breadcrumbs_frontend',['crumbs'=>[$result['title']=>'']],true);
         $data['search_widget'] = $this->load->view('common/v_search_widget',['type'=>'photos'],true);
-        $data['presentation_js_init'] = $this->load->view('scripts/v_scripts_presentation',"",true);
+        $data['result_js_init'] = $this->load->view('scripts/v_scripts_presentation',"",true);
 
         // Search widget and thumbnails display logic.
         if(count($result['items']) > 0)
@@ -114,7 +115,7 @@ class Item extends CI_Controller
         ];
 
         $data['pagination'] = $this->load->view('common/v_pagination_widget',$pagination_data,true);
-        $this->load->view("v_presentation_layout",$data);
+        $this->load->view("v_results_layout",$data);
     }
 
     private function validate_request($id,$share_id=null)
