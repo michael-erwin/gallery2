@@ -6,7 +6,7 @@ class M_Presentation_Items extends MY_Model
                 "id" => "int(255) UNSIGNED AUTO_INCREMENT PRIMARY KEY",
                 "uid" => "varchar(32) NOT NULL",
                 "title" => "varchar(16) NOT NULL",
-                "caption" => "varchar(64) NOT NULL",
+                "caption" => "varchar(164) NOT NULL",
                 "width" => "int(255) UNSIGNED",
                 "height" => "int(255) UNSIGNED",
                 "file_size" => "int(255) UNSIGNED",

@@ -248,10 +248,10 @@ admin_app.presentation_items_editor =
                 '</div>'+
                 '<div class="info">'+
                     '<div class="field">'+
-                        '<input class="form-control" type="text" maxlength="16" name="title" placeholder="Title" value="'+inf.title+'">'+
+                        '<input class="form-control" type="text" maxlength="32" name="title" placeholder="Title" value="'+inf.title+'">'+
                     '</div>'+
                     '<div class="field">'+
-                        '<input class="form-control" type="text" maxlength="64" name="caption" placeholder="Caption" value="'+inf.caption+'">'+
+                        '<input class="form-control" type="text" maxlength="164" name="caption" placeholder="Caption" value="'+inf.caption+'">'+
                     '</div>'+
                 '</div>'+
             '</li>';
