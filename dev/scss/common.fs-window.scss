@@ -1,0 +1,36 @@
+/* Global - Fullscreen Widget */
+.fs-window {
+    position: fixed;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.fs-window .display-content {
+    display: inline-block;
+    margin: auto;
+    vertical-align: middle;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.fs-window .exit-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 20px;
+    font-family: 'Glyphicons Halflings';
+    padding: 2px 5px;
+    color: rgba(255,255,255,0.5);
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 2px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.fs-window .exit-btn:hover {
+    color: rgba(255,255,255,0.7);
+    background-color: rgba(0,0,0,0.7);
+}
+.fs-window .exit-btn:before {
+    content: "\e014";
+}

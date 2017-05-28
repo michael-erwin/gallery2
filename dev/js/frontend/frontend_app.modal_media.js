@@ -26,7 +26,6 @@ var modal_media = {
             }
             else if(type == "videos") {
                 var video_link = site.base_url+'videos/preview/'+(data.title).replace(' ','-')+'-'+data.uid;
-                //var video_link = site.base_url+'media/videos/public/480p/'+data.uid+'.mp4';
                 var video_poster = site.base_url+'media/videos/public/480/'+data.uid+'.jpg';
                 this.objects.media_box.removeClass('media-photo').addClass('media-video');
                 video_page_box.poster(video_poster);

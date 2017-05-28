@@ -22,6 +22,7 @@ html,body {
 }
 .modal-dialog.modal-fluid {
     width:  100% !important;
+    max-width: 1200px;
     padding: 15px;
     margin-left: auto;
     margin-right: auto;
@@ -55,14 +56,7 @@ html,body {
     content: "";
     display: table;
 }
-.overlay-ctrl-btn {
-    color: rgba(255,255,255,0.7);
-    background-color: rgba(0,0,0,0.5);
-}
-.overlay-ctrl-btn:hover {
-    color: rgba(255,255,255,0.9);
-    background-color: rgba(0,0,0,0.7);
-}
+
 .clearfix:after {
     content: "";
     display: table;
@@ -76,113 +70,8 @@ ol.breadcrumb a.active {
 /* Animations */
 @import "etc/animations";
 
-/*
-* Media Item Display
-* - Modal or page content having media item on left and details on right
-*  (title,description,etc.)
-*/
-.media-item-display.loading table td,
-.media-item-display.loading table th {
-    color: transparent;
-}
-.media-item-display.loading .media {
-    background-color: #eeeeee;
-}
-.media-item-display.loading button.btn {
-    display: none;
-}
-.media-item-display .row {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-.media-item-display .row > div {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-.media-item-display .media-block {
-    margin-bottom: 10px;
-}
-.media-item-display .media {
-    min-height: 271px;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #dddddd;
-    position: relative;
-}
-.media-item-display .media.media-photo {
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-image: url('../img/hourglass.gif');
-}
-.media-item-display .media.media-photo img {
-    display: none;
-    max-width: 100%;
-    max-height: 550px;
-}
-.media-item-display.loading .media img,
-.media-item-display.loading .media .video-js,
-.media-item-display.loading .info .label,
-.media-item-display .media .video-js,
-.media-item-display .media img,
-.media-item-display .media .display-options,
-.media-item-display .media.media-photo .video-js,
-.media-item-display .media.media-video img,
-.media-item-display .media.media-video .display-options {
-    display: none;
-}
-.media-item-display .media.media-photo.loaded img,
-.media-item-display .media.media-photo.loaded:hover .display-options {
-    display: inline-block;
-}
-.media-item-display .media.media-photo .display-options {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    display: none;
-}
-
-.media-item-display .media.media-photo .display-options > span {
-    font-size: 20px;
-    font-family: 'Glyphicons Halflings';
-    padding: 2px 4px;
-    border-radius: 2px;
-    cursor: pointer;
-    margin-left: 5px;
-}
-.media-item-display .media.media-photo .display-options .fullscreen:before {
-    display: inline;
-    content: "\e140";
-}
-.media-item-display .media.media-video {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%;
-}
-.media-item-display .media.media-video .video-js {
-    width: calc(100% - 20px);
-    height: calc(100% - 20px);
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    display: block;
-}
-.media-item-display .info .table {
-    margin-bottom: 10px;
-}
-.media-item-display .info .table th {
-    border-bottom: 0;
-    background-color: #f5f5f5;
-}
-.media-item-display .info .table td:first-child {
-    width: 100px;
-}
-.media-item-display .info a.label:hover {
-    background-color: #3c8dbc !important;
-}
-.media-item-display .info button.btn {
-    width: 92px;
-}
+/* Media Item Display */
+@import "common.media-item-display";
 
 /* Favorites Modal */
 .favorite-thumbs {
@@ -261,42 +150,7 @@ body.loading {
     border-radius: 4px;
 }
 
-/* Global - Fullscreen Widget */
-.fs-window {
-    position: fixed;
-    background-color: black;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-}
-.fs-window .display-content {
-    display: inline-block;
-    margin: auto;
-    vertical-align: middle;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.fs-window .exit-btn {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 20px;
-    font-family: 'Glyphicons Halflings';
-    padding: 2px 5px;
-    color: rgba(255,255,255,0.5);
-    background-color: rgba(0,0,0,0.5);
-    border-radius: 2px;
-    cursor: pointer;
-    margin-left: 5px;
-}
-.fs-window .exit-btn:hover {
-    color: rgba(255,255,255,0.7);
-    background-color: rgba(0,0,0,0.7);
-}
-.fs-window .exit-btn:before {
-    content: "\e014";
-}
+@import "common.fs-window";
 
 /* Header */
 header {

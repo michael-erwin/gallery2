@@ -288,8 +288,9 @@ admin_app.library =
             this.objects.content_box.find('.checkbox-ui [type="checkbox"]').unbind().on('click',this.selectMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="edit"]').unbind().on('mousedown',this.editMedia.bind(this));
             this.objects.content_box.find('.controls [data-id="delete"]').unbind().on('mousedown',this.deleteMedia.bind(this));
-            this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
-            this.objects.content_box.find('a.video-preview').unbind('click').click(videomodal.open);
+            // this.objects.content_box.find('a.photo-preview').fullsizable({detach_id: 'main_header',clickBehaviour: 'next'});
+            // this.objects.content_box.find('a.video-preview').unbind('click').click(videomodal.open);
+            this.objects.content_box.find('a.media-item').unbind('click').click(modal_media.open.bind(modal_media));
         }else{
             this.objects.media_type_dropdown_box.prop('disabled',true);
             this.objects.category_dropdown_box.prop('disabled',true);

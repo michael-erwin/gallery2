@@ -88,20 +88,6 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="modal_video" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div data-id="container">
-                        <div class="title">Title</div>
-                        <video id="modal_video_player" preload="none" class="video-js vjs-default-skin">
-                            <source type="video/mp4">
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal" id="modal_media_details">
         <div class="modal-dialog modal-fluid">
             <div class="modal-content">

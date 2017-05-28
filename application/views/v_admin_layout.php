@@ -12,8 +12,6 @@
     <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet"> -->
     <!-- Plugins Dependency -->
     <link href="<?php echo base_url();?>assets/plugins/toastr/toastr.min.css" rel="stylesheet">
-    <link href="<?php echo base_url();?>assets/plugins/fullsizable/css/jquery-fullsizable.css" rel="stylesheet">
-    <link href="<?php echo base_url();?>assets/plugins/fullsizable/css/jquery-fullsizable-theme.css" rel="stylesheet">
     <link href="<?php echo base_url();?>assets/plugins/videojs/video-js.min.css" rel="stylesheet">
     <!-- Theme Style -->
     <link href="<?php echo base_url();?>assets/css/theme.min.css" rel="stylesheet">
@@ -174,6 +172,58 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="modal_media_details">
+        <div class="modal-dialog modal-fluid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Media Information</h4>
+                </div>
+                <div class="modal-body media-item-display loading">
+                    <div class="row" data-id="contents">
+                        <div class="col-xs-12 col-sm-8 media-block">
+                            <div class="media">
+                                <video id="video_item_object" preload="none" class="video-js vjs-default-skin vjs-big-play-centered" controls data-setup='{"fluid":true}'>
+                                  <source src=" " type="video/mp4" />
+                                </video>
+                                <img id="photo_item_object">
+                                <div class="display-options">
+                                    <span class="display-options-icon overlay-ctrl-btn fullscreen" title="Fullscreen"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 info-block">
+                            <div class="info">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr><th colspan="2">Details</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Title</td><td>&nbsp;</td></tr>
+                                        <tr><td>Description</td><td>&nbsp;</td></tr>
+                                        <tr><td>Dimension</td><td>&nbsp;</td></tr>
+                                        <tr><td>File size</td><td>&nbsp;</td></tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr><th>Tags</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>&nbsp;</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="photo_fullscreen" class="fs-window">
+        <div class="display-content"></div>
+        <div class="exit-btn" title="Exit"></div>
+    </div>
     <!-- /Common Modals -->
     <!-- Global Constants -->
     <script>
@@ -186,7 +236,6 @@
     <script src="<?php echo base_url();?>assets/libs/bootstrap/bootstrap.min.js"></script>
     <!-- Plugins Dependency -->
     <script src="<?php echo base_url();?>assets/plugins/toastr/toastr.min.js"></script>
-    <script src="<?php echo base_url();?>assets/plugins/fullsizable/js/jquery.fullsizable.js"></script>
     <script src="<?php echo base_url();?>assets/plugins/videojs/video.min.js"></script>
     <!-- Theme App -->
     <!-- <script src="<?php echo base_url();?>assets/js/theme.min.js"></script> -->

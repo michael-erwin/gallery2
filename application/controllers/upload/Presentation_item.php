@@ -103,7 +103,10 @@ class Presentation_item extends CI_Controller
                 else
                 {
                     $response['message'] = "Database write failed.";
-                    $this->m_photo->delete_file($uid);
+					$response['dbg_info'] = $db_insert;
+                    @unlink($this->media_path."/presentation_items/full_size/{$uid}.jpg");
+					@unlink($this->media_path."/presentation_items/256/{$uid}.jpg");
+					@unlink($this->media_path."/presentation_items/128/{$uid}.jpg");
                 }
             }
             else
