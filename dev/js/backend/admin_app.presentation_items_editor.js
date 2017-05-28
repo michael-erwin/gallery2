@@ -1,7 +1,9 @@
 admin_app.presentation_items_editor =
 {
     self: '#modal_presentation_items_editor',
-    config: {},
+    config: {
+        last_item_count: 0
+    },
     objects: {
         'entry_title': null,
         'sort_box': null,
@@ -29,7 +31,7 @@ admin_app.presentation_items_editor =
         this.objects.input_files.unbind('click').on('click',function(){this.value=null;});
         this.self.delegate('input[type="file"]','change',this.addFiles.bind(this));
         this.self.delegate('.remove','click',this.delete.bind(this));
-        $(this.self).on('hidden.bs.modal',function(){admin_app.presentation.getData()});
+        $(this.self).on('hidden.bs.modal',this.close.bind(this));
 
         // Apply sortable elements.
         this.objects.sort_box.sortable({
@@ -65,13 +67,17 @@ admin_app.presentation_items_editor =
     },
     open: function(data) {
         // Reset data.
+        this.config.last_item_count = (data.items.length == 0)? 0 : data.items.split(',').length;
         this.data = {
-                entry: { id: data.id, title: data.title, description: data.description },
+                entry: { id: data.id, title: data.title, description: data.description, items: data.items },
                 items: [],
                 files: [],
                 files_processed: 0
             };
         this.getData();
+    },
+    close: function() {
+        if(this.config.last_item_count != this.data.items.length) admin_app.presentation.getData();
     },
     getData: function(render=true) {
         if(render === true) this.disableState();
@@ -180,12 +186,14 @@ admin_app.presentation_items_editor =
 
                 // Events.
                 xhr.error = function(e) {
+                    this.enableState();
                     this.data.files_processed++;
                     file_item.processed = true;
                     toastr["warning"]("Failed to upload "+file_item.file.name+"?");
                     file_item.elem.replaceWith(tag);
-                };
+                }.bind(this);
                 xhr.onload = function(e) {
+                    this.enableState();
                     this.data.files_processed++;
                     try {
                         var response = JSON.parse(xhr.responseText);
@@ -211,6 +219,7 @@ admin_app.presentation_items_editor =
                 }.bind(this);
 
                 // Submit files.
+                this.disableState();
                 xhr.open('POST', site.base_url+'upload/presentation_item', true);
                 xhr.send(form_data);
             }
@@ -234,6 +243,7 @@ admin_app.presentation_items_editor =
             '<li class="'+mod+' active" data-info=\''+(JSON.stringify(inf)).replace(/[']/g,"&#39;")+'\'>'+
                 '<div class="remove" title="Remove">×</div>'+
                 '<div class="image" style="'+inf.bg+'">'+
+                    '<div class="icon"></div>'+
                     '<div class="series"></div>'+
                 '</div>'+
                 '<div class="info">'+
